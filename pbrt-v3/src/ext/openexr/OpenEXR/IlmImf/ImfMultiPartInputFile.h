@@ -125,4 +125,4 @@ class IMF_EXPORT MultiPartInputFile : public GenericInputFile
 
 OPENEXR_IMF_INTERNAL_NAMESPACE_HEADER_EXIT
 
-#endif /* IMFMULTIPARTINPUTFILE_H_ */
+#endif

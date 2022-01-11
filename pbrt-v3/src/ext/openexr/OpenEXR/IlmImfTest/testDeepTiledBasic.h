@@ -39,4 +39,4 @@
 
 void testDeepTiledBasic (const std::string & tempDir);
 
-#endif /* TESTDEEPTILEDBASIC_H_ */
+#endif

@@ -804,12 +804,12 @@ DwaCompressor::LossyDctDecoderBase::execute ()
                         dst[0] = _mm_insert_epi16
                             (_mm_setzero_si128(), *currDcComp[comp]++, 0);
                     }
-                #else  /* IMF_HAVE_SSE2 */
+                #else
 
                     memset (halfZigBlock[comp]._buffer, 0, 64 * 2);
                     halfZigBlock[comp]._buffer[0] = *currDcComp[comp]++;
 
-                #endif /* IMF_HAVE_SSE2 */
+                #endif
 
                 _packedDcCount++;
                 
@@ -963,7 +963,7 @@ DwaCompressor::LossyDctDecoderBase::execute ()
                         dst[6] = dst[0];
                         dst[7] = dst[0];
 
-                    #else  /* IMF_HAVE_SSE2 */
+                    #else
 
                         unsigned short *dst = &rowBlock[comp][blockx*64];
 
@@ -974,7 +974,7 @@ DwaCompressor::LossyDctDecoderBase::execute ()
                             dst[i] = dst[0];
                         }
 
-                    #endif /* IMF_HAVE_SSE2 */
+                    #endif
                 } // blockIsConstant
             } // comp
         } // blockx
@@ -1071,7 +1071,7 @@ DwaCompressor::LossyDctDecoderBase::execute ()
             else
             {
 
-        #endif /* IMF_HAVE_SSE2 */
+        #endif
 
                 //
                 // Basic scalar kinda slow path for handling the full X blocks
@@ -1104,7 +1104,7 @@ DwaCompressor::LossyDctDecoderBase::execute ()
 
             }
 
-        #endif /* IMF_HAVE_SSE2 */
+        #endif
 
             //
             // If we have partial X blocks, deal with all those now

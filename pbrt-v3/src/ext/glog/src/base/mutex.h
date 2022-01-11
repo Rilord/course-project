@@ -194,7 +194,7 @@ class Mutex {
   inline void SetIsSafe() { is_safe_ = true; }
 
   // Catch the error of writing Mutex when intending MutexLock.
-  Mutex(Mutex* /*ignored*/) {}
+  Mutex(Mutex* ) {}
   // Disallow "evil" constructors
   Mutex(const Mutex&);
   void operator=(const Mutex&);
@@ -238,7 +238,7 @@ void Mutex::ReaderUnlock() { Unlock(); }
 
 #elif defined(HAVE_PTHREAD) && defined(HAVE_RWLOCK)
 
-#define SAFE_PTHREAD(fncall)  do {   /* run fncall if is_safe_ is true */  \
+#define SAFE_PTHREAD(fncall)  do {     \
   if (is_safe_ && fncall(&mutex_) != 0) abort();                           \
 } while (0)
 
@@ -260,7 +260,7 @@ void Mutex::ReaderUnlock() { SAFE_PTHREAD(pthread_rwlock_unlock); }
 
 #elif defined(HAVE_PTHREAD)
 
-#define SAFE_PTHREAD(fncall)  do {   /* run fncall if is_safe_ is true */  \
+#define SAFE_PTHREAD(fncall)  do {     \
   if (is_safe_ && fncall(&mutex_) != 0) abort();                           \
 } while (0)
 
@@ -330,4 +330,4 @@ using namespace MUTEX_NAMESPACE;
 
 #undef MUTEX_NAMESPACE
 
-#endif  /* #define GOOGLE_MUTEX_H__ */
+#endif

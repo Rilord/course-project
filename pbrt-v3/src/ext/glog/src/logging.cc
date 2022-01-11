@@ -555,7 +555,7 @@ vector<LogSink*>* LogDestination::sinks_ = NULL;
 Mutex LogDestination::sink_mutex_;
 bool LogDestination::terminal_supports_color_ = TerminalSupportsColor();
 
-/* static */
+
 const string& LogDestination::hostname() {
   if (hostname_.empty()) {
     GetHostName(&hostname_);

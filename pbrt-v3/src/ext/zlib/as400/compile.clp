@@ -1,43 +1,43 @@
-/******************************************************************************/
-/*                                                                            */
-/*  ZLIB                                                                      */
-/*                                                                            */
-/*    Compile sources into modules and link them into a service program.      */
-/*                                                                            */
-/******************************************************************************/
+
+
+
+
+
+
+
 
              PGM
 
-/*      Configuration adjustable parameters.                                  */
+
 
              DCL        VAR(&SRCLIB) TYPE(*CHAR) LEN(10) +
-                          VALUE('ZLIB')                         /* Source library. */
+                          VALUE('ZLIB')
              DCL        VAR(&SRCFILE) TYPE(*CHAR) LEN(10) +
-                          VALUE('SOURCES')                      /* Source member file. */
+                          VALUE('SOURCES')
              DCL        VAR(&CTLFILE) TYPE(*CHAR) LEN(10) +
-                          VALUE('TOOLS')                        /* Control member file. */
+                          VALUE('TOOLS')
 
              DCL        VAR(&MODLIB) TYPE(*CHAR) LEN(10) +
-                          VALUE('ZLIB')                         /* Module library. */
+                          VALUE('ZLIB')
 
              DCL        VAR(&SRVLIB) TYPE(*CHAR) LEN(10) +
-                          VALUE('LGPL')                         /* Service program library. */
+                          VALUE('LGPL')
 
              DCL        VAR(&CFLAGS) TYPE(*CHAR) +
-                          VALUE('OPTIMIZE(40)')                 /* Compile options. */
+                          VALUE('OPTIMIZE(40)')
 
              DCL        VAR(&TGTRLS) TYPE(*CHAR) +
-                          VALUE('V5R3M0')                       /* Target release. */
+                          VALUE('V5R3M0')
 
 
-/*      Working storage.                                                      */
 
-             DCL        VAR(&CMDLEN) TYPE(*DEC) LEN(15 5) VALUE(300)    /* Command length. */
+
+             DCL        VAR(&CMDLEN) TYPE(*DEC) LEN(15 5) VALUE(300)
              DCL        VAR(&CMD) TYPE(*CHAR) LEN(512)
              DCL        VAR(&FIXDCMD) TYPE(*CHAR) LEN(512)
 
 
-/*      Compile sources into modules.                                         */
+
 
              CHGVAR     VAR(&FIXDCMD) VALUE('CRTCMOD' *BCAT &CFLAGS *BCAT      +
                         'SYSIFCOPT(*IFS64IO)' *BCAT                            +
@@ -93,7 +93,7 @@
              CALL       PGM(QCMDEXC) PARM(&CMD &CMDLEN)
 
 
-/*      Link modules into a service program.                                  */
+
 
              CRTSRVPGM  SRVPGM(&SRVLIB/ZLIB) +
                           MODULE(&MODLIB/ADLER32     &MODLIB/COMPRESS    +

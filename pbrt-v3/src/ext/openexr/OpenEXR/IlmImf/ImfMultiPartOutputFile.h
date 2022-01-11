@@ -115,4 +115,4 @@ class IMF_EXPORT MultiPartOutputFile : public GenericOutputFile
 
 OPENEXR_IMF_INTERNAL_NAMESPACE_HEADER_EXIT
 
-#endif /* MULTIPARTOUTPUTFILE_H_ */
+#endif

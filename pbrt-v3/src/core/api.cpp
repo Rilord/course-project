@@ -1,34 +1,4 @@
 
-/*
-    pbrt source code is Copyright(c) 1998-2016
-                        Matt Pharr, Greg Humphreys, and Wenzel Jakob.
-
-    This file is part of pbrt.
-
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are
-    met:
-
-    - Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-
-    - Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-    IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-    TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-    PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-    HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
- */
 
 // core/api.cpp*
 #include "api.h"
@@ -390,7 +360,7 @@ std::vector<std::shared_ptr<Shape>> MakeShapes(const std::string &name,
             "Ignoring.",                                   \
             func);                                         \
         return;                                            \
-    } else /* swallow trailing semicolon */
+    } else
 #define VERIFY_OPTIONS(func)                             \
     VERIFY_INITIALIZED(func);                            \
     if (!(PbrtOptions.cat || PbrtOptions.toPly) &&       \
@@ -400,7 +370,7 @@ std::vector<std::shared_ptr<Shape>> MakeShapes(const std::string &name,
             "\"%s\" not allowed.  Ignoring.",            \
             func);                                       \
         return;                                          \
-    } else /* swallow trailing semicolon */
+    } else
 #define VERIFY_WORLD(func)                                   \
     VERIFY_INITIALIZED(func);                                \
     if (!(PbrtOptions.cat || PbrtOptions.toPly) &&           \
@@ -410,7 +380,7 @@ std::vector<std::shared_ptr<Shape>> MakeShapes(const std::string &name,
             "\"%s\" not allowed. Ignoring.",                 \
             func);                                           \
         return;                                              \
-    } else /* swallow trailing semicolon */
+    } else
 #define FOR_ACTIVE_TRANSFORMS(expr)           \
     for (int i = 0; i < MaxTransforms; ++i)   \
         if (activeTransformBits & (1 << i)) { \
@@ -423,7 +393,7 @@ std::vector<std::shared_ptr<Shape>> MakeShapes(const std::string &name,
                 "Animated transformations set; ignoring for \"%s\" " \
                 "and using the start transform only",                \
                 func);                                               \
-    } while (false) /* swallow trailing semicolon */
+    } while (false)
 
 // Object Creation Function Definitions
 std::vector<std::shared_ptr<Shape>> MakeShapes(const std::string &name,
@@ -1629,13 +1599,8 @@ void pbrtWorldEnd() {
         // issue is that all the rest of the profiling system assumes
         // hierarchical inheritance of profiling state; this is the only
         // place where that isn't the case.
-        CHECK_EQ(CurrentProfilerState(), ProfToBits(Prof::SceneConstruction));
-        ProfilerState = ProfToBits(Prof::IntegratorRender);
 
         if (scene && integrator) integrator->Render(*scene);
-
-        CHECK_EQ(CurrentProfilerState(), ProfToBits(Prof::IntegratorRender));
-        ProfilerState = ProfToBits(Prof::SceneConstruction);
 
     }
 

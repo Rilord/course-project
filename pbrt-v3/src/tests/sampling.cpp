@@ -217,8 +217,8 @@ TEST(MaxMinDist, MinDist) {
 
         // Expected minimum distances from Gruenschloss et al.'s paper.
         Float expectedMinDist[17] = {
-            0., /* not checked */
-            0., /* not checked */
+            0.,
+            0.,
             0.35355, 0.35355, 0.22534, 0.16829, 0.11267,
             0.07812, 0.05644, 0.03906, 0.02816, 0.01953,
             0.01408, 0.00975, 0.00704, 0.00486, 0.00352,

@@ -69,9 +69,9 @@ OPENEXR_IMF_INTERNAL_NAMESPACE_HEADER_ENTER
 
     #ifdef __LP64__
         #define IMF_HAVE_GCC_INLINEASM_64
-    #endif /* __LP64__ */
+    #endif
 
-#endif /* OPENEXR_IMF_HAVE_GCC_INLINE_ASM_AVX */
+#endif
 
 //
 // A simple 64-element array, aligned properly for SIMD access. 
@@ -173,7 +173,7 @@ csc709Inverse64 (float *comp0, float *comp1, float *comp2)
         csc709Inverse (comp0[i], comp1[i], comp2[i]);
 }
 
-#else /* IMF_HAVE_SSE2 */
+#else
 
 //
 // SSE2 color space conversion
@@ -228,7 +228,7 @@ csc709Inverse64 (float *comp0, float *comp1, float *comp2)
     CSC_INVERSE_709_SSE2_LOOP (15)
 }
 
-#endif /* IMF_HAVE_SSE2 */
+#endif
 
 
 //
@@ -281,7 +281,7 @@ interleaveByte2 (char *dst, char *src0, char *src1, int numBytes)
     }
 }
 
-#else  /* IMF_HAVE_SSE2 */
+#else
 
 // 
 // SSE2 byte interleaving
@@ -399,7 +399,7 @@ interleaveByte2 (char *dst, char *src0, char *src1, int numBytes)
     }
 }
 
-#endif /* IMF_HAVE_SSE2 */
+#endif
 
 
 //
@@ -472,18 +472,18 @@ convertFloatToHalf64_f16c (unsigned short *dst, float *src)
             "vmovdqa   %%xmm3,       0x70(%1)       \n"
         #ifndef __AVX__
             "vzeroupper                             \n"
-        #endif /* __AVX__ */
-            : /* Output  */                
-            : /* Input   */ "r"(src), "r"(dst)
+        #endif
+            :
+            :  "r"(src), "r"(dst)
         #ifndef __AVX__
-            : /* Clobber */ "%xmm0", "%xmm1", "%xmm2", "%xmm3", "memory"
+            :  "%xmm0", "%xmm1", "%xmm2", "%xmm3", "memory"
         #else
-            : /* Clobber */ "%ymm0", "%ymm1", "%ymm2", "%ymm3", "memory"
-        #endif /* __AVX__ */
+            :  "%ymm0", "%ymm1", "%ymm2", "%ymm3", "memory"
+        #endif
            );
     #else
         convertFloatToHalf64_scalar (dst, src);
-    #endif /* IMF_HAVE_GCC_INLINEASM */
+    #endif
 }
 
 
@@ -663,12 +663,7 @@ fromHalfZigZag_f16c (unsigned short *src, float *dst)
     #if defined IMF_HAVE_GCC_INLINEASM_64
         __asm__
 
-           /* x3 <- 0                    
-            * x8 <- [ 0- 7]              
-            * x6 <- [56-63]              
-            * x9 <- [21-28]              
-            * x7 <- [28-35]              
-            * x3 <- [ 6- 9] (lower half) */
+
           
           ("vpxor   %%xmm3,  %%xmm3, %%xmm3   \n"
            "vmovdqa    (%0), %%xmm8           \n"
@@ -677,12 +672,7 @@ fromHalfZigZag_f16c (unsigned short *src, float *dst)
            "vmovdqu  56(%0), %%xmm7           \n"
            "vmovq    12(%0), %%xmm3           \n"
 
-           /* Setup rows 0-2 of A in xmm0-xmm2 
-            * x1 <- x8 >> 16 (1 value)     
-            * x2 <- x8 << 32 (2 values)    
-            * x0 <- alignr([35-42], x8, 2) 
-            * x1 <- blend(x1, [41-48])     
-            * x2 <- blend(x2, [49-56])     */
+
 
            "vpsrldq      $2, %%xmm8, %%xmm1   \n"      
            "vpslldq      $4, %%xmm8, %%xmm2   \n"      
@@ -690,12 +680,7 @@ fromHalfZigZag_f16c (unsigned short *src, float *dst)
            "vpblendw  $0xfc, 82(%0), %%xmm1, %%xmm1 \n"
            "vpblendw  $0x1f, 98(%0), %%xmm2, %%xmm2 \n"
      
-           /* Setup rows 4-6 of A in xmm4-xmm6 
-            * x4 <- x6 >> 32 (2 values)   
-            * x5 <- x6 << 16 (1 value)    
-            * x6 <- alignr(x6,x9,14)      
-            * x4 <- blend(x4, [ 7-14])    
-            * x5 <- blend(x5, [15-22])    */
+
 
            "vpsrldq      $4, %%xmm6, %%xmm4         \n"
            "vpslldq      $2, %%xmm6, %%xmm5         \n"
@@ -703,15 +688,11 @@ fromHalfZigZag_f16c (unsigned short *src, float *dst)
            "vpblendw  $0xf8, 14(%0), %%xmm4, %%xmm4 \n"
            "vpblendw  $0x3f, 30(%0), %%xmm5, %%xmm5 \n"
 
-           /* Load the upper half of row 3 into xmm3 
-            * x3 <- [54-57] (upper half) */
+
 
            "vpinsrq      $1, 108(%0), %%xmm3, %%xmm3\n"
 
-           /* Reverse the even rows. We're not using PSHUFB as
-            * that requires loading an extra constant all the time,
-            * and we're alreadly pretty memory bound.
-            */
+
 
            "vpshuflw $0x1b, %%xmm0, %%xmm0          \n" 
            "vpshuflw $0x1b, %%xmm2, %%xmm2          \n" 
@@ -728,7 +709,7 @@ fromHalfZigZag_f16c (unsigned short *src, float *dst)
            "vpshufd $0x4e, %%xmm4, %%xmm4          \n" 
            "vpshufd $0x4e, %%xmm6, %%xmm6          \n" 
 
-           /* Transpose xmm0-xmm7 into xmm8-xmm15 */
+
 
            "vpunpcklwd %%xmm1, %%xmm0, %%xmm8       \n"
            "vpunpcklwd %%xmm3, %%xmm2, %%xmm9       \n"
@@ -757,11 +738,7 @@ fromHalfZigZag_f16c (unsigned short *src, float *dst)
            "vpunpcklqdq %%xmm7,  %%xmm6, %%xmm14    \n"
            "vpunpckhqdq %%xmm7,  %%xmm6, %%xmm15    \n"
 
-           /* Rotate the rows to get the correct final order. 
-            * Rotating xmm12 isn't needed, as we can handle
-            * the rotation in the PUNPCKLQDQ above. Rotating
-            * xmm8 isn't needed as it's already in the right order           
-            */
+
 
            "vpalignr  $2,  %%xmm9,  %%xmm9,  %%xmm9 \n"
            "vpalignr  $4, %%xmm10, %%xmm10, %%xmm10 \n"
@@ -770,7 +747,7 @@ fromHalfZigZag_f16c (unsigned short *src, float *dst)
            "vpalignr $12, %%xmm14, %%xmm14, %%xmm14 \n"
            "vpalignr $14, %%xmm15, %%xmm15, %%xmm15 \n"
 
-            /* Convert from half -> float */
+
 
            "vcvtph2ps  %%xmm8, %%ymm8            \n"  
            "vcvtph2ps  %%xmm9, %%ymm9            \n"
@@ -781,7 +758,7 @@ fromHalfZigZag_f16c (unsigned short *src, float *dst)
            "vcvtph2ps %%xmm14, %%ymm14           \n"
            "vcvtph2ps %%xmm15, %%ymm15           \n"
            
-           /* Move float values to dst */
+
 
            "vmovaps    %%ymm8,    (%1)           \n"
            "vmovaps    %%ymm9,  32(%1)           \n"
@@ -793,10 +770,10 @@ fromHalfZigZag_f16c (unsigned short *src, float *dst)
            "vmovaps   %%ymm15, 224(%1)           \n"
         #ifndef __AVX__
             "vzeroupper                          \n"
-        #endif /* __AVX__ */
-            : /* Output  */                
-            : /* Input   */ "r"(src), "r"(dst)
-            : /* Clobber */ "memory",
+        #endif
+            :
+            :  "r"(src), "r"(dst)
+            :  "memory",
         #ifndef __AVX__
                             "%xmm0",  "%xmm1",  "%xmm2",  "%xmm3", 
                             "%xmm4",  "%xmm5",  "%xmm6",  "%xmm7",
@@ -807,12 +784,12 @@ fromHalfZigZag_f16c (unsigned short *src, float *dst)
                             "%ymm4",  "%ymm5",  "%ymm6",  "%ymm7",
                             "%ymm8",  "%ymm9",  "%ymm10", "%ymm11",
                             "%ymm12", "%ymm13", "%ymm14", "%ymm15"
-        #endif /* __AVX__ */
+        #endif
         );
 
     #else
         fromHalfZigZag_scalar(src, dst);
-    #endif /* defined IMF_HAVE_GCC_INLINEASM_64 */
+    #endif
 }
 
 
@@ -832,7 +809,7 @@ dctInverse8x8DcOnly (float *data)
         data[i] = val;
 }
 
-#else  /* IMF_HAVE_SSE2 */
+#else
 
 void
 dctInverse8x8DcOnly (float *data)
@@ -844,7 +821,7 @@ dctInverse8x8DcOnly (float *data)
         dst[i] = src;
 }
 
-#endif /* IMF_HAVE_SSE2 */
+#endif
 
 
 //
@@ -1046,9 +1023,7 @@ dctInverse8x8_sse2 (float *data)
         //
 
         #define DCT_INVERSE_8x8_SS2_ROW_LOOP(i)                             \
-            /*                                                              \
-             * Broadcast the components of the row                          \
-             */                                                             \
+                                                                         \
                                                                             \
             x[0] = _mm_shuffle_ps (srcVec[2 * i],                           \
                                    srcVec[2 * i],                           \
@@ -1081,9 +1056,7 @@ dctInverse8x8_sse2 (float *data)
             x[7] = _mm_shuffle_ps (srcVec[2 * i + 1],                       \
                                    srcVec[2 * i + 1],                       \
                                    _MM_SHUFFLE (3, 3, 3, 3));               \
-            /*                                                              \
-             * Multiply the components by each column of the matrix         \
-             */                                                             \
+                                                                         \
                                                                             \
             x[0] = _mm_mul_ps (x[0], c0);                                   \
             x[2] = _mm_mul_ps (x[2], c1);                                   \
@@ -1095,9 +1068,7 @@ dctInverse8x8_sse2 (float *data)
             x[5] = _mm_mul_ps (x[5], c6);                                   \
             x[7] = _mm_mul_ps (x[7], c7);                                   \
                                                                             \
-            /*                                                              \
-             * Add across                                                   \
-             */                                                             \
+                                                                         \
                                                                             \
             evenSum = _mm_setzero_ps();                                     \
             evenSum = _mm_add_ps (evenSum, x[0]);                           \
@@ -1111,11 +1082,7 @@ dctInverse8x8_sse2 (float *data)
             oddSum = _mm_add_ps (oddSum, x[5]);                             \
             oddSum = _mm_add_ps (oddSum, x[7]);                             \
                                                                             \
-            /*                                                              \
-             * Final Sum:                                                   \
-             *    out [0, 1, 2, 3] = evenSum + oddSum                       \
-             *    out [7, 6, 5, 4] = evenSum - oddSum                       \
-             */                                                             \
+                                                                         \
                                                                             \
             srcVec[2 * i]     = _mm_add_ps (evenSum, oddSum);               \
             srcVec[2 * i + 1] = _mm_sub_ps (evenSum, oddSum);               \
@@ -1250,11 +1217,11 @@ dctInverse8x8_sse2 (float *data)
             srcVec[14+col] = _mm_sub_ps (gamma[0], beta[0]);
         }
 
-    #else /* IMF_HAVE_SSE2 */
+    #else
 
         dctInverse8x8_scalar<zeroedRows> (data);
 
-    #endif /* IMF_HAVE_SSE2 */
+    #endif
 }
 
 
@@ -1282,19 +1249,19 @@ dctInverse8x8_sse2 (float *data)
     "vunpckhpd      %%ymm" STR(_TMP1) ",  %%ymm" STR(_TMP0) ",  %%ymm" STR(_DST1) "  \n" 
 
 #define IDCT_AVX_MMULT_ROWS(_SRC)                       \
-    /* Broadcast the source values into y12-y15 */      \
+          \
     "vpermilps $0x00, " STR(_SRC) ", %%ymm12       \n"  \
     "vpermilps $0x55, " STR(_SRC) ", %%ymm13       \n"  \
     "vpermilps $0xaa, " STR(_SRC) ", %%ymm14       \n"  \
     "vpermilps $0xff, " STR(_SRC) ", %%ymm15       \n"  \
                                                         \
-    /* Multiple coefs and the broadcasted values */     \
+         \
     "vmulps    %%ymm12,  %%ymm8, %%ymm12     \n"        \
     "vmulps    %%ymm13,  %%ymm9, %%ymm13     \n"        \
     "vmulps    %%ymm14, %%ymm10, %%ymm14     \n"        \
     "vmulps    %%ymm15, %%ymm11, %%ymm15     \n"        \
                                                         \
-    /* Accumulate the result back into the source */    \
+        \
     "vaddps    %%ymm13, %%ymm12, %%ymm12      \n"       \
     "vaddps    %%ymm15, %%ymm14, %%ymm14      \n"       \
     "vaddps    %%ymm14, %%ymm12, " STR(_SRC) "\n"     
@@ -1302,47 +1269,20 @@ dctInverse8x8_sse2 (float *data)
 #define IDCT_AVX_EO_TO_ROW_HALVES(_EVEN, _ODD, _FRONT, _BACK)      \
     "vsubps   " STR(_ODD) "," STR(_EVEN) "," STR(_BACK)  "\n"  \
     "vaddps   " STR(_ODD) "," STR(_EVEN) "," STR(_FRONT) "\n"  \
-    /* Reverse the back half                                */ \
+     \
     "vpermilps $0x1b," STR(_BACK) "," STR(_BACK) "\n"  
 
-/* In order to allow for path paths when we know certain rows
- * of the 8x8 block are zero, most of the body of the DCT is
- * in the following macro. Statements are wrapped in a ROWn()
- * macro, where n is the lowest row in the 8x8 block in which
- * they depend.
- *
- * This should work for the cases where we have 2-8 full rows.
- * the 1-row case is special, and we'll handle it seperately.  
- */
+
 #define IDCT_AVX_BODY \
-    /* ==============================================               
-     *               Row 1D DCT                                     
-     * ----------------------------------------------
-     */                                                           \
+                                                               \
                                                                   \
-    /* Setup for the row-oriented 1D DCT. Assuming that (%0) holds 
-     * the row-major 8x8 block, load ymm0-3 with the even columns
-     * and ymm4-7 with the odd columns. The lower half of the ymm
-     * holds one row, while the upper half holds the next row.
-     *
-     * If our source is:
-     *    a0 a1 a2 a3   a4 a5 a6 a7
-     *    b0 b1 b2 b3   b4 b5 b6 b7
-     *
-     * We'll be forming:
-     *    a0 a2 a4 a6   b0 b2 b4 b6
-     *    a1 a3 a5 a7   b1 b3 b5 b7
-     */                                                              \
+                                                                  \
     ROW0( IDCT_AVX_SETUP_2_ROWS(0, 4, 14, 15,    0,  16,  32,  48) ) \
     ROW2( IDCT_AVX_SETUP_2_ROWS(1, 5, 12, 13,   64,  80,  96, 112) ) \
     ROW4( IDCT_AVX_SETUP_2_ROWS(2, 6, 10, 11,  128, 144, 160, 176) ) \
     ROW6( IDCT_AVX_SETUP_2_ROWS(3, 7,  8,  9,  192, 208, 224, 240) ) \
                                                                      \
-    /* Multiple the even columns (ymm0-3) by the matrix M1
-     * storing the results back in ymm0-3
-     *
-     * Assume that (%1) holds the matrix in column major order
-     */                                                              \
+                                                                  \
     "vbroadcastf128   (%1),  %%ymm8         \n"                      \
     "vbroadcastf128 16(%1),  %%ymm9         \n"                      \
     "vbroadcastf128 32(%1), %%ymm10         \n"                      \
@@ -1353,9 +1293,7 @@ dctInverse8x8_sse2 (float *data)
     ROW4( IDCT_AVX_MMULT_ROWS(%%ymm2) )                              \
     ROW6( IDCT_AVX_MMULT_ROWS(%%ymm3) )                              \
                                                                      \
-    /* Repeat, but with the odd columns (ymm4-7) and the 
-     * matrix M2
-     */                                                              \
+                                                                  \
     "vbroadcastf128  64(%1),  %%ymm8         \n"                     \
     "vbroadcastf128  80(%1),  %%ymm9         \n"                     \
     "vbroadcastf128  96(%1), %%ymm10         \n"                     \
@@ -1366,17 +1304,13 @@ dctInverse8x8_sse2 (float *data)
     ROW4( IDCT_AVX_MMULT_ROWS(%%ymm6) )                              \
     ROW6( IDCT_AVX_MMULT_ROWS(%%ymm7) )                              \
                                                                      \
-    /* Sum the M1 (ymm0-3) and M2 (ymm4-7) results to get the 
-     * front halves of the results, and difference to get the 
-     * back halves. The front halfs end up in ymm0-3, the back
-     * halves end up in ymm12-15. 
-     */                                                                \
+                                                                    \
     ROW0( IDCT_AVX_EO_TO_ROW_HALVES(%%ymm0, %%ymm4, %%ymm0, %%ymm12) ) \
     ROW2( IDCT_AVX_EO_TO_ROW_HALVES(%%ymm1, %%ymm5, %%ymm1, %%ymm13) ) \
     ROW4( IDCT_AVX_EO_TO_ROW_HALVES(%%ymm2, %%ymm6, %%ymm2, %%ymm14) ) \
     ROW6( IDCT_AVX_EO_TO_ROW_HALVES(%%ymm3, %%ymm7, %%ymm3, %%ymm15) ) \
                                                                        \
-    /* Reassemble the rows halves into ymm0-7  */                      \
+                          \
     ROW7( "vperm2f128 $0x13, %%ymm3, %%ymm15, %%ymm7   \n" )           \
     ROW6( "vperm2f128 $0x02, %%ymm3, %%ymm15, %%ymm6   \n" )           \
     ROW5( "vperm2f128 $0x13, %%ymm2, %%ymm14, %%ymm5   \n" )           \
@@ -1387,39 +1321,15 @@ dctInverse8x8_sse2 (float *data)
     ROW0( "vperm2f128 $0x02, %%ymm0, %%ymm12, %%ymm0   \n" )           \
                                                                        \
                                                                        \
-    /* ==============================================
-     *                Column 1D DCT 
-     * ----------------------------------------------
-     */                                                                \
+                                                                    \
                                                                        \
-    /* Rows should be in ymm0-7, and M2 columns should still be 
-     * preserved in ymm8-11.  M2 has 4 unique values (and +- 
-     * versions of each), and all (positive) values appear in 
-     * the first column (and row), which is in ymm8.
-     *
-     * For the column-wise DCT, we need to:
-     *   1) Broadcast each element a row of M2 into 4 vectors
-     *   2) Multiple the odd rows (ymm1,3,5,7) by the broadcasts.
-     *   3) Accumulate into ymm12-15 for the odd outputs.
-     *
-     * Instead of doing 16 broadcasts for each element in M2, 
-     * do 4, filling y8-11 with:
-     *
-     *     ymm8:  [ b  b  b  b  | b  b  b  b ]
-     *     ymm9:  [ d  d  d  d  | d  d  d  d ]
-     *     ymm10: [ e  e  e  e  | e  e  e  e ]
-     *     ymm11: [ g  g  g  g  | g  g  g  g ]
-     * 
-     * And deal with the negative values by subtracting during accum.
-     */                                                                \
+                                                                    \
     "vpermilps        $0xff,  %%ymm8, %%ymm11  \n"                     \
     "vpermilps        $0xaa,  %%ymm8, %%ymm10  \n"                     \
     "vpermilps        $0x55,  %%ymm8, %%ymm9   \n"                     \
     "vpermilps        $0x00,  %%ymm8, %%ymm8   \n"                     \
                                                                        \
-    /* This one is easy, since we have ymm12-15 open for scratch   
-     *    ymm12 = b ymm1 + d ymm3 + e ymm5 + g ymm7 
-     */                                                                \
+                                                                    \
     ROW1( "vmulps    %%ymm1,  %%ymm8, %%ymm12    \n" )                 \
     ROW3( "vmulps    %%ymm3,  %%ymm9, %%ymm13    \n" )                 \
     ROW5( "vmulps    %%ymm5, %%ymm10, %%ymm14    \n" )                 \
@@ -1429,9 +1339,7 @@ dctInverse8x8_sse2 (float *data)
     ROW7( "vaddps   %%ymm14, %%ymm15, %%ymm14    \n" )                 \
     ROW5( "vaddps   %%ymm12, %%ymm14, %%ymm12    \n" )                 \
                                                                        \
-    /* Tricker, since only y13-15 are open for scratch   
-     *    ymm13 = d ymm1 - g ymm3 - b ymm5 - e ymm7 
-     */                                                                \
+                                                                    \
     ROW1( "vmulps    %%ymm1,   %%ymm9, %%ymm13   \n" )                 \
     ROW3( "vmulps    %%ymm3,  %%ymm11, %%ymm14   \n" )                 \
     ROW5( "vmulps    %%ymm5,   %%ymm8, %%ymm15   \n" )                 \
@@ -1442,9 +1350,7 @@ dctInverse8x8_sse2 (float *data)
     ROW7( "vmulps    %%ymm7,  %%ymm10, %%ymm15   \n" )                 \
     ROW7( "vsubps    %%ymm15, %%ymm13, %%ymm13   \n" )                 \
                                                                        \
-    /* Tricker still, as only y14-15 are open for scratch   
-     *    ymm14 = e ymm1 - b ymm3 + g ymm5 + d ymm7 
-     */                                                                \
+                                                                    \
     ROW1( "vmulps     %%ymm1, %%ymm10,  %%ymm14  \n" )                 \
     ROW3( "vmulps     %%ymm3,  %%ymm8,  %%ymm15  \n" )                 \
                                                                        \
@@ -1457,9 +1363,7 @@ dctInverse8x8_sse2 (float *data)
     ROW7( "vaddps    %%ymm15, %%ymm14, %%ymm14   \n" )                 \
                                                                        \
                                                                        \
-    /* Easy, as we can blow away ymm1,3,5,7 for scratch
-     *    ymm15 = g ymm1 - e ymm3 + d ymm5 - b ymm7 
-     */                                                                \
+                                                                    \
     ROW1( "vmulps    %%ymm1, %%ymm11, %%ymm15    \n" )                 \
     ROW3( "vmulps    %%ymm3, %%ymm10,  %%ymm3    \n" )                 \
     ROW5( "vmulps    %%ymm5,  %%ymm9,  %%ymm5    \n" )                 \
@@ -1470,70 +1374,43 @@ dctInverse8x8_sse2 (float *data)
     ROW3( "vsubps    %%ymm3, %%ymm15, %%ymm15    \n" )                 \
                                                                        \
                                                                        \
-    /* Load coefs for M1. Because we're going to broadcast
-     * coefs, we don't need to load the actual structure from
-     * M1. Instead, just load enough that we can broadcast.
-     * There are only 6 unique values in M1, but they're in +-
-     * pairs, leaving only 3 unique coefs if we add and subtract 
-     * properly.
-     *
-     * Fill      ymm1 with coef[2] = [ a  a  c  f | a  a  c  f ]
-     * Broadcast ymm5 with           [ f  f  f  f | f  f  f  f ]
-     * Broadcast ymm3 with           [ c  c  c  c | c  c  c  c ]
-     * Broadcast ymm1 with           [ a  a  a  a | a  a  a  a ]
-     */                                                                \
+                                                                    \
     "vbroadcastf128   8(%1),  %%ymm1          \n"                      \
     "vpermilps        $0xff,  %%ymm1, %%ymm5  \n"                      \
     "vpermilps        $0xaa,  %%ymm1, %%ymm3  \n"                      \
     "vpermilps        $0x00,  %%ymm1, %%ymm1  \n"                      \
                                                                        \
-    /* If we expand E = [M1] [x0 x2 x4 x6]^t, we get the following 
-     * common expressions:
-     *
-     *   E_0 = ymm8  = (a ymm0 + a ymm4) + (c ymm2 + f ymm6) 
-     *   E_3 = ymm11 = (a ymm0 + a ymm4) - (c ymm2 + f ymm6)
-     * 
-     *   E_1 = ymm9  = (a ymm0 - a ymm4) + (f ymm2 - c ymm6)
-     *   E_2 = ymm10 = (a ymm0 - a ymm4) - (f ymm2 - c ymm6)
-     *
-     * Afterwards, ymm8-11 will hold the even outputs.
-     */                                                                \
+                                                                    \
                                                                        \
-    /*  ymm11 = (a ymm0 + a ymm4),   ymm1 = (a ymm0 - a ymm4) */       \
+           \
     ROW0( "vmulps    %%ymm1,  %%ymm0, %%ymm11   \n" )                  \
     ROW4( "vmulps    %%ymm1,  %%ymm4,  %%ymm4   \n" )                  \
     ROW0( "vmovaps   %%ymm11, %%ymm1            \n" )                  \
     ROW4( "vaddps    %%ymm4, %%ymm11, %%ymm11   \n" )                  \
     ROW4( "vsubps    %%ymm4,  %%ymm1,  %%ymm1   \n" )                  \
                                                                        \
-    /* ymm7 = (c ymm2 + f ymm6) */                                     \
+                                         \
     ROW2( "vmulps    %%ymm3, %%ymm2,  %%ymm7    \n" )                  \
     ROW6( "vmulps    %%ymm5, %%ymm6,  %%ymm9    \n" )                  \
     ROW6( "vaddps    %%ymm9, %%ymm7,  %%ymm7    \n" )                  \
                                                                        \
-    /* E_0 = ymm8  = (a ymm0 + a ymm4) + (c ymm2 + f ymm6) 
-     * E_3 = ymm11 = (a ymm0 + a ymm4) - (c ymm2 + f ymm6) 
-     */                                                                \
+                                                                    \
     ROW0( "vmovaps   %%ymm11, %%ymm8            \n" )                  \
     ROW2( "vaddps     %%ymm7, %%ymm8,  %%ymm8   \n" )                  \
     ROW2( "vsubps     %%ymm7, %%ymm11, %%ymm11  \n" )                  \
                                                                        \
-    /* ymm7 = (f ymm2 - c ymm6) */                                     \
+                                         \
     ROW2( "vmulps     %%ymm5,  %%ymm2, %%ymm7   \n" )                  \
     ROW6( "vmulps     %%ymm3,  %%ymm6, %%ymm9   \n" )                  \
     ROW6( "vsubps     %%ymm9,  %%ymm7, %%ymm7   \n" )                  \
                                                                        \
-    /* E_1 = ymm9  = (a ymm0 - a ymm4) + (f ymm2 - c ymm6) 
-     * E_2 = ymm10 = (a ymm0 - a ymm4) - (f ymm2 - c ymm6)
-     */                                                                \
+                                                                    \
     ROW0( "vmovaps   %%ymm1,  %%ymm9            \n" )                  \
     ROW0( "vmovaps   %%ymm1, %%ymm10            \n" )                  \
     ROW2( "vaddps    %%ymm7,  %%ymm1,  %%ymm9   \n" )                  \
     ROW2( "vsubps    %%ymm7,  %%ymm1,  %%ymm10  \n" )                  \
                                                                        \
-    /* Add the even (ymm8-11) and the odds (ymm12-15), 
-     * placing the results into ymm0-7 
-     */                                                                \
+                                                                    \
     "vaddps   %%ymm12,  %%ymm8, %%ymm0       \n"                       \
     "vaddps   %%ymm13,  %%ymm9, %%ymm1       \n"                       \
     "vaddps   %%ymm14, %%ymm10, %%ymm2       \n"                       \
@@ -1544,7 +1421,7 @@ dctInverse8x8_sse2 (float *data)
     "vsubps   %%ymm14, %%ymm10, %%ymm5       \n"                       \
     "vsubps   %%ymm15, %%ymm11, %%ymm4       \n"                       \
                                                                        \
-    /* Copy out the results from ymm0-7  */                            \
+                                \
     "vmovaps   %%ymm0,    (%0)                   \n"                   \
     "vmovaps   %%ymm1,  32(%0)                   \n"                   \
     "vmovaps   %%ymm2,  64(%0)                   \n"                   \
@@ -1554,17 +1431,17 @@ dctInverse8x8_sse2 (float *data)
     "vmovaps   %%ymm6, 192(%0)                   \n"                   \
     "vmovaps   %%ymm7, 224(%0)                   \n"            
 
-/* Output, input, and clobber (OIC) sections of the inline asm */
+
 #define IDCT_AVX_OIC(_IN0)                          \
-        : /* Output  */                            \
-        : /* Input   */ "r"(_IN0), "r"(sAvxCoef)      \
-        : /* Clobber */ "memory",                  \
+        :                             \
+        :  "r"(_IN0), "r"(sAvxCoef)      \
+        :  "memory",                  \
                         "%xmm0",  "%xmm1",  "%xmm2",  "%xmm3", \
                         "%xmm4",  "%xmm5",  "%xmm6",  "%xmm7", \
                         "%xmm8",  "%xmm9",  "%xmm10", "%xmm11",\
                         "%xmm12", "%xmm13", "%xmm14", "%xmm15" 
 
-/* Include vzeroupper for non-AVX builds                */
+
 #ifndef __AVX__ 
     #define IDCT_AVX_ASM(_IN0)   \
         __asm__(                 \
@@ -1572,13 +1449,13 @@ dctInverse8x8_sse2 (float *data)
             "vzeroupper      \n" \
             IDCT_AVX_OIC(_IN0)   \
         );                       
-#else /* __AVX__ */
+#else
     #define IDCT_AVX_ASM(_IN0)   \
         __asm__(                 \
             IDCT_AVX_BODY        \
             IDCT_AVX_OIC(_IN0)   \
         );                       
-#endif /* __AVX__ */
+#endif
 
 template <int zeroedRows>
 void
@@ -1586,24 +1463,17 @@ dctInverse8x8_avx (float *data)
 {
     #if defined IMF_HAVE_GCC_INLINEASM_64
 
-    /* The column-major version of M1, followed by the 
-     * column-major version of M2:
-     *   
-     *          [ a  c  a  f ]          [ b  d  e  g ]
-     *   M1  =  [ a  f -a -c ]    M2 =  [ d -g -b -e ]
-     *          [ a -f -a  c ]          [ e -b  g  d ]
-     *          [ a -c  a -f ]          [ g -e  d -b ]
-     */   
-    const float sAvxCoef[32]  __attribute__((aligned(32))) = {
-        3.535536e-01,  3.535536e-01,  3.535536e-01,  3.535536e-01, /* a  a  a  a */
-        4.619398e-01,  1.913422e-01, -1.913422e-01, -4.619398e-01, /* c  f -f -c */
-        3.535536e-01, -3.535536e-01, -3.535536e-01,  3.535536e-01, /* a -a -a  a */
-        1.913422e-01, -4.619398e-01,  4.619398e-01, -1.913422e-01, /* f -c  c -f */
 
-        4.903927e-01,  4.157349e-01,  2.777855e-01,  9.754573e-02, /* b  d  e  g */
-        4.157349e-01, -9.754573e-02, -4.903927e-01, -2.777855e-01, /* d -g -b -e */
-        2.777855e-01, -4.903927e-01,  9.754573e-02,  4.157349e-01, /* e -b  g  d */
-        9.754573e-02, -2.777855e-01,  4.157349e-01, -4.903927e-01  /* g -e  d -b */
+    const float sAvxCoef[32]  __attribute__((aligned(32))) = {
+        3.535536e-01,  3.535536e-01,  3.535536e-01,  3.535536e-01,
+        4.619398e-01,  1.913422e-01, -1.913422e-01, -4.619398e-01,
+        3.535536e-01, -3.535536e-01, -3.535536e-01,  3.535536e-01,
+        1.913422e-01, -4.619398e-01,  4.619398e-01, -1.913422e-01,
+
+        4.903927e-01,  4.157349e-01,  2.777855e-01,  9.754573e-02,
+        4.157349e-01, -9.754573e-02, -4.903927e-01, -2.777855e-01,
+        2.777855e-01, -4.903927e-01,  9.754573e-02,  4.157349e-01,
+        9.754573e-02, -2.777855e-01,  4.157349e-01, -4.903927e-01
     };
 
         #define ROW0(_X) _X
@@ -1659,10 +1529,7 @@ dctInverse8x8_avx (float *data)
 
             __asm__(  
 
-                /* ==============================================
-                 *                Row 1D DCT 
-                 * ----------------------------------------------
-                 */ 
+
                 IDCT_AVX_SETUP_2_ROWS(0, 4, 14, 15,    0,  16,  32,  48) 
 
                 "vbroadcastf128   (%1),  %%ymm8         \n"
@@ -1670,7 +1537,7 @@ dctInverse8x8_avx (float *data)
                 "vbroadcastf128 32(%1), %%ymm10         \n"
                 "vbroadcastf128 48(%1), %%ymm11         \n"
 
-                /* Stash a vector of [a a a a | a a a a] away  in ymm2 */
+
                 "vinsertf128 $1,  %%xmm8,  %%ymm8,  %%ymm2 \n"
 
                 IDCT_AVX_MMULT_ROWS(%%ymm0) 
@@ -1686,15 +1553,12 @@ dctInverse8x8_avx (float *data)
 
                 "vperm2f128 $0x02, %%ymm0, %%ymm12, %%ymm0   \n" 
 
-                /* ==============================================
-                 *                Column 1D DCT 
-                 * ----------------------------------------------
-                 */ 
 
-                /* DC only, so multiple by a and we're done */
+
+
                 "vmulps   %%ymm2, %%ymm0, %%ymm0  \n"
 
-                /* Copy out results  */
+
                 "vmovaps %%ymm0,    (%0)          \n"
                 "vmovaps %%ymm0,  32(%0)          \n"
                 "vmovaps %%ymm0,  64(%0)          \n"
@@ -1706,17 +1570,17 @@ dctInverse8x8_avx (float *data)
 
                 #ifndef __AVX__
                     "vzeroupper                   \n" 
-                #endif /* __AVX__ */
+                #endif
                 IDCT_AVX_OIC(data)
             );
         } else {
             assert(false); // Invalid template instance parameter
         }
-    #else  /* IMF_HAVE_GCC_INLINEASM_64 */
+    #else
 
         dctInverse8x8_scalar<zeroedRows>(data);
 
-    #endif /*  IMF_HAVE_GCC_INLINEASM_64 */
+    #endif
 }
 
 
@@ -1934,7 +1798,7 @@ dctForward8x8 (float *data)
     }
 }
 
-#else  /* IMF_HAVE_SSE2 */
+#else
 
 //
 // SSE2 implementation
@@ -2141,7 +2005,7 @@ dctForward8x8 (float *data)
     }
 }
 
-#endif /* IMF_HAVE_SSE2 */
+#endif
 
 } // anonymous namespace
 

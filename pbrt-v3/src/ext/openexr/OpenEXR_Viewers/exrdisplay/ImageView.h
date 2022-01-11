@@ -59,9 +59,9 @@ class ImageView: public Fl_Gl_Window
         ImageView (int x, int y,
                    int w, int h,            // display window width and height
                    const char label[],
-                   const IMF::Rgba pixels[/* w*h */],
-                   float* dataZ[/* w*h */],
-                   unsigned int sampleCount[/* w*h */],
+                   const IMF::Rgba pixels[],
+                   float* dataZ[],
+                   unsigned int sampleCount[],
                    int zsize,
                    int dw, int dh,          // data window width and height
                    int dx, int dy,          // data window offset
@@ -78,8 +78,8 @@ class ImageView: public Fl_Gl_Window
         virtual void        setKneeLow (float low);
         virtual void        setKneeHigh (float high);
         virtual void        setPixels(const IMF::Rgba pixels[],
-                                      float* dataZ[/* w*h */],
-                                      unsigned int sampleCount[/* w*h */],
+                                      float* dataZ[],
+                                      unsigned int sampleCount[],
                                       int zsize,
                                       int dw, int dh, int dx, int dy);
 

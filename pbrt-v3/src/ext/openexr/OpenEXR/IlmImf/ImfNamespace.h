@@ -119,4 +119,4 @@ namespace OPENEXR_IMF_NAMESPACE {
 #  pragma warning(pop)
 #endif
 
-#endif /* INCLUDED_IMFNAMESPACE_H */
+#endif

@@ -81,7 +81,7 @@ class IMF_EXPORT StdIFStream: public OPENEXR_IMF_INTERNAL_NAMESPACE::IStream
 
     virtual ~StdIFStream ();
 
-    virtual bool	read (char c[/*n*/], int n);
+    virtual bool	read (char c[], int n);
     virtual Int64	tellg ();
     virtual void	seekg (Int64 pos);
     virtual void	clear ();
@@ -121,7 +121,7 @@ class IMF_EXPORT StdOFStream: public OPENEXR_IMF_INTERNAL_NAMESPACE::OStream
 
     virtual ~StdOFStream ();
 
-    virtual void	write (const char c[/*n*/], int n);
+    virtual void	write (const char c[], int n);
     virtual Int64	tellp ();
     virtual void	seekp (Int64 pos);
 
@@ -143,7 +143,7 @@ class IMF_EXPORT StdOSStream: public OPENEXR_IMF_INTERNAL_NAMESPACE::OStream
 
     StdOSStream ();
 
-    virtual void	write (const char c[/*n*/], int n);
+    virtual void	write (const char c[], int n);
     virtual Int64	tellp ();
     virtual void	seekp (Int64 pos);
 

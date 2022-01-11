@@ -37,4 +37,4 @@
 #include <string>
 void testPartHelper (const std::string & tempDir);
 
-#endif /* TESTPARTHELPER_H_ */
+#endif

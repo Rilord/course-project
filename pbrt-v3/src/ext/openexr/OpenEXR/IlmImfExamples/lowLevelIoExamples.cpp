@@ -67,7 +67,7 @@ class C_IStream: public IStream
     C_IStream (FILE *file, const char fileName[]):
 	IStream (fileName), _file (file) {}
 
-    virtual bool	read (char c[/*n*/], int n);
+    virtual bool	read (char c[], int n);
     virtual Int64	tellg ();
     virtual void	seekg (Int64 pos);
     virtual void	clear ();
@@ -85,7 +85,7 @@ class C_OStream: public OStream
     C_OStream (FILE *file, const char fileName[]):
 	OStream (fileName), _file (file) {}
 
-    virtual void	write (const char c[/*n*/], int n);
+    virtual void	write (const char c[], int n);
     virtual Int64	tellp ();
     virtual void	seekp (Int64 pos);
 
@@ -96,7 +96,7 @@ class C_OStream: public OStream
 
 
 bool
-C_IStream::read (char c[/*n*/], int n)
+C_IStream::read (char c[], int n)
 {
     if (n != fread (c, 1, n, _file))
     {
@@ -139,7 +139,7 @@ C_IStream::clear ()
 
 
 void
-C_OStream::write (const char c[/*n*/], int n)
+C_OStream::write (const char c[], int n)
 {
     clearerr (_file);
 

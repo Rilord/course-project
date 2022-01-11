@@ -104,9 +104,7 @@ testComputeLocalFrame ()
         if (abs (L[1][3])>eps)
             assert(false );
         assert(abs(x^y)<eps);
-        /*std::cout<<y<<"\n";
-        std::cout<<normalDir<<"\n";
-        std::cout<<(y^normalDir)<<"\n";*/
+
         assert(abs(y^normalDir)<eps);
         assert((abs(y.length()-1.f)<eps));
         

@@ -210,11 +210,11 @@ static inline void CalledAbort() {
 #define ASSERT_DEATH(fn, msg)                                           \
   do {                                                                  \
     g_called_abort = false;                                             \
-    /* in logging.cc */                                                 \
+                                                     \
     void (*original_logging_fail_func)() = g_logging_fail_func;         \
     g_logging_fail_func = &CalledAbort;                                 \
     if (!setjmp(g_jmp_buf)) fn;                                         \
-    /* set back to their default */                                     \
+                                         \
     g_logging_fail_func = original_logging_fail_func;                   \
     if (!g_called_abort) {                                              \
       fprintf(stderr, "Function didn't die (%s): %s\n", msg, #fn);      \

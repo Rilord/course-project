@@ -859,40 +859,7 @@ equalWithRelErrorObj(const Vec2<T> &v, const object &obj1, const object &obj2)
     
 }
 
-/*
-template <class T>
-static bool
-equalWithAbsErrorTuple(Vec2<T> &v, const tuple &t, T e)
-{
-    Vec2<T> w;
-    if(t.attr("__len__")() == 2)
-    {
-        w.x = extract<T>(t[0]);
-        w.y = extract<T>(t[1]);
-    }
-    else
-        THROW(IEX_NAMESPACE::LogicExc, "tuple of length 2 expected");
-    
-    return v.equalWithAbsError(w, e);
-}
 
-template <class T>
-static bool
-equalWithRelErrorTuple(Vec2<T> &v, const tuple &t, T e)
-{
-    std::cout << "RelError Tuple called" << std::endl;
-    Vec2<T> w;
-    if(t.attr("__len__")() == 2)
-    {
-        w.x = extract<T>(t[0]);
-        w.y = extract<T>(t[1]);
-    }
-    else
-        THROW(IEX_NAMESPACE::LogicExc, "tuple of length 2 expected");
-    
-    return v.equalWithRelError(w, e);
-}
-*/
 template <class T,class BoostPyType>
 static bool
 equal(const Vec2<T> &v, const BoostPyType &t)

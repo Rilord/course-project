@@ -66,13 +66,13 @@
 //	    struct R
 //	    {
 //	        static void
-//	        writeChars (T &o, const char c[/*n*/], int n)
+//	        writeChars (T &o, const char c[], int n)
 //	        {
 //	            ... // Write c[0], c[1] ... c[n-1] to output buffer o.
 //	        }
 //
 //	        static void
-//	        readChars (T &i, char c[/*n*/], int n)
+//	        readChars (T &i, char c[], int n)
 //	        {
 //	            ... // Read n characters from input buffer i
 //		        // and copy them to c[0], c[1] ... c[n-1].
@@ -181,7 +181,7 @@ write (T &out, half v);
 
 template <class S, class T>
 void
-write (T &out, const char v[/*n*/], int n);	// fixed-size char array
+write (T &out, const char v[], int n);	// fixed-size char array
 
 template <class S, class T>
 void
@@ -264,11 +264,11 @@ read (T &in, half &v);
 
 template <class S, class T>
 void
-read (T &in, char v[/*n*/], int n);		// fixed-size char array
+read (T &in, char v[], int n);		// fixed-size char array
 
 template <class S, class T>
 void
-read (T &in, int n, char v[/*n*/]);		// zero-terminated string
+read (T &in, int n, char v[]);		// zero-terminated string
 
 
 //-------------------------------------------

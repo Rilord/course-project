@@ -1542,7 +1542,7 @@ class StreamingListener : public EmptyTestEventListener {
   explicit StreamingListener(AbstractSocketWriter* socket_writer)
       : socket_writer_(socket_writer) { Start(); }
 
-  void OnTestProgramStart(const UnitTest& /* unit_test */) {
+  void OnTestProgramStart(const UnitTest& ) {
     SendLn("event=TestProgramStart");
   }
 
@@ -1555,12 +1555,12 @@ class StreamingListener : public EmptyTestEventListener {
     socket_writer_->CloseConnection();
   }
 
-  void OnTestIterationStart(const UnitTest& /* unit_test */, int iteration) {
+  void OnTestIterationStart(const UnitTest& , int iteration) {
     SendLn("event=TestIterationStart&iteration=" +
            StreamableToString(iteration));
   }
 
-  void OnTestIterationEnd(const UnitTest& unit_test, int /* iteration */) {
+  void OnTestIterationEnd(const UnitTest& unit_test, int ) {
     SendLn("event=TestIterationEnd&passed=" +
            FormatBool(unit_test.Passed()) + "&elapsed_time=" +
            StreamableToString(unit_test.elapsed_time()) + "ms");

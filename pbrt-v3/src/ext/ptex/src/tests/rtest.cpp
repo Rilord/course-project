@@ -92,7 +92,7 @@ void DumpMetaData(PtexMetaData* meta)
     }
 }
 
-int main(int /*argc*/, char** /*argv*/)
+int main(int , char** )
 {
     Ptex::String error;
     PtexPtr<PtexCache> c(PtexCache::create(0,0));

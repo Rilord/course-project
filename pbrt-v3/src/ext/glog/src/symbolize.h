@@ -101,7 +101,7 @@ bool GetSectionHeaderByName(int fd, const char *name, size_t name_len,
 
 _END_GOOGLE_NAMESPACE_
 
-#endif  /* __ELF__ */
+#endif
 
 _START_GOOGLE_NAMESPACE_
 

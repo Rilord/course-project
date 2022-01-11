@@ -719,17 +719,7 @@ LineBufferTaskIIF::LineBufferTaskIIF
      _scanLineMax (scanLineMax),
      _optimizationMode (optimizationMode)
 {
-     /*
-     //
-     // indicates the optimised path has been taken
-     //
-     static bool could_optimise=false;
-     if(could_optimise==false)
-     {
-         std::cerr << " optimised path\n";
-         could_optimise=true;
-     }
-     */
+
 }
  
 LineBufferTaskIIF::~LineBufferTaskIIF ()

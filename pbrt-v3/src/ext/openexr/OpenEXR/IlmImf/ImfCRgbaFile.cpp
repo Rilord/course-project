@@ -165,7 +165,7 @@ ImfFloatToHalf (float f, ImfHalf *h)
 
 
 void	
-ImfFloatToHalfArray (int n, const float f[/*n*/], ImfHalf h[/*n*/])
+ImfFloatToHalfArray (int n, const float f[], ImfHalf h[])
 {
     for (int i = 0; i < n; ++i)
 	h[i] = half(f[i]).bits();
@@ -180,7 +180,7 @@ ImfHalfToFloat (ImfHalf h)
 
 
 void
-ImfHalfToFloatArray (int n, const ImfHalf h[/*n*/], float f[/*n*/])
+ImfHalfToFloatArray (int n, const ImfHalf h[], float f[])
 {
     for (int i = 0; i < n; ++i)
 	f[i] = float (*((half *)(h + i)));

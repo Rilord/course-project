@@ -1,16 +1,4 @@
-/*
-   minizip.c
-   Version 1.1, February 14h, 2010
-   sample part of the MiniZip project - ( http://www.winimage.com/zLibDll/minizip.html )
 
-         Copyright (C) 1998-2010 Gilles Vollant (minizip) ( http://www.winimage.com/zLibDll/minizip.html )
-
-         Modifications of Unzip for Zip64
-         Copyright (C) 2007-2008 Even Rouault
-
-         Modifications for Zip64 support on both zip and unzip
-         Copyright (C) 2009-2010 Mathias Svensson ( http://result42.com )
-*/
 
 
 #if (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__))
@@ -72,9 +60,9 @@
 
 #ifdef _WIN32
 uLong filetime(f, tmzip, dt)
-    char *f;                /* name of file to get info on */
-    tm_zip *tmzip;             /* return value: access, modific. and creation times */
-    uLong *dt;             /* dostime */
+    char *f;
+    tm_zip *tmzip;
+    uLong *dt;
 {
   int ret = 0;
   {
@@ -96,12 +84,12 @@ uLong filetime(f, tmzip, dt)
 #else
 #ifdef unix || __APPLE__
 uLong filetime(f, tmzip, dt)
-    char *f;               /* name of file to get info on */
-    tm_zip *tmzip;         /* return value: access, modific. and creation times */
-    uLong *dt;             /* dostime */
+    char *f;
+    tm_zip *tmzip;
+    uLong *dt;
 {
   int ret=0;
-  struct stat s;        /* results of stat() */
+  struct stat s;
   struct tm* filedate;
   time_t tm_t=0;
 
@@ -113,12 +101,12 @@ uLong filetime(f, tmzip, dt)
       len = MAXFILENAME;
 
     strncpy(name, f,MAXFILENAME-1);
-    /* strncpy doesnt append the trailing NULL, of the string is too long. */
+
     name[ MAXFILENAME ] = '\0';
 
     if (name[len - 1] == '/')
       name[len - 1] = '\0';
-    /* not all systems allow stat'ing a file with / appended */
+
     if (stat(name,&s)==0)
     {
       tm_t = s.st_mtime;
@@ -138,9 +126,9 @@ uLong filetime(f, tmzip, dt)
 }
 #else
 uLong filetime(f, tmzip, dt)
-    char *f;                /* name of file to get info on */
-    tm_zip *tmzip;             /* return value: access, modific. and creation times */
-    uLong *dt;             /* dostime */
+    char *f;
+    tm_zip *tmzip;
+    uLong *dt;
 {
     return 0;
 }
@@ -180,8 +168,7 @@ void do_help()
            "  -j  exclude path. store only the file name.\n\n");
 }
 
-/* calculate the CRC32 of a file,
-   because to encrypt a file, we need known the CRC32 of the file before */
+
 int getFileCrc(const char* filenameinzip,void*buf,unsigned long size_buf,unsigned long* result_crc)
 {
    unsigned long calculate_crc=0;
@@ -322,7 +309,7 @@ int main(argc,argv)
 
         zipok = 1 ;
         strncpy(filename_try, argv[zipfilenamearg],MAXFILENAME-1);
-        /* strncpy doesnt append the trailing NULL, of the string is too long. */
+
         filename_try[ MAXFILENAME ] = '\0';
 
         len=(int)strlen(filename_try);
@@ -335,7 +322,7 @@ int main(argc,argv)
 
         if (opt_overwrite==2)
         {
-            /* if the file don't exist, we not append file */
+
             if (check_exist_file(filename_try)==0)
                 opt_overwrite=1;
         }
@@ -410,26 +397,21 @@ int main(argc,argv)
                 zi.external_fa = 0;
                 filetime(filenameinzip,&zi.tmz_date,&zi.dosDate);
 
-/*
-                err = zipOpenNewFileInZip(zf,filenameinzip,&zi,
-                                 NULL,0,NULL,0,NULL / * comment * /,
-                                 (opt_compress_level != 0) ? Z_DEFLATED : 0,
-                                 opt_compress_level);
-*/
+
                 if ((password != NULL) && (err==ZIP_OK))
                     err = getFileCrc(filenameinzip,buf,size_buf,&crcFile);
 
                 zip64 = isLargeFile(filenameinzip);
 
-                                                         /* The path name saved, should not include a leading slash. */
-               /*if it did, windows/xp and dynazip couldn't read the zip file. */
+
+
                  savefilenameinzip = filenameinzip;
                  while( savefilenameinzip[0] == '\\' || savefilenameinzip[0] == '/' )
                  {
                      savefilenameinzip++;
                  }
 
-                 /*should the zip file contain any path at all?*/
+
                  if( opt_exclude_path )
                  {
                      const char *tmpptr;
@@ -447,12 +429,12 @@ int main(argc,argv)
                      }
                  }
 
-                 /**/
+
                 err = zipOpenNewFileInZip3_64(zf,savefilenameinzip,&zi,
-                                 NULL,0,NULL,0,NULL /* comment*/,
+                                 NULL,0,NULL,0,NULL ,
                                  (opt_compress_level != 0) ? Z_DEFLATED : 0,
                                  opt_compress_level,0,
-                                 /* -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY, */
+
                                  -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
                                  password,crcFile, zip64);
 

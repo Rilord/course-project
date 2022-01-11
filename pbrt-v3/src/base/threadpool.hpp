@@ -1,10 +1,3 @@
-/*
-* Basic C++11 based thread pool with per-thread job queues
-*
-* Copyright (C) 2016 by Sascha Willems - www.saschawillems.de
-*
-* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
-*/
 
 #include <vector>
 #include <thread>
@@ -14,7 +7,6 @@
 #include <functional>
 
 // make_unique is not available in C++11
-// Taken from Herb Sutter's blog (https://herbsutter.com/gotw/_102/)
 template<typename T, typename ...Args>
 std::unique_ptr<T> make_unique(Args&& ...args)
 {

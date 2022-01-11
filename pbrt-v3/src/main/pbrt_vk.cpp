@@ -2,12 +2,15 @@
 // Created by kodor on 12/25/21.
 //
 
+#include <spectrum.h>
 #include "pbrt.h"
 
 // Ray tracer
 #include "api.h"
 #include "parser.h"
+#include "paramset.h"
 #include "parallel.h"
+#include "memory.h"
 #include "imageio.h"
 
 // Vulkan
@@ -15,14 +18,39 @@
 #include "vulkanexamplebase.h"
 
 
+static float currentPosition[4] = { 0, 0, 0, 0, },
+        cameraPosition[4] = { 400, 20, 30, 0, },
+        cameraLook[4] = { 0, 63, -100, 0, },
+        lightPosition[4] = { 0 };
 using namespace pbrt;
 
 #define VERTEX_BUFFER_BIND_ID 0
+
+enum class model_type { SPHERE = 0, TRIANGLE = 1, KETTLE = 2 };
 
 struct Vertex {
     float pos[3];
     float uv[2];
     float normal[3];
+};
+
+struct Position {
+    float pos[4];
+};
+
+struct Model {
+    float pos[4];
+    model_type type;
+};
+
+
+
+struct ParamListItem {
+    std::string name;
+    double *doubleValues = nullptr;
+    const char **stringValues = nullptr;
+    size_t size = 0;
+    bool isString = false;
 };
 
 class VulkanExample : public VulkanExampleBase {
@@ -32,10 +60,25 @@ public:
 
     Options options;
 
+    float cameraFOV = 45.0f;
+
+    int32_t objectIndex = 0;
+    int32_t accelStrucIndex = 0;
+    int32_t sceneIndex = 0;
+    std::vector<std::string> objectsAvailable = { "Сфера", "Треугольник", "Высокополигональная модель"};
+    std::vector<std::string> accelStructsAvailable = { "BVH", "K-мерное дерево"};
+    std::vector<std::string> scenesAvailable = { "killeroo.pbrt", "room.pbrt", "teapot-area-light.pbrt"};
+
+    std::vector<Model> models;
+
+
     uint8_t * g_imageBufferVK;
     Point2i g_resolution;
 
-    char filename[1024] = "../scenes/killeroo-simple.pbrt";
+    std::vector<std::string> scenesPaths =
+            { "../scenes/killeroo-simple.pbrt",
+              "../scenes/room.pbrt",
+              "../scenes/teapot-area-light.pbrt"};
 
 
     struct Texture {
@@ -77,7 +120,7 @@ public:
     VkDescriptorSetLayout descriptorSetLayout;
 
     VulkanExample() : VulkanExampleBase() {
-        title = "Ray tracing";
+        title = "Трассировка пути";
         google::InitGoogleLogging("");
         pbrtInit(options);
 
@@ -105,6 +148,189 @@ public:
         uniformBufferVS.destroy();
 
         pbrtCleanup();
+
+    }
+
+    void manualSceneLoad() {
+        setLook();
+        addCamera();
+        addFilm();
+        pbrtWorldBegin();
+        addLight();
+        addModels();
+        pbrtWorldEnd();
+    }
+
+    void setLook() {
+
+        ParamSet params;
+        pbrtLookAt(cameraPosition[0],
+                   cameraPosition[1],
+                   cameraPosition[2],
+                   cameraLook[0],
+                   cameraLook[1],
+                   cameraLook[2],
+                   0, 0, 1
+        );
+
+    }
+
+    void addCamera() {
+        ParamSet params;
+
+        std::unique_ptr<float[]> fov(new float[1]);
+        for (int i = 0; i < 1; i++) {
+            fov[i] = cameraFOV;
+        }
+
+        params.AddFloat("fov", std::move(fov), 1);
+
+        pbrtCamera("perspective", std::move(params));
+    }
+
+    void addFilm() {
+        ParamSet params;
+
+        std::unique_ptr<int[]> xres(new int[1]);
+        for (int i = 0; i < 1; i++) {
+            xres[i] = 700;
+        }
+
+        params.AddInt("xresolution", std::move(xres), 1);
+
+        std::unique_ptr<int[]> yres(new int[1]);
+        for (int i = 0; i < 1; i++) {
+            yres[i] = 700;
+        }
+
+        params.AddInt("yresolution", std::move(yres), 1);
+
+        std::unique_ptr<std::string[]> filename(new std::string[1]);
+        filename[0] = "result.exr";
+
+        params.AddString("filename", std::move(filename), 1);
+
+        pbrtFilm("image", std::move(params));
+
+        std::unique_ptr<int[]> samples(new int[1]);
+        for (int i = 0; i < 1; i++) {
+            samples[i] = 8;
+        }
+
+        params.AddInt("pixelsamples", std::move(samples), 1);
+
+        pbrtSampler("halton", std::move(params));
+
+        pbrtIntegrator("path", std::move(params));
+
+
+
+    }
+
+    void addLight() {
+        pbrtAttributeBegin();
+
+        ParamSet params;
+        std::unique_ptr<float[]> color_kd(new float[3]);
+        for (int i = 0; i < 3; i++) {
+            color_kd[i] = 0;
+        }
+        params.AddFloat("Kd", std::move(color_kd), 3);
+        pbrtMaterial("plastic", std::move(params));
+
+        pbrtTranslate(lightPosition[0], lightPosition[1], lightPosition[2]);
+
+
+        std::unique_ptr<float[]> color(new float[3]);
+        for (int i = 0; i < 3; i++) {
+            color[i] = 2000;
+        }
+
+
+        params.AddFloat("L", std::move(color), 3);
+
+        std::unique_ptr<int[]> samples(new int[1]);
+        for (int i = 0; i < 1; i++) {
+            samples[i] = 8;
+        }
+
+        params.AddInt("nsamples", std::move(samples), 1);
+
+        pbrtAreaLightSource("area", std::move(params));
+
+        std::unique_ptr<float[]> radius(new float[1]);
+        for (int i = 0; i < 1; i++) {
+            radius[i] = 3;
+        }
+
+        params.AddFloat("radius", std::move(radius), 1);
+        pbrtShape("sphere", std::move(params));
+
+        pbrtAttributeEnd();
+    }
+
+
+    void addModel() {
+        Model model;
+        model.pos[0] = currentPosition[0];
+        model.pos[1] = currentPosition[1];
+        model.pos[2] = currentPosition[2];
+        if (objectIndex == 0) {
+            model.type = model_type::SPHERE;
+        } else if (objectIndex == 1) {
+            model.type = model_type::TRIANGLE;
+        } else if (objectIndex == 2) {
+            model.type = model_type::KETTLE;
+        }
+
+        models.push_back(model);
+    }
+
+    void addModels() {
+        for (auto &model : models) {
+            pbrtAttributeBegin();
+            {
+                ParamSet params;
+                std::unique_ptr<float[]> color_kd(new float[3]);
+                color_kd[0] = 0.5; color_kd[1] = 0.5; color_kd[2] = 0.8;
+                params.AddFloat("Kd", std::move(color_kd), 3);
+                pbrtMaterial("plastic", std::move(params));
+            }
+
+            {
+                ParamSet params;
+                pbrtTranslate(model.pos[0],
+                              model.pos[1],
+                              model.pos[2]);
+            }
+
+            {
+                switch (objectIndex) {
+                    case(0): {
+                        ParamSet params;
+                        std::unique_ptr<float[]> radius(new float[1]);
+                        radius[0] = 100;
+                        params.AddFloat("radius", std::move(radius), 1);
+                        pbrtShape("sphere", std::move(params));
+                        break;
+                    }
+                    case(1): {
+                        pbrtParseFile("../scenes/geometry/triangle.pbrt");
+                        break;
+                    }
+                    case(2): {
+                        pbrtParseFile("../scenes/geometry/killeroo.pbrt");
+                        break;
+                    }
+                    default:
+                        break;
+                }
+
+            }
+
+            pbrtAttributeEnd();
+
+        }
 
     }
 
@@ -411,12 +637,12 @@ public:
 
     void generateQuad() {
         std::vector<Vertex> vertices =
-        {
-                { {  1.0f,  1.0f, 0.0f }, { 1.0f, 1.0f },{ 0.0f, 0.0f, 1.0f } },
-                { { -1.0f,  1.0f, 0.0f }, { 0.0f, 1.0f },{ 0.0f, 0.0f, 1.0f } },
-                { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f } },
-                { {  1.0f, -1.0f, 0.0f }, { 1.0f, 0.0f },{ 0.0f, 0.0f, 1.0f } }
-        };
+                {
+                        { {  1.0f,  1.0f, 0.0f }, { 1.0f, 1.0f },{ 0.0f, 0.0f, 1.0f } },
+                        { { -1.0f,  1.0f, 0.0f }, { 0.0f, 1.0f },{ 0.0f, 0.0f, 1.0f } },
+                        { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f } },
+                        { {  1.0f, -1.0f, 0.0f }, { 1.0f, 0.0f },{ 0.0f, 0.0f, 1.0f } }
+                };
 
         std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0};
         indexCount = static_cast<uint32_t>(indices.size());
@@ -660,13 +886,90 @@ public:
     }
 
     virtual void OnUpdateUIOverlay(vks::UIOverlay *overlay) {
-        if (overlay->header("Load scene")) {
-            if (overlay->inputText("File", filename, 1024)) {
+        if (overlay->header("Загрузить сцену из файла")) {
+            if (overlay->comboBox("Выбрать объект", &sceneIndex, scenesAvailable)) {
+
             }
-            if (overlay->button("generate image")) {
-                pbrtParseFile(filename);
+            if (overlay->button("Сгенерировать изображение")) {
+                pbrtParseFile(scenesPaths[sceneIndex]);
                 pbrtGetImageBuffer(&g_imageBufferVK, g_resolution);
                 loadTexture();
+                generateQuad();
+                setupVertexDescriptions();
+                prepareUniformBuffers();
+                setupDescriptorSetLayout();
+                preparePipelines();
+                setupDescriptorPool();
+                setupDescriptorSet();
+                buildCommandBuffers();
+            }
+        }
+
+        if (overlay->header("Задать сцену самостоятельно")) {
+            if (overlay->comboBox("Выбрать объект", &objectIndex, objectsAvailable)) {
+
+            }
+
+            overlay->text("Положение объекта");
+
+            if (overlay->sliderFloat("mx", &currentPosition[0], -1000, 1000)) {
+            }
+
+            if (overlay->sliderFloat("my", &currentPosition[1], -1000, 1000)) {
+            }
+            if (overlay->sliderFloat("mz", &currentPosition[2], -1000, 1000)) {
+            }
+
+            if (overlay->button("Добавить объект")) {
+                addModel();
+            }
+
+            overlay->text("Положение камеры");
+
+            if (overlay->sliderFloat("cx", &currentPosition[0], -1000, 1000)) {
+            }
+
+            if (overlay->sliderFloat("cy", &currentPosition[1], -1000, 1000)) {
+            }
+            if (overlay->sliderFloat("cz", &currentPosition[2], -1000, 1000)) {
+            }
+
+            overlay->text("Направление камеры");
+
+            if (overlay->sliderFloat("dx", &cameraPosition[0], -1000, 1000)) {
+            }
+
+            if (overlay->sliderFloat("dy", &cameraPosition[1], -1000, 1000)) {
+            }
+            if (overlay->sliderFloat("dz", &cameraPosition[2], -1000, 1000)) {
+            }
+
+
+            if (overlay->sliderFloat("Угол обзора камеры", &cameraFOV, 0, 180)) {
+                std::cout << cameraFOV << std::endl;
+            }
+
+            overlay->text("Положение освещения");
+
+            if (overlay->sliderFloat("lx", &cameraPosition[0], -1000, 1000)) {
+            }
+
+            if (overlay->sliderFloat("ly", &cameraPosition[1], -1000, 1000)) {
+            }
+            if (overlay->sliderFloat("lz", &cameraPosition[2], -1000, 1000)) {
+            }
+
+            if (overlay->comboBox("Выбрать ускоряющую структуру",
+                                  &accelStrucIndex, accelStructsAvailable)){
+
+                buildCommandBuffers();
+            }
+
+            if (overlay->button("Построить заданную сцену")) {
+                manualSceneLoad();
+                pbrtGetImageBuffer(&g_imageBufferVK, g_resolution);
+                loadTexture();
+                models.clear();
                 generateQuad();
                 setupVertexDescriptions();
                 prepareUniformBuffers();

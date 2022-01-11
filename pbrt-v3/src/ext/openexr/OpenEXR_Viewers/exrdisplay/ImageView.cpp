@@ -203,9 +203,9 @@ ImageView::findZbound()
 }
 
 void
-ImageView::setPixels(const IMF::Rgba pixels[/* w*h */],
-                     float* dataZ[/* w*h */],
-                     unsigned int sampleCount[/* w*h */],
+ImageView::setPixels(const IMF::Rgba pixels[],
+                     float* dataZ[],
+                     unsigned int sampleCount[],
                      int zsize,
                      int dw, int dh, int dx, int dy)
 {

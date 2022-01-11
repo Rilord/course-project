@@ -39,4 +39,4 @@
 
 void testMultiScanlinePartThreading (const std::string & tempDir);
 
-#endif /* TESTMULTISCANLINEPARTTHREADING_H_ */
+#endif

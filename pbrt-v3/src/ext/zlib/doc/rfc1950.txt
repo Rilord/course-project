@@ -524,22 +524,9 @@ RFC 1950       ZLIB Compressed Data Format Specification        May 1996
       ++     "n++" increments the variable n.
       %      modulo operator: a % b is the remainder of a divided by b.
 
-      #define BASE 65521 /* largest prime smaller than 65536 */
+      #define BASE 65521
 
-      /*
-         Update a running Adler-32 checksum with the bytes buf[0..len-1]
-       and return the updated checksum. The Adler-32 checksum should be
-       initialized to 1.
 
-       Usage example:
-
-         unsigned long adler = 1L;
-
-         while (read_buffer(buffer, length) != EOF) {
-           adler = update_adler32(adler, buffer, length);
-         }
-         if (adler != original_adler) error();
-      */
       unsigned long update_adler32(unsigned long adler,
          unsigned char *buf, int len)
       {
@@ -554,7 +541,7 @@ RFC 1950       ZLIB Compressed Data Format Specification        May 1996
         return (s2 << 16) + s1;
       }
 
-      /* Return the adler32 of the bytes buf[0..len-1] */
+
 
 
 

@@ -273,16 +273,12 @@ do
       # Prefer dirname, but fall back on a substitute if dirname fails.
       dstdir=`
 	(dirname "$dst") 2>/dev/null ||
-	expr X"$dst" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
+	expr X"$dst" : 'X\(.*[^/]\)/*$' \| \
 	     X"$dst" : 'X\(//\)[^/]' \| \
 	     X"$dst" : 'X\(//\)$' \| \
 	     X"$dst" : 'X\(/\)' \| . 2>/dev/null ||
 	echo X"$dst" |
-	    sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{
-		   s//\1/
-		   q
-		 }
-		 /^X\(\/\/\)[^/].*/{
+	    sed '/^X\(.*[^/]\)\/\{
 		   s//\1/
 		   q
 		 }

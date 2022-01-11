@@ -1,10 +1,6 @@
-/*
-  Additional tools for Minizip
-  Code: Xavier Roche '2004
-  License: Same as ZLIB (www.gzip.org)
-*/
 
-/* Code */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,21 +45,21 @@ uLong* bytesRecovered;
     while ( fread(header, 1, 30, fpZip) == 30 ) {
       int currentOffset = offset;
 
-      /* File entry */
+
       if (READ_32(header) == 0x04034b50) {
         unsigned int version = READ_16(header + 4);
         unsigned int gpflag = READ_16(header + 6);
         unsigned int method = READ_16(header + 8);
         unsigned int filetime = READ_16(header + 10);
         unsigned int filedate = READ_16(header + 12);
-        unsigned int crc = READ_32(header + 14); /* crc */
-        unsigned int cpsize = READ_32(header + 18); /* compressed size */
-        unsigned int uncpsize = READ_32(header + 22); /* uncompressed sz */
-        unsigned int fnsize = READ_16(header + 26); /* file name length */
-        unsigned int extsize = READ_16(header + 28); /* extra field length */
+        unsigned int crc = READ_32(header + 14);
+        unsigned int cpsize = READ_32(header + 18);
+        unsigned int uncpsize = READ_32(header + 22);
+        unsigned int fnsize = READ_16(header + 26);
+        unsigned int extsize = READ_16(header + 28);
         filename[0] = extra[0] = '\0';
 
-        /* Header */
+
         if (fwrite(header, 1, 30, fpOut) == 30) {
           offset += 30;
         } else {
@@ -71,7 +67,7 @@ uLong* bytesRecovered;
           break;
         }
 
-        /* Filename */
+
         if (fnsize > 0) {
           if (fnsize < sizeof(filename)) {
             if (fread(filename, 1, fnsize, fpZip) == fnsize) {
@@ -94,7 +90,7 @@ uLong* bytesRecovered;
           break;
         }
 
-        /* Extra field */
+
         if (extsize > 0) {
           if (extsize < sizeof(extra)) {
             if (fread(extra, 1, extsize, fpZip) == extsize) {
@@ -114,7 +110,7 @@ uLong* bytesRecovered;
           }
         }
 
-        /* Data */
+
         {
           int dataSize = cpsize;
           if (dataSize == 0) {
@@ -144,7 +140,7 @@ uLong* bytesRecovered;
           }
         }
 
-        /* Central directory entry */
+
         {
           char header[46];
           char* comment = "";
@@ -162,15 +158,15 @@ uLong* bytesRecovered;
           WRITE_16(header + 28, fnsize);
           WRITE_16(header + 30, extsize);
           WRITE_16(header + 32, comsize);
-          WRITE_16(header + 34, 0);     /* disk # */
-          WRITE_16(header + 36, 0);     /* int attrb */
-          WRITE_32(header + 38, 0);     /* ext attrb */
+          WRITE_16(header + 34, 0);
+          WRITE_16(header + 36, 0);
+          WRITE_32(header + 38, 0);
           WRITE_32(header + 42, currentOffset);
-          /* Header */
+
           if (fwrite(header, 1, 46, fpOutCD) == 46) {
             offsetCD += 46;
 
-            /* Filename */
+
             if (fnsize > 0) {
               if (fwrite(filename, 1, fnsize, fpOutCD) == fnsize) {
                 offsetCD += fnsize;
@@ -183,7 +179,7 @@ uLong* bytesRecovered;
               break;
             }
 
-            /* Extra field */
+
             if (extsize > 0) {
               if (fwrite(extra, 1, extsize, fpOutCD) == extsize) {
                 offsetCD += extsize;
@@ -193,7 +189,7 @@ uLong* bytesRecovered;
               }
             }
 
-            /* Comment field */
+
             if (comsize > 0) {
               if ((int)fwrite(comment, 1, comsize, fpOutCD) == comsize) {
                 offsetCD += comsize;
@@ -210,7 +206,7 @@ uLong* bytesRecovered;
           }
         }
 
-        /* Success */
+
         entries++;
 
       } else {
@@ -218,7 +214,7 @@ uLong* bytesRecovered;
       }
     }
 
-    /* Final central directory  */
+
     {
       int entriesZip = entries;
       char header[22];
@@ -228,18 +224,18 @@ uLong* bytesRecovered;
         entriesZip = 0xffff;
       }
       WRITE_32(header, 0x06054b50);
-      WRITE_16(header + 4, 0);    /* disk # */
-      WRITE_16(header + 6, 0);    /* disk # */
-      WRITE_16(header + 8, entriesZip);   /* hack */
-      WRITE_16(header + 10, entriesZip);  /* hack */
-      WRITE_32(header + 12, offsetCD);    /* size of CD */
-      WRITE_32(header + 16, offset);      /* offset to CD */
-      WRITE_16(header + 20, comsize);     /* comment */
+      WRITE_16(header + 4, 0);
+      WRITE_16(header + 6, 0);
+      WRITE_16(header + 8, entriesZip);
+      WRITE_16(header + 10, entriesZip);
+      WRITE_32(header + 12, offsetCD);
+      WRITE_32(header + 16, offset);
+      WRITE_16(header + 20, comsize);
 
-      /* Header */
+
       if (fwrite(header, 1, 22, fpOutCD) == 22) {
 
-        /* Comment field */
+
         if (comsize > 0) {
           if ((int)fwrite(comment, 1, comsize, fpOutCD) != comsize) {
             err = Z_ERRNO;
@@ -251,7 +247,7 @@ uLong* bytesRecovered;
       }
     }
 
-    /* Final merge (file + central directory) */
+
     fclose(fpOutCD);
     if (err == Z_OK) {
       fpOutCD = fopen(fileOutTmp, "rb");
@@ -268,14 +264,14 @@ uLong* bytesRecovered;
       }
     }
 
-    /* Close */
+
     fclose(fpZip);
     fclose(fpOut);
 
-    /* Wipe temporary file */
+
     (void)remove(fileOutTmp);
 
-    /* Number of recovered entries */
+
     if (err == Z_OK) {
       if (nRecovered != NULL) {
         *nRecovered = entries;

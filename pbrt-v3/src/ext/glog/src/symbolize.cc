@@ -829,7 +829,7 @@ bool Symbolize(void *pc, char *out, int out_size) {
 
 _END_GOOGLE_NAMESPACE_
 
-#else  /* HAVE_SYMBOLIZE */
+#else
 
 #include <assert.h>
 

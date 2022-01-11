@@ -1,34 +1,4 @@
 
-/*
-    pbrt source code is Copyright(c) 1998-2016
-                        Matt Pharr, Greg Humphreys, and Wenzel Jakob.
-
-    This file is part of pbrt.
-
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are
-    met:
-
-    - Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-
-    - Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-    IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-    TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-    PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-    HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
- */
 
 #if defined(_MSC_VER)
 #define NOMINMAX
@@ -115,10 +85,10 @@ inline void GrayCodeSample(const uint32_t *C, uint32_t n, uint32_t scramble,
     uint32_t v = scramble;
     for (uint32_t i = 0; i < n; ++i) {
 #ifndef PBRT_HAVE_HEX_FP_CONSTANTS
-        p[i] = std::min(v * Float(2.3283064365386963e-10) /* 1/2^32 */,
+        p[i] = std::min(v * Float(2.3283064365386963e-10) ,
                         OneMinusEpsilon);
 #else
-        p[i] = std::min(v * Float(0x1p-32) /* 1/2^32 */,
+        p[i] = std::min(v * Float(0x1p-32) ,
                         OneMinusEpsilon);
 #endif
         v ^= C[CountTrailingZeros(i + 1)];
@@ -265,10 +235,10 @@ inline float SobolSampleFloat(int64_t a, int dimension, uint32_t scramble) {
     for (int i = dimension * SobolMatrixSize; a != 0; a >>= 1, i++)
         if (a & 1) v ^= SobolMatrices32[i];
 #ifndef PBRT_HAVE_HEX_FP_CONSTANTS
-    return std::min(v * 2.3283064365386963e-10f /* 1/2^32 */,
+    return std::min(v * 2.3283064365386963e-10f ,
                     FloatOneMinusEpsilon);
 #else
-    return std::min(v * 0x1p-32f /* 1/2^32 */,
+    return std::min(v * 0x1p-32f ,
                     FloatOneMinusEpsilon);
 #endif
 }

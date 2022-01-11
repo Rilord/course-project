@@ -17,33 +17,7 @@
 //   https://github.com/ocornut/imgui/issues/4445
 //-----------------------------------------------------------------------------
 
-/*
- * This file was generated with gl3w_gen.py, part of imgl3w
- * (hosted at https://github.com/dearimgui/gl3w_stripped)
- *
- * This is free and unencumbered software released into the public domain.
- *
- * Anyone is free to copy, modify, publish, use, compile, sell, or
- * distribute this software, either in source code form or as a compiled
- * binary, for any purpose, commercial or non-commercial, and by any
- * means.
- *
- * In jurisdictions that recognize copyright laws, the author or authors
- * of this software dedicate any and all copyright interest in the
- * software to the public domain. We make this dedication for the benefit
- * of the public at large and to the detriment of our heirs and
- * successors. We intend this dedication to be an overt act of
- * relinquishment in perpetuity of all present and future rights to this
- * software under copyright law.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
- * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- */
+
 
 #ifndef __gl3w_h_
 #define __gl3w_h_
@@ -81,15 +55,7 @@ typedef unsigned long long     khronos_uint64_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-/*
-** Copyright 2013-2020 The Khronos Group Inc.
-** SPDX-License-Identifier: MIT
-**
-** This header is generated from the Khronos OpenGL / OpenGL ES XML
-** API Registry. The current version of the Registry, generator scripts
-** used to make the header, and the header can be found at
-**   https://github.com/KhronosGroup/OpenGL-Registry
-*/
+
 #if defined(_WIN32) && !defined(APIENTRY) && !defined(__CYGWIN__) && !defined(__SCITECH_SNAP__)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN 1
@@ -105,28 +71,8 @@ extern "C" {
 #ifndef GLAPI
 #define GLAPI extern
 #endif
-/* glcorearb.h is for use with OpenGL core profile implementations.
-** It should should be placed in the same directory as gl.h and
-** included as <GL/glcorearb.h>.
-**
-** glcorearb.h includes only APIs in the latest OpenGL core profile
-** implementation together with APIs in newer ARB extensions which 
-** can be supported by the core profile. It does not, and never will
-** include functionality removed from the core profile, such as
-** fixed-function vertex and fragment processing.
-**
-** Do not #include both <GL/glcorearb.h> and either of <GL/gl.h> or
-** <GL/glext.h> in the same source file.
-*/
-/* Generated C header for:
- * API: gl
- * Profile: core
- * Versions considered: .*
- * Versions emitted: .*
- * Default extensions included: glcore
- * Additional extensions included: _nomatch_^
- * Extensions removed: _nomatch_^
- */
+
+
 #ifndef GL_VERSION_1_0
 typedef void GLvoid;
 typedef unsigned int GLenum;
@@ -201,7 +147,7 @@ GLAPI const GLubyte *APIENTRY glGetString (GLenum name);
 GLAPI GLboolean APIENTRY glIsEnabled (GLenum cap);
 GLAPI void APIENTRY glViewport (GLint x, GLint y, GLsizei width, GLsizei height);
 #endif
-#endif /* GL_VERSION_1_0 */
+#endif
 #ifndef GL_VERSION_1_1
 typedef khronos_float_t GLclampf;
 typedef double GLclampd;
@@ -216,7 +162,7 @@ GLAPI void APIENTRY glBindTexture (GLenum target, GLuint texture);
 GLAPI void APIENTRY glDeleteTextures (GLsizei n, const GLuint *textures);
 GLAPI void APIENTRY glGenTextures (GLsizei n, GLuint *textures);
 #endif
-#endif /* GL_VERSION_1_1 */
+#endif
 #ifndef GL_VERSION_1_3
 #define GL_TEXTURE0                       0x84C0
 #define GL_ACTIVE_TEXTURE                 0x84E0
@@ -224,7 +170,7 @@ typedef void (APIENTRYP PFNGLACTIVETEXTUREPROC) (GLenum texture);
 #ifdef GL_GLEXT_PROTOTYPES
 GLAPI void APIENTRY glActiveTexture (GLenum texture);
 #endif
-#endif /* GL_VERSION_1_3 */
+#endif
 #ifndef GL_VERSION_1_4
 #define GL_BLEND_DST_RGB                  0x80C8
 #define GL_BLEND_SRC_RGB                  0x80C9
@@ -237,7 +183,7 @@ typedef void (APIENTRYP PFNGLBLENDEQUATIONPROC) (GLenum mode);
 GLAPI void APIENTRY glBlendFuncSeparate (GLenum sfactorRGB, GLenum dfactorRGB, GLenum sfactorAlpha, GLenum dfactorAlpha);
 GLAPI void APIENTRY glBlendEquation (GLenum mode);
 #endif
-#endif /* GL_VERSION_1_4 */
+#endif
 #ifndef GL_VERSION_1_5
 typedef khronos_ssize_t GLsizeiptr;
 typedef khronos_intptr_t GLintptr;
@@ -257,7 +203,7 @@ GLAPI void APIENTRY glGenBuffers (GLsizei n, GLuint *buffers);
 GLAPI void APIENTRY glBufferData (GLenum target, GLsizeiptr size, const void *data, GLenum usage);
 GLAPI void APIENTRY glBufferSubData (GLenum target, GLintptr offset, GLsizeiptr size, const void *data);
 #endif
-#endif /* GL_VERSION_1_5 */
+#endif
 #ifndef GL_VERSION_2_0
 typedef char GLchar;
 typedef khronos_int16_t GLshort;
@@ -316,7 +262,7 @@ GLAPI void APIENTRY glUniform1i (GLint location, GLint v0);
 GLAPI void APIENTRY glUniformMatrix4fv (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 GLAPI void APIENTRY glVertexAttribPointer (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer);
 #endif
-#endif /* GL_VERSION_2_0 */
+#endif
 #ifndef GL_VERSION_3_0
 typedef khronos_uint16_t GLhalf;
 #define GL_MAJOR_VERSION                  0x821B
@@ -336,11 +282,11 @@ GLAPI void APIENTRY glBindVertexArray (GLuint array);
 GLAPI void APIENTRY glDeleteVertexArrays (GLsizei n, const GLuint *arrays);
 GLAPI void APIENTRY glGenVertexArrays (GLsizei n, GLuint *arrays);
 #endif
-#endif /* GL_VERSION_3_0 */
+#endif
 #ifndef GL_VERSION_3_1
 #define GL_VERSION_3_1 1
 #define GL_PRIMITIVE_RESTART              0x8F9D
-#endif /* GL_VERSION_3_1 */
+#endif
 #ifndef GL_VERSION_3_2
 #define GL_VERSION_3_2 1
 typedef struct __GLsync *GLsync;
@@ -351,7 +297,7 @@ typedef void (APIENTRYP PFNGLGETINTEGER64I_VPROC) (GLenum target, GLuint index, 
 #ifdef GL_GLEXT_PROTOTYPES
 GLAPI void APIENTRY glDrawElementsBaseVertex (GLenum mode, GLsizei count, GLenum type, const void *indices, GLint basevertex);
 #endif
-#endif /* GL_VERSION_3_2 */
+#endif
 #ifndef GL_VERSION_3_3
 #define GL_VERSION_3_3 1
 #define GL_SAMPLER_BINDING                0x8919
@@ -359,51 +305,51 @@ typedef void (APIENTRYP PFNGLBINDSAMPLERPROC) (GLuint unit, GLuint sampler);
 #ifdef GL_GLEXT_PROTOTYPES
 GLAPI void APIENTRY glBindSampler (GLuint unit, GLuint sampler);
 #endif
-#endif /* GL_VERSION_3_3 */
+#endif
 #ifndef GL_VERSION_4_1
 typedef void (APIENTRYP PFNGLGETFLOATI_VPROC) (GLenum target, GLuint index, GLfloat *data);
 typedef void (APIENTRYP PFNGLGETDOUBLEI_VPROC) (GLenum target, GLuint index, GLdouble *data);
-#endif /* GL_VERSION_4_1 */
+#endif
 #ifndef GL_VERSION_4_3
 typedef void (APIENTRY  *GLDEBUGPROC)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);
-#endif /* GL_VERSION_4_3 */
+#endif
 #ifndef GL_VERSION_4_5
 #define GL_CLIP_ORIGIN                    0x935C
 typedef void (APIENTRYP PFNGLGETTRANSFORMFEEDBACKI_VPROC) (GLuint xfb, GLenum pname, GLuint index, GLint *param);
 typedef void (APIENTRYP PFNGLGETTRANSFORMFEEDBACKI64_VPROC) (GLuint xfb, GLenum pname, GLuint index, GLint64 *param);
-#endif /* GL_VERSION_4_5 */
+#endif
 #ifndef GL_ARB_bindless_texture
 typedef khronos_uint64_t GLuint64EXT;
-#endif /* GL_ARB_bindless_texture */
+#endif
 #ifndef GL_ARB_cl_event
 struct _cl_context;
 struct _cl_event;
-#endif /* GL_ARB_cl_event */
+#endif
 #ifndef GL_ARB_clip_control
 #define GL_ARB_clip_control 1
-#endif /* GL_ARB_clip_control */
+#endif
 #ifndef GL_ARB_debug_output
 typedef void (APIENTRY  *GLDEBUGPROCARB)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);
-#endif /* GL_ARB_debug_output */
+#endif
 #ifndef GL_EXT_EGL_image_storage
 typedef void *GLeglImageOES;
-#endif /* GL_EXT_EGL_image_storage */
+#endif
 #ifndef GL_EXT_direct_state_access
 typedef void (APIENTRYP PFNGLGETFLOATI_VEXTPROC) (GLenum pname, GLuint index, GLfloat *params);
 typedef void (APIENTRYP PFNGLGETDOUBLEI_VEXTPROC) (GLenum pname, GLuint index, GLdouble *params);
 typedef void (APIENTRYP PFNGLGETPOINTERI_VEXTPROC) (GLenum pname, GLuint index, void **params);
 typedef void (APIENTRYP PFNGLGETVERTEXARRAYINTEGERI_VEXTPROC) (GLuint vaobj, GLuint index, GLenum pname, GLint *param);
 typedef void (APIENTRYP PFNGLGETVERTEXARRAYPOINTERI_VEXTPROC) (GLuint vaobj, GLuint index, GLenum pname, void **param);
-#endif /* GL_EXT_direct_state_access */
+#endif
 #ifndef GL_NV_draw_vulkan_image
 typedef void (APIENTRY  *GLVULKANPROCNV)(void);
-#endif /* GL_NV_draw_vulkan_image */
+#endif
 #ifndef GL_NV_gpu_shader5
 typedef khronos_int64_t GLint64EXT;
-#endif /* GL_NV_gpu_shader5 */
+#endif
 #ifndef GL_NV_vertex_buffer_unified_memory
 typedef void (APIENTRYP PFNGLGETINTEGERUI64I_VNVPROC) (GLenum value, GLuint index, GLuint64EXT *result);
-#endif /* GL_NV_vertex_buffer_unified_memory */
+#endif
 #ifdef __cplusplus
 }
 #endif
@@ -429,13 +375,13 @@ extern "C" {
 typedef void (*GL3WglProc)(void);
 typedef GL3WglProc (*GL3WGetProcAddressProc)(const char *proc);
 
-/* gl3w api */
+
 GL3W_API int imgl3wInit(void);
 GL3W_API int imgl3wInit2(GL3WGetProcAddressProc proc);
 GL3W_API int imgl3wIsSupported(int major, int minor);
 GL3W_API GL3WglProc imgl3wGetProcAddress(const char *proc);
 
-/* gl3w internal state */
+
 union GL3WProcs {
     GL3WglProc ptr[53];
     struct {
@@ -498,7 +444,7 @@ union GL3WProcs {
 
 GL3W_API extern union GL3WProcs imgl3wProcs;
 
-/* OpenGL functions */
+
 #define glActiveTexture                  imgl3wProcs.gl.ActiveTexture
 #define glAttachShader                   imgl3wProcs.gl.AttachShader
 #define glBindBuffer                     imgl3wProcs.gl.BindBuffer

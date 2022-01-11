@@ -50,8 +50,8 @@ TEST(Spectrum, LinearUpsampleSimple) {
     // Resample at exactly the same points; should give back exactly the
     // original values.
     Float newVal[nIn];
-    ResampleLinearSpectrum(lambda, val, nIn, lambda[0] /* lambdaMin */,
-                           lambda[nIn - 1] /* lambdaMax */, nIn /* nOut */,
+    ResampleLinearSpectrum(lambda, val, nIn, lambda[0] ,
+                           lambda[nIn - 1] , nIn ,
                            newVal);
 
     for (int i = 0; i < 5; ++i) EXPECT_EQ(val[i], newVal[i]);
@@ -67,8 +67,8 @@ TEST(Spectrum, LinearUpsampleSubset) {
     // samples; should give back exactly the original values for them.
     const int nOut = 3;
     Float newVal[nOut];
-    ResampleLinearSpectrum(lambda, val, nIn, lambda[1] /* lambdaMin */,
-                           lambda[3] /* lambdaMax */, nOut, newVal);
+    ResampleLinearSpectrum(lambda, val, nIn, lambda[1] ,
+                           lambda[3] , nOut, newVal);
 
     for (int i = 0; i < 3; ++i) EXPECT_EQ(val[i + 1], newVal[i]);
 }
@@ -105,8 +105,8 @@ TEST(Spectrum, LinearUpsampleHigher) {
     // linear function (modulo floating-point roundoff error).
     const int nOut = 20;
     Float newVal[nOut];
-    ResampleLinearSpectrum(lambda, val, nIn, lambda[1] /* lambdaMin */,
-                           lambda[3] /* lambdaMax */, nOut, newVal);
+    ResampleLinearSpectrum(lambda, val, nIn, lambda[1] ,
+                           lambda[3] , nOut, newVal);
 
     for (int i = 0; i < nOut; ++i) {
         Float t = i / Float(nOut - 1);

@@ -206,7 +206,7 @@ static void outliterals(stb_uchar *in, int numlit)
     if      (numlit ==     0)    ;
     else if (numlit <=    32)    stb_out (0x000020 + numlit-1);
     else if (numlit <=  2048)    stb_out2(0x000800 + numlit-1);
-    else /*  numlit <= 65536) */ stb_out3(0x070000 + numlit-1);
+    else  stb_out3(0x070000 + numlit-1);
 
     if (stb__out) {
         memcpy(stb__out,in,numlit);
@@ -266,7 +266,7 @@ static int stb_compress_chunk(stb_uchar *history,
 
 #define stb__nc(b,d)  ((d) <= window && ((b) > 9 || stb_not_crap(b,d)))
 
-#define STB__TRY(t,p)  /* avoid retrying a match we already tried */ \
+#define STB__TRY(t,p)   \
     if (p ? dist != q-t : 1)                             \
     if ((m = stb_matchlen(t, q, match_max)) > best)     \
     if (stb__nc(m,q-(t)))                                \

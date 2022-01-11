@@ -1,37 +1,4 @@
-/*
-PTEX SOFTWARE
-Copyright 2014 Disney Enterprises, Inc.  All rights reserved
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-  * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-
-  * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in
-    the documentation and/or other materials provided with the
-    distribution.
-
-  * The names "Disney", "Walt Disney Pictures", "Walt Disney Animation
-    Studios" or the names of its contributors may NOT be used to
-    endorse or promote products derived from this software without
-    specific prior written permission from Walt Disney Pictures.
-
-Disclaimer: THIS SOFTWARE IS PROVIDED BY WALT DISNEY PICTURES AND
-CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
-BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE, NONINFRINGEMENT AND TITLE ARE DISCLAIMED.
-IN NO EVENT SHALL WALT DISNEY PICTURES, THE COPYRIGHT HOLDER OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND BASED ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-*/
 
 #include "PtexPlatform.h"
 #include <algorithm>
@@ -378,7 +345,7 @@ namespace {
     // generate a reduction of a packed-triangle texture
     // note: this method won't work for tiled textures
     template<typename T>
-    inline void reduceTri(const T* src, int sstride, int w, int /*vw*/,
+    inline void reduceTri(const T* src, int sstride, int w, int ,
                           T* dst, int dstride, int nchan)
     {
         sstride /= (int)sizeof(T);
@@ -397,7 +364,7 @@ namespace {
     }
 }
 
-void reduceTri(const void* src, int sstride, int w, int /*vw*/,
+void reduceTri(const void* src, int sstride, int w, int ,
                void* dst, int dstride, DataType dt, int nchan)
 {
     switch (dt) {
@@ -643,7 +610,7 @@ void genRfaceids(const FaceInfo* faces, int nfaces,
 namespace {
     // apply to 1..4 channels, unrolled
     template<class T, int nChan>
-    void ApplyConst(float weight, float* dst, void* data, int /*nChan*/)
+    void ApplyConst(float weight, float* dst, void* data, int )
     {
         // dst[i] += data[i] * weight for i in {0..n-1}
         VecAccum<T,nChan>()(dst, static_cast<T*>(data), weight);

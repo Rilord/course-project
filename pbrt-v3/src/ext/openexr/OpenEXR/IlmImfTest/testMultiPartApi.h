@@ -39,4 +39,4 @@
 
 void testMultiPartApi (const std::string & tempDir);
 
-#endif /* TESTMULTIPARTAPI_H_ */
+#endif

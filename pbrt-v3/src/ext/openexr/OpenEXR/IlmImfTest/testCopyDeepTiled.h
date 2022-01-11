@@ -39,4 +39,4 @@
 
 void testCopyDeepTiled (const std::string & tempDir);
 
-#endif /* TESTCOPYDEEPTILED_H_ */
+#endif

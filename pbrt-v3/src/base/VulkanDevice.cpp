@@ -1,23 +1,11 @@
-/*
-* Vulkan device class
-*
-* Encapsulates a physical Vulkan device and its logical representation
-*
-* Copyright (C) by Sascha Willems - www.saschawillems.de
-*
-* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
-*/
+
 
 #include <VulkanDevice.h>
 #include <unordered_set>
 
 namespace vks
 {	
-	/**
-	* Default constructor
-	*
-	* @param physicalDevice Physical device that is to be used
-	*/
+
 	VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice)
 	{
 		assert(physicalDevice);
@@ -53,11 +41,7 @@ namespace vks
 		}
 	}
 
-	/** 
-	* Default destructor
-	*
-	* @note Frees the logical device
-	*/
+
 	VulkanDevice::~VulkanDevice()
 	{
 		if (commandPool)
@@ -70,17 +54,7 @@ namespace vks
 		}
 	}
 
-	/**
-	* Get the index of a memory type that has all the requested property bits set
-	*
-	* @param typeBits Bit mask with bits set for each memory type supported by the resource to request for (from VkMemoryRequirements)
-	* @param properties Bit mask of properties for the memory type to request
-	* @param (Optional) memTypeFound Pointer to a bool that is set to true if a matching memory type has been found
-	* 
-	* @return Index of the requested memory type
-	*
-	* @throw Throws an exception if memTypeFound is null and no memory type could be found that supports the requested properties
-	*/
+
 	uint32_t VulkanDevice::getMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32 *memTypeFound) const
 	{
 		for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; i++)
@@ -110,15 +84,7 @@ namespace vks
 		}
 	}
 
-	/**
-	* Get the index of a queue family that supports the requested queue flags
-	*
-	* @param queueFlags Queue flags to find a queue family index for
-	*
-	* @return Index of the queue family index that matches the flags
-	*
-	* @throw Throws an exception if no queue family index could be found that supports the requested flags
-	*/
+
 	uint32_t VulkanDevice::getQueueFamilyIndex(VkQueueFlagBits queueFlags) const
 	{
 		// Dedicated queue for compute
@@ -159,16 +125,7 @@ namespace vks
 		throw std::runtime_error("Could not find a matching queue family index");
 	}
 
-	/**
-	* Create the logical device based on the assigned physical device, also gets default queue family indices
-	*
-	* @param enabledFeatures Can be used to enable certain features upon device creation
-	* @param pNextChain Optional chain of pointer to extension structures
-	* @param useSwapChain Set to false for headless rendering to omit the swapchain device extensions
-	* @param requestedQueueTypes Bit flags specifying the queue types to be requested from the device  
-	*
-	* @return VkResult of the device creation call
-	*/
+
 	VkResult VulkanDevice::createLogicalDevice(VkPhysicalDeviceFeatures enabledFeatures, std::vector<const char*> enabledExtensions, void* pNextChain, bool useSwapChain, VkQueueFlags requestedQueueTypes)
 	{			
 		// Desired queues need to be requested upon logical device creation
@@ -298,18 +255,7 @@ namespace vks
 		return result;
 	}
 
-	/**
-	* Create a buffer on the device
-	*
-	* @param usageFlags Usage flag bit mask for the buffer (i.e. index, vertex, uniform buffer)
-	* @param memoryPropertyFlags Memory properties for this buffer (i.e. device local, host visible, coherent)
-	* @param size Size of the buffer in byes
-	* @param buffer Pointer to the buffer handle acquired by the function
-	* @param memory Pointer to the memory handle acquired by the function
-	* @param data Pointer to the data that should be copied to the buffer after creation (optional, if not set, no data is copied over)
-	*
-	* @return VK_SUCCESS if buffer handle and memory have been created and (optionally passed) data has been copied
-	*/
+
 	VkResult VulkanDevice::createBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, VkDeviceSize size, VkBuffer *buffer, VkDeviceMemory *memory, void *data)
 	{
 		// Create the buffer handle
@@ -357,17 +303,7 @@ namespace vks
 		return VK_SUCCESS;
 	}
 
-	/**
-	* Create a buffer on the device
-	*
-	* @param usageFlags Usage flag bit mask for the buffer (i.e. index, vertex, uniform buffer)
-	* @param memoryPropertyFlags Memory properties for this buffer (i.e. device local, host visible, coherent)
-	* @param buffer Pointer to a vk::Vulkan buffer object
-	* @param size Size of the buffer in bytes
-	* @param data Pointer to the data that should be copied to the buffer after creation (optional, if not set, no data is copied over)
-	*
-	* @return VK_SUCCESS if buffer handle and memory have been created and (optionally passed) data has been copied
-	*/
+
 	VkResult VulkanDevice::createBuffer(VkBufferUsageFlags usageFlags, VkMemoryPropertyFlags memoryPropertyFlags, vks::Buffer *buffer, VkDeviceSize size, void *data)
 	{
 		buffer->device = logicalDevice;
@@ -415,16 +351,7 @@ namespace vks
 		return buffer->bind();
 	}
 
-	/**
-	* Copy buffer data from src to dst using VkCmdCopyBuffer
-	* 
-	* @param src Pointer to the source buffer to copy from
-	* @param dst Pointer to the destination buffer to copy to
-	* @param queue Pointer
-	* @param copyRegion (Optional) Pointer to a copy region, if NULL, the whole buffer is copied
-	*
-	* @note Source and destination pointers must have the appropriate transfer usage flags set (TRANSFER_SRC / TRANSFER_DST)
-	*/
+
 	void VulkanDevice::copyBuffer(vks::Buffer *src, vks::Buffer *dst, VkQueue queue, VkBufferCopy *copyRegion)
 	{
 		assert(dst->size <= src->size);
@@ -445,16 +372,7 @@ namespace vks
 		flushCommandBuffer(copyCmd, queue);
 	}
 
-	/** 
-	* Create a command pool for allocation command buffers from
-	* 
-	* @param queueFamilyIndex Family index of the queue to create the command pool for
-	* @param createFlags (Optional) Command pool creation flags (Defaults to VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT)
-	*
-	* @note Command buffers allocated from the created pool can only be submitted to a queue with the same family index
-	*
-	* @return A handle to the created command buffer
-	*/
+
 	VkCommandPool VulkanDevice::createCommandPool(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags createFlags)
 	{
 		VkCommandPoolCreateInfo cmdPoolInfo = {};
@@ -466,15 +384,7 @@ namespace vks
 		return cmdPool;
 	}
 
-	/**
-	* Allocate a command buffer from the command pool
-	*
-	* @param level Level of the new command buffer (primary or secondary)
-	* @param pool Command pool from which the command buffer will be allocated
-	* @param (Optional) begin If true, recording on the new command buffer will be started (vkBeginCommandBuffer) (Defaults to false)
-	*
-	* @return A handle to the allocated command buffer
-	*/
+
 	VkCommandBuffer VulkanDevice::createCommandBuffer(VkCommandBufferLevel level, VkCommandPool pool, bool begin)
 	{
 		VkCommandBufferAllocateInfo cmdBufAllocateInfo = vks::initializers::commandBufferAllocateInfo(pool, level, 1);
@@ -494,17 +404,7 @@ namespace vks
 		return createCommandBuffer(level, commandPool, begin);
 	}
 
-	/**
-	* Finish command buffer recording and submit it to a queue
-	*
-	* @param commandBuffer Command buffer to flush
-	* @param queue Queue to submit the command buffer to
-	* @param pool Command pool on which the command buffer has been created
-	* @param free (Optional) Free the command buffer once it has been submitted (Defaults to true)
-	*
-	* @note The queue that the command buffer is submitted to must be from the same family index as the pool it was allocated from
-	* @note Uses a fence to ensure command buffer has finished executing
-	*/
+
 	void VulkanDevice::flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, VkCommandPool pool, bool free)
 	{
 		if (commandBuffer == VK_NULL_HANDLE)
@@ -537,27 +437,13 @@ namespace vks
 		return flushCommandBuffer(commandBuffer, queue, commandPool, free);
 	}
 
-	/**
-	* Check if an extension is supported by the (physical device)
-	*
-	* @param extension Name of the extension to check
-	*
-	* @return True if the extension is supported (present in the list read at device creation time)
-	*/
+
 	bool VulkanDevice::extensionSupported(std::string extension)
 	{
 		return (std::find(supportedExtensions.begin(), supportedExtensions.end(), extension) != supportedExtensions.end());
 	}
 
-	/**
-	* Select the best-fit depth format for this device from a list of possible depth (and stencil) formats
-	*
-	* @param checkSamplingSupport Check if the format can be sampled from (e.g. for shader reads)
-	*
-	* @return The depth format that best fits for the current device
-	*
-	* @throw Throws an exception if no depth format fits the requirements
-	*/
+
 	VkFormat VulkanDevice::getSupportedDepthFormat(bool checkSamplingSupport)
 	{
 		// All depth formats may be optional, so we need to find a suitable depth format to use

@@ -65,15 +65,15 @@ OPENEXR_IMF_INTERNAL_NAMESPACE_HEADER_ENTER
 
 IMF_EXPORT 
 int
-hufCompress (const unsigned short raw[/*nRaw*/],
+hufCompress (const unsigned short raw[],
 	     int nRaw,
-	     char compressed[/*2 * nRaw + 65536*/]);
+	     char compressed[]);
 
 IMF_EXPORT
 void
-hufUncompress (const char compressed[/*nCompressed*/],
+hufUncompress (const char compressed[],
 	       int nCompressed,
-	       unsigned short raw[/*nRaw*/],
+	       unsigned short raw[],
 	       int nRaw);
 
 

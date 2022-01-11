@@ -21,7 +21,7 @@ class RefNumIFStream : public Imf::IStream
 													 const char 		fileName[]);
 		virtual 			~RefNumIFStream			();
 		
-		virtual bool		read 					(char c[/*n*/], int n);
+		virtual bool		read 					(char c[], int n);
     	virtual Imf::Int64	tellg 					();
     	virtual void		seekg 					(Imf::Int64 pos);
     	virtual void		clear 					();
@@ -45,7 +45,7 @@ class RefNumOFStream : public Imf::OStream
 													 const char 		fileName[]);
 		virtual 			~RefNumOFStream			();
 		
-		virtual void		write 					(const char c[/*n*/], int n);
+		virtual void		write 					(const char c[], int n);
     	virtual Imf::Int64	tellp 					();
     	virtual void		seekp 					(Imf::Int64 pos);
     	

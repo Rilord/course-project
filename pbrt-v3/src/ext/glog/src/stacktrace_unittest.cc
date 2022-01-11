@@ -147,7 +147,7 @@ void ATTRIBUTE_NOINLINE CheckStackTraceLeaf(void) {
 
 //-----------------------------------------------------------------------//
 
-/* Dummy functions to make the backtrace more interesting. */
+
 void ATTRIBUTE_NOINLINE CheckStackTrace4(int i) {
   ADJUST_ADDRESS_RANGE_FROM_RA(&expected_range[2]);
   INIT_ADDRESS_RANGE(CheckStackTrace4, start, end, &expected_range[1]);

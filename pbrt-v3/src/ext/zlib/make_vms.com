@@ -152,7 +152,7 @@ $ endif
 $ goto aconf_loop
 $ACONF_EXIT:
 $ write aconf ""
-$ write aconf "/* VMS specifics added by make_vms.com: */"
+$ write aconf ""
 $ write aconf "#define VMS 1"
 $ write aconf "#include <unistd.h>"
 $ write aconf "#include <unixio.h>"
@@ -591,7 +591,7 @@ $   comm_h = false
 $   gosub cc_prop_check
 $   return
 $ endif
-$ write aconf "/* ", line, " */"
+$ write aconf ""
 $ return
 $!------------------------------------------------------------------------------
 $!
@@ -639,7 +639,7 @@ $ else
 $   write sys$output "Checking for ''cdef'... no"
 $   if (comm_h)
 $   then
-      call write_config f$fao("/* !AS */",line)
+      call write_config f$fao("",line)
 $   else
 $     if f$type('cdef_val'_no) .nes. ""
 $     then

@@ -1,11 +1,5 @@
 
-/*
-* UI overlay class using ImGui
-*
-* Copyright (C) 2017 by Sascha Willems - www.saschawillems.de
-*
-* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
-*/
+
 
 #include "VulkanUIOverlay.h"
 
@@ -57,7 +51,7 @@ namespace vks
 		}
 	}
 
-	/** Prepare all vulkan resources required to render the UI overlay */
+
 	void UIOverlay::prepareResources()
 	{
 		ImGuiIO& io = ImGui::GetIO();
@@ -78,8 +72,19 @@ namespace vks
 			delete[] fontAsset;
 		}
 #else
+        ImFontConfig font_config;
+        font_config.OversampleH = 1; //or 2 is the same
+        font_config.OversampleV = 1;
+        font_config.PixelSnapH = 1;
+
+        static const ImWchar ranges[] =
+        {
+            0x0020, 0x00FF, // Basic Latin + Latin Supplement
+            0x0400, 0x044F, // Cyrillic
+            0,
+        };
 		const std::string filename = getAssetPath() + "Roboto-Medium.ttf";
-		io.Fonts->AddFontFromFileTTF(filename.c_str(), 16.0f);
+		io.Fonts->AddFontFromFileTTF(filename.c_str(), 16.0f, &font_config, ranges);
 #endif		
 		io.Fonts->GetTexDataAsRGBA32(&fontData, &texWidth, &texHeight);
 		VkDeviceSize uploadSize = texWidth*texHeight * 4 * sizeof(char);
@@ -213,7 +218,7 @@ namespace vks
 		vkUpdateDescriptorSets(device->logicalDevice, static_cast<uint32_t>(writeDescriptorSets.size()), writeDescriptorSets.data(), 0, nullptr);
 	}
 
-	/** Prepare a separate pipeline for the UI overlay rendering decoupled from the main application */
+
 	void UIOverlay::preparePipeline(const VkPipelineCache pipelineCache, const VkRenderPass renderPass)
 	{
 		// Pipeline layout
@@ -294,7 +299,7 @@ namespace vks
 		VK_CHECK_RESULT(vkCreateGraphicsPipelines(device->logicalDevice, pipelineCache, 1, &pipelineCreateInfo, nullptr, &pipeline));
 	}
 
-	/** Update vertex and index buffer containing the imGui elements when required */
+
 	bool UIOverlay::update()
 	{
 		ImDrawData* imDrawData = ImGui::GetDrawData();
@@ -454,6 +459,12 @@ namespace vks
 		bool res = ImGui::SliderInt(caption, value, min, max);
 		if (res) { updated = true; };
 		return res;
+	}
+
+	bool UIOverlay::inputFloat3(const char *caption, float *vec) {
+        bool res = ImGui::InputFloat3(caption, vec, "%.1f");
+        if (res) { updated = true; }
+        return res;
 	}
 
 	bool UIOverlay::comboBox(const char *caption, int32_t *itemindex, std::vector<std::string> items)

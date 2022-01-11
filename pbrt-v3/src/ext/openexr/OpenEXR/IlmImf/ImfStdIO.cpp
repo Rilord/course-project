@@ -123,7 +123,7 @@ StdIFStream::~StdIFStream ()
 
 
 bool
-StdIFStream::read (char c[/*n*/], int n)
+StdIFStream::read (char c[], int n)
 {
     if (!*_is)
         throw IEX_NAMESPACE::InputExc ("Unexpected end of file.");
@@ -186,7 +186,7 @@ StdOFStream::~StdOFStream ()
 
 
 void
-StdOFStream::write (const char c[/*n*/], int n)
+StdOFStream::write (const char c[], int n)
 {
     clearError();
     _os->write (c, n);
@@ -216,7 +216,7 @@ StdOSStream::StdOSStream (): OPENEXR_IMF_INTERNAL_NAMESPACE::OStream ("(string)"
 
 
 void
-StdOSStream::write (const char c[/*n*/], int n)
+StdOSStream::write (const char c[], int n)
 {
     clearError();
     _os.write (c, n);

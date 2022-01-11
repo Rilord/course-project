@@ -38,4 +38,4 @@
 
 namespace IMF = OPENEXR_IMF_NAMESPACE;
 
-#endif /* NAMESPACEALIAS_H_ */
+#endif

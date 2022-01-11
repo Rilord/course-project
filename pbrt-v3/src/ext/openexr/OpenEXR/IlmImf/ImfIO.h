@@ -88,7 +88,7 @@ class IMF_EXPORT IStream
     // the file it returns false, otherwise it returns true.
     //------------------------------------------------------
 
-    virtual bool	read (char c[/*n*/], int n) = 0;
+    virtual bool	read (char c[], int n) = 0;
     
     
     //---------------------------------------------------
@@ -171,7 +171,7 @@ class IMF_EXPORT OStream
     // an exception.
     //----------------------------------------------------------
 
-    virtual void	write (const char c[/*n*/], int n) = 0;
+    virtual void	write (const char c[], int n) = 0;
 
 
     //---------------------------------------------------------
@@ -218,13 +218,13 @@ class IMF_EXPORT OStream
 struct StreamIO
 {
     static void
-    writeChars (OStream &os, const char c[/*n*/], int n)
+    writeChars (OStream &os, const char c[], int n)
     {
         os.write (c, n);
     }
 
     static bool
-    readChars (IStream &is, char c[/*n*/], int n)
+    readChars (IStream &is, char c[], int n)
     {
         return is.read (c, n);
     }
@@ -234,14 +234,14 @@ struct StreamIO
 struct CharPtrIO
 {
     static void
-    writeChars (char *&op, const char c[/*n*/], int n)
+    writeChars (char *&op, const char c[], int n)
     {
         while (n--)
             *op++ = *c++;
     }
 
     static bool
-    readChars (const char *&ip, char c[/*n*/], int n)
+    readChars (const char *&ip, char c[], int n)
     {
         while (n--)
             *c++ = *ip++;

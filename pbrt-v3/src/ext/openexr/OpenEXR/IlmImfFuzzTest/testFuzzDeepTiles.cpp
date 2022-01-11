@@ -337,7 +337,7 @@ void readFile(const char filename[])
          
     }catch(std::exception & e)
     {
-        /* expect to get exceptions*/
+
     }
     
     
@@ -451,7 +451,7 @@ void readFile(const char filename[])
         }        
     }catch(std::exception & e)
     {
-        /* expect to get exceptions*/
+
     }
         
 }

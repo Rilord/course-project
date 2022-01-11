@@ -41,4 +41,4 @@
 
 void testCopyMultiPartFile (const std::string & tempDir);
 
-#endif /* TESTCOPYMULTIPARTFILE_H_ */
+#endif

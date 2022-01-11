@@ -67,8 +67,8 @@ void
 RGBAtoYCA (const V3f &yw,
 	   int n,
 	   bool aIsValid,
-	   const Rgba rgbaIn[/*n*/],
-	   Rgba ycaOut[/*n*/])
+	   const Rgba rgbaIn[],
+	   Rgba ycaOut[])
 {
     for (int i = 0; i < n; ++i)
     {
@@ -132,8 +132,8 @@ RGBAtoYCA (const V3f &yw,
 
 void
 decimateChromaHoriz (int n,
-		     const Rgba ycaIn[/*n+N-1*/],
-		     Rgba ycaOut[/*n*/])
+		     const Rgba ycaIn[],
+		     Rgba ycaOut[])
 {
     #ifdef DEBUG
 	assert (ycaIn != ycaOut);
@@ -188,7 +188,7 @@ decimateChromaHoriz (int n,
 void
 decimateChromaVert (int n,
 		    const Rgba * const ycaIn[N],
-		    Rgba ycaOut[/*n*/])
+		    Rgba ycaOut[])
 {
     for (int i = 0; i < n; ++i)
     {
@@ -237,8 +237,8 @@ void
 roundYCA (int n,
 	  unsigned int roundY,
 	  unsigned int roundC,
-	  const Rgba ycaIn[/*n*/],
-	  Rgba ycaOut[/*n*/])
+	  const Rgba ycaIn[],
+	  Rgba ycaOut[])
 {
     for (int i = 0; i < n; ++i)
     {
@@ -256,8 +256,8 @@ roundYCA (int n,
 
 void
 reconstructChromaHoriz (int n,
-			const Rgba ycaIn[/*n+N-1*/],
-			Rgba ycaOut[/*n*/])
+			const Rgba ycaIn[],
+			Rgba ycaOut[])
 {
     #ifdef DEBUG
 	assert (ycaIn != ycaOut);
@@ -315,7 +315,7 @@ reconstructChromaHoriz (int n,
 void
 reconstructChromaVert (int n,
 		       const Rgba * const ycaIn[N],
-		       Rgba ycaOut[/*n*/])
+		       Rgba ycaOut[])
 {
     for (int i = 0; i < n; ++i)
     {
@@ -358,8 +358,8 @@ reconstructChromaVert (int n,
 void
 YCAtoRGBA (const IMATH_NAMESPACE::V3f &yw,
 	   int n,
-	   const Rgba ycaIn[/*n*/],
-	   Rgba rgbaOut[/*n*/])
+	   const Rgba ycaIn[],
+	   Rgba rgbaOut[])
 {
     for (int i = 0; i < n; ++i)
     {
@@ -442,7 +442,7 @@ void
 fixSaturation (const IMATH_NAMESPACE::V3f &yw,
 	       int n,
 	       const Rgba * const rgbaIn[3],
-	       Rgba rgbaOut[/*n*/])
+	       Rgba rgbaOut[])
 {
     float neighborA2 = saturation (rgbaIn[0][0]);
     float neighborA1 = neighborA2;

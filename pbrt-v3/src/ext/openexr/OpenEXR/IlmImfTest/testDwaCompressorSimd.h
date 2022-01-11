@@ -37,5 +37,5 @@
 #include <string>
 void testDwaCompressorSimd(const std::string&);
 
-#endif /* TESTDWACOMPRESSORSIMD_H_ */
+#endif
 

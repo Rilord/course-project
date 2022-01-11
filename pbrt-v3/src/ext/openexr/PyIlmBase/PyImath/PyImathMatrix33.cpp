@@ -1062,29 +1062,7 @@ register_Matrix33()
     decoratecopy(matrix33_class);
 
     return matrix33_class;
-/*
-    const Matrix33 &	operator = (const Matrix33 &v);
-    const Matrix33 &	operator = (T a);
-    T *			getValue ();
-    const T *		getValue () const;
-    template <class S> void getValue (Matrix33<S> &v) const;
-    template <class S> Matrix33 & setValue (const Matrix33<S> &v);
-    template <class S> Matrix33 & setTheMatrix (const Matrix33<S> &v);
-    template <class S> void multVecMatrix(const Vec2<S> &src, Vec2<S> &dst) const;
-    template <class S> void multDirMatrix(const Vec2<S> &src, Vec2<S> &dst) const;
-    template <class S> const Matrix33 &	setRotation (S r);
-    template <class S> const Matrix33 &	rotate (S r);
-    const Matrix33 &	setScale (T s);
-    template <class S> const Matrix33 &	setScale (const Vec2<S> &s);
-    template <class S> const Matrix33 &	scale (const Vec2<S> &s);
-    template <class S> const Matrix33 &	setTranslation (const Vec2<S> &t);
-    Vec2<T>		translation () const;
-    template <class S> const Matrix33 &	translate (const Vec2<S> &t);
-    template <class S> const Matrix33 &	setShear (const S &h);
-    template <class S> const Matrix33 &	setShear (const Vec2<S> &h);
-    template <class S> const Matrix33 &	shear (const S &xy);
-    template <class S> const Matrix33 &	shear (const Vec2<S> &h);
-*/
+
 }
 
 template <class T>

@@ -754,14 +754,7 @@ register_Euler()
 // XXX fixme - template this
 // really this should get generated automatically...
 
-/*
-template <class T,int index>
-static FixedArray<T>
-EulerArray_get(FixedArray<IMATH_NAMESPACE::Euler<T> > &qa)
-{
-    return FixedArray<T>( &(qa[0].r)+index, qa.len(), 4*qa.stride());
-}
-*/
+
 
 template <class T>
 static FixedArray<IMATH_NAMESPACE::Euler<T> > *

@@ -1,10 +1,4 @@
-/*
-* Vulkan Example base class
-*
-* Copyright (C) by Sascha Willems - www.saschawillems.de
-*
-* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
-*/
+
 
 #include "vulkanexamplebase.h"
 
@@ -639,7 +633,7 @@ void VulkanExampleBase::updateOverlay()
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
 	ImGui::SetNextWindowPos(ImVec2(10, 10));
 	ImGui::SetNextWindowSize(ImVec2(0, 0));
-	ImGui::Begin("Vulkan Example", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+	ImGui::Begin("Трассировка пути", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
 	ImGui::TextUnformatted(title.c_str());
 	ImGui::TextUnformatted(deviceProperties.deviceName);
 	ImGui::Text("%.2f ms/frame (%.1d fps)", (1000.0f / lastFPS), lastFPS);
@@ -733,7 +727,7 @@ VulkanExampleBase::VulkanExampleBase(bool enableValidation)
 	commandLineParser.parse(args);
 	if (commandLineParser.isSet("help")) {
 #if defined(_WIN32)
-		setupConsole("Vulkan example");
+		setupConsole("Трасировка пути");
 #endif
 		commandLineParser.printHelp();
 		std::cin.get();
@@ -780,7 +774,7 @@ VulkanExampleBase::VulkanExampleBase(bool enableValidation)
 	// Enable console if validation is active, debug message callback will output to it
 	if (this->settings.validation)
 	{
-		setupConsole("Vulkan example");
+		setupConsole("Трасировка пути");
 	}
 	setupDPIAwareness();
 #endif
@@ -1413,11 +1407,7 @@ void VulkanExampleBase::handleAppCommand(android_app * app, int32_t cmd)
 	{
 	case APP_CMD_SAVE_STATE:
 		LOGD("APP_CMD_SAVE_STATE");
-		/*
-		vulkanExample->app->savedState = malloc(sizeof(struct saved_state));
-		*((struct saved_state*)vulkanExample->app->savedState) = vulkanExample->state;
-		vulkanExample->app->savedStateSize = sizeof(struct saved_state);
-		*/
+
 		break;
 	case APP_CMD_INIT_WINDOW:
 		LOGD("APP_CMD_INIT_WINDOW");
@@ -1898,7 +1888,7 @@ void VulkanExampleBase::handleEvent(const DFBWindowEvent *event)
 	}
 }
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-/*static*/void VulkanExampleBase::registryGlobalCb(void *data,
+void VulkanExampleBase::registryGlobalCb(void *data,
 		wl_registry *registry, uint32_t name, const char *interface,
 		uint32_t version)
 {
@@ -1906,25 +1896,25 @@ void VulkanExampleBase::handleEvent(const DFBWindowEvent *event)
 	self->registryGlobal(registry, name, interface, version);
 }
 
-/*static*/void VulkanExampleBase::seatCapabilitiesCb(void *data, wl_seat *seat,
+void VulkanExampleBase::seatCapabilitiesCb(void *data, wl_seat *seat,
 		uint32_t caps)
 {
 	VulkanExampleBase *self = reinterpret_cast<VulkanExampleBase *>(data);
 	self->seatCapabilities(seat, caps);
 }
 
-/*static*/void VulkanExampleBase::pointerEnterCb(void *data,
+void VulkanExampleBase::pointerEnterCb(void *data,
 		wl_pointer *pointer, uint32_t serial, wl_surface *surface,
 		wl_fixed_t sx, wl_fixed_t sy)
 {
 }
 
-/*static*/void VulkanExampleBase::pointerLeaveCb(void *data,
+void VulkanExampleBase::pointerLeaveCb(void *data,
 		wl_pointer *pointer, uint32_t serial, wl_surface *surface)
 {
 }
 
-/*static*/void VulkanExampleBase::pointerMotionCb(void *data,
+void VulkanExampleBase::pointerMotionCb(void *data,
 		wl_pointer *pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy)
 {
 	VulkanExampleBase *self = reinterpret_cast<VulkanExampleBase *>(data);
@@ -1935,7 +1925,7 @@ void VulkanExampleBase::pointerMotion(wl_pointer *pointer, uint32_t time, wl_fix
 	handleMouseMove(wl_fixed_to_int(sx), wl_fixed_to_int(sy));
 }
 
-/*static*/void VulkanExampleBase::pointerButtonCb(void *data,
+void VulkanExampleBase::pointerButtonCb(void *data,
 		wl_pointer *pointer, uint32_t serial, uint32_t time, uint32_t button,
 		uint32_t state)
 {
@@ -1962,7 +1952,7 @@ void VulkanExampleBase::pointerButton(struct wl_pointer *pointer,
 	}
 }
 
-/*static*/void VulkanExampleBase::pointerAxisCb(void *data,
+void VulkanExampleBase::pointerAxisCb(void *data,
 		wl_pointer *pointer, uint32_t time, uint32_t axis,
 		wl_fixed_t value)
 {
@@ -1985,24 +1975,24 @@ void VulkanExampleBase::pointerAxis(wl_pointer *pointer, uint32_t time,
 	}
 }
 
-/*static*/void VulkanExampleBase::keyboardKeymapCb(void *data,
+void VulkanExampleBase::keyboardKeymapCb(void *data,
 		struct wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size)
 {
 }
 
-/*static*/void VulkanExampleBase::keyboardEnterCb(void *data,
+void VulkanExampleBase::keyboardEnterCb(void *data,
 		struct wl_keyboard *keyboard, uint32_t serial,
 		struct wl_surface *surface, struct wl_array *keys)
 {
 }
 
-/*static*/void VulkanExampleBase::keyboardLeaveCb(void *data,
+void VulkanExampleBase::keyboardLeaveCb(void *data,
 		struct wl_keyboard *keyboard, uint32_t serial,
 		struct wl_surface *surface)
 {
 }
 
-/*static*/void VulkanExampleBase::keyboardKeyCb(void *data,
+void VulkanExampleBase::keyboardKeyCb(void *data,
 		struct wl_keyboard *keyboard, uint32_t serial, uint32_t time,
 		uint32_t key, uint32_t state)
 {
@@ -2044,7 +2034,7 @@ void VulkanExampleBase::keyboardKey(struct wl_keyboard *keyboard,
 		keyPressed(key);
 }
 
-/*static*/void VulkanExampleBase::keyboardModifiersCb(void *data,
+void VulkanExampleBase::keyboardModifiersCb(void *data,
 		struct wl_keyboard *keyboard, uint32_t serial, uint32_t mods_depressed,
 		uint32_t mods_latched, uint32_t mods_locked, uint32_t group)
 {
@@ -2115,7 +2105,7 @@ void VulkanExampleBase::registryGlobal(wl_registry *registry, uint32_t name,
 	}
 }
 
-/*static*/void VulkanExampleBase::registryGlobalRemoveCb(void *data,
+void VulkanExampleBase::registryGlobalRemoveCb(void *data,
 		struct wl_registry *registry, uint32_t name)
 {
 }
@@ -2262,7 +2252,7 @@ xcb_window_t VulkanExampleBase::setupWindow()
 		screen->root_visual,
 		value_mask, value_list);
 
-	/* Magic code that will send notification when window is destroyed */
+
 	xcb_intern_atom_reply_t* reply = intern_atom_helper(connection, true, "WM_PROTOCOLS");
 	atom_wm_delete_window = intern_atom_helper(connection, false, "WM_DELETE_WINDOW");
 
@@ -2277,11 +2267,7 @@ xcb_window_t VulkanExampleBase::setupWindow()
 
 	free(reply);
 
-	/**
-	 * Set the WM_CLASS property to display
-	 * title in dash tooltip and application menu
-	 * on GNOME and other desktop environments
-	 */
+
 	std::string wm_class;
 	wm_class = wm_class.insert(0, name);
 	wm_class = wm_class.insert(name.size(), 1, '\0');

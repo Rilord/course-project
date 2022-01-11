@@ -395,15 +395,13 @@ static bool tryParseDouble(const char *s, const char *s_end, double *result) {
   // Tells whether a loop terminated due to reaching s_end.
   bool end_not_reached = false;
 
-  /*
-          BEGIN PARSING.
-  */
+
 
   // Find out what sign we've got.
   if (*curr == '+' || *curr == '-') {
     sign = *curr;
     curr++;
-  } else if (IS_DIGIT(*curr)) { /* Pass through. */
+  } else if (IS_DIGIT(*curr)) {
   } else {
     goto fail;
   }
@@ -448,7 +446,7 @@ static bool tryParseDouble(const char *s, const char *s_end, double *result) {
     if ((end_not_reached = (curr != s_end)) && (*curr == '+' || *curr == '-')) {
       exp_sign = *curr;
       curr++;
-    } else if (IS_DIGIT(*curr)) { /* Pass through. */
+    } else if (IS_DIGIT(*curr)) {
     } else {
       // Empty E is not allowed.
       goto fail;
@@ -1324,7 +1322,7 @@ int main(int argc, char *argv[]) {
     std::vector<shape_t> shapes;
     std::vector<material_t> materials;
     std::string err;
-    if (!LoadObj(shapes, materials, err, objFilename, /* mtl_basepath */ nullptr,
+    if (!LoadObj(shapes, materials, err, objFilename,  nullptr,
                  ptexQuads ? 0 : load_flags_t(triangulation))) {
         fprintf(stderr, "%s: errors loading OBJ file: %s\n", objFilename, err.c_str());
         return 1;

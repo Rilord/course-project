@@ -46,9 +46,9 @@ namespace {
     {
         __asm__ __volatile__ (
             "cpuid"
-            : /* Output  */ "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx) 
-            : /* Input   */ "a"(n)
-            : /* Clobber */);
+            :  "=a"(eax), "=b"(ebx), "=c"(ecx), "=d"(edx)
+            :  "a"(n)
+            : );
     }
 
 #else // IMF_HAVE_SSE2 && __GNUC__
@@ -68,9 +68,9 @@ namespace {
     {
         __asm__ __volatile__ (
             "xgetbv"
-            : /* Output  */ "=a"(eax), "=d"(edx) 
-            : /* Input   */ "c"(n)
-            : /* Clobber */);
+            :  "=a"(eax), "=d"(edx)
+            :  "c"(n)
+            : );
     }
 
 #else //  OPENEXR_IMF_HAVE_GCC_INLINE_ASM_AVX

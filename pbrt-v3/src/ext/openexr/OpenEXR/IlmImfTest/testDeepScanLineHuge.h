@@ -37,4 +37,4 @@
 
 void testDeepScanLineHuge (const std::string & tempDir);
 
-#endif /* TESTDEEPSCANLINEHUGE_H_ */
+#endif

@@ -1,10 +1,4 @@
-/*
-* UI overlay class using ImGui
-*
-* Copyright (C) 2017 by Sascha Willems - www.saschawillems.de
-*
-* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
-*/
+
 
 #pragma once
 
@@ -83,6 +77,7 @@ namespace vks
 		bool checkBox(const char* caption, int32_t* value);
 		bool inputFloat(const char* caption, float* value, float step, uint32_t precision);
 		bool sliderFloat(const char* caption, float* value, float min, float max);
+        bool inputFloat3(const char* caption, float *vec);
 		bool sliderInt(const char* caption, int32_t* value, int32_t min, int32_t max);
 		bool comboBox(const char* caption, int32_t* itemindex, std::vector<std::string> items);
         bool inputText(const char* caption, char *text, size_t size);

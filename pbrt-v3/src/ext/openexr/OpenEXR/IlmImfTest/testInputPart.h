@@ -39,4 +39,4 @@
 
 void testInputPart (const std::string & tempDir);
 
-#endif /* TESTINPUTPART_H_ */
+#endif

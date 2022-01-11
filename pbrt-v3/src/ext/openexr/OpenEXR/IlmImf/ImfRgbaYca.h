@@ -155,8 +155,8 @@ IMF_EXPORT
 void RGBAtoYCA (const IMATH_NAMESPACE::V3f &yw,
 		int n,
 	        bool aIsValid,
-		const Rgba rgbaIn[/*n*/],
-		Rgba ycaOut[/*n*/]);
+		const Rgba rgbaIn[],
+		Rgba ycaOut[]);
 
 //
 // Perform horizontal low-pass filtering and subsampling of
@@ -170,8 +170,8 @@ void RGBAtoYCA (const IMATH_NAMESPACE::V3f &yw,
 
 IMF_EXPORT
 void decimateChromaHoriz (int n,
-			  const Rgba ycaIn[/*n+N-1*/],
-			  Rgba ycaOut[/*n*/]);
+			  const Rgba ycaIn[],
+			  Rgba ycaOut[]);
 
 //
 // Perform vertical chroma channel low-pass filtering and subsampling.
@@ -182,7 +182,7 @@ void decimateChromaHoriz (int n,
 IMF_EXPORT
 void decimateChromaVert (int n,
 			 const Rgba * const ycaIn[N],
-			 Rgba ycaOut[/*n*/]);
+			 Rgba ycaOut[]);
 
 //
 // Round the luminance and chroma channels of an array of YCA
@@ -195,8 +195,8 @@ IMF_EXPORT
 void roundYCA (int n,
 	       unsigned int roundY,
 	       unsigned int roundC,
-	       const Rgba ycaIn[/*n*/],
-	       Rgba ycaOut[/*n*/]);
+	       const Rgba ycaIn[],
+	       Rgba ycaOut[]);
 
 //
 // For a scan line that has valid chroma data only for every other pixel,
@@ -205,8 +205,8 @@ void roundYCA (int n,
 
 IMF_EXPORT
 void reconstructChromaHoriz (int n,
-			     const Rgba ycaIn[/*n+N-1*/],
-			     Rgba ycaOut[/*n*/]);
+			     const Rgba ycaIn[],
+			     Rgba ycaOut[]);
 
 //
 // For a scan line that has only luminance and no valid chroma data,
@@ -216,7 +216,7 @@ void reconstructChromaHoriz (int n,
 IMF_EXPORT
 void reconstructChromaVert (int n,
 			    const Rgba * const ycaIn[N],
-			    Rgba ycaOut[/*n*/]);
+			    Rgba ycaOut[]);
 			 
 //
 // Convert an array of n YCA (luminance/chroma/alpha) pixels to RGBA.
@@ -227,8 +227,8 @@ void reconstructChromaVert (int n,
 IMF_EXPORT
 void YCAtoRGBA (const IMATH_NAMESPACE::V3f &yw,
 		int n,
-		const Rgba ycaIn[/*n*/],
-		Rgba rgbaOut[/*n*/]);
+		const Rgba ycaIn[],
+		Rgba rgbaOut[]);
 			 
 //
 // Eliminate super-saturated pixels:
@@ -251,7 +251,7 @@ IMF_EXPORT
 void fixSaturation (const IMATH_NAMESPACE::V3f &yw,
 		    int n,
 		    const Rgba * const rgbaIn[3],
-		    Rgba rgbaOut[/*n*/]);
+		    Rgba rgbaOut[]);
 
 } // namespace RgbaYca
 OPENEXR_IMF_INTERNAL_NAMESPACE_HEADER_EXIT

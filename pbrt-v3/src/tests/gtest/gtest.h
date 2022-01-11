@@ -846,8 +846,8 @@ template <>
 class tuple<> {
  public:
   tuple() {}
-  tuple(const tuple& /* t */)  {}
-  tuple& operator=(const tuple& /* t */) { return *this; }
+  tuple(const tuple& )  {}
+  tuple& operator=(const tuple& ) { return *this; }
 };
 
 template <GTEST_1_TYPENAMES_(T)>
@@ -1595,7 +1595,7 @@ struct SameSizeTuplePrefixComparator;
 template <>
 struct SameSizeTuplePrefixComparator<0, 0> {
   template <class Tuple1, class Tuple2>
-  static bool Eq(const Tuple1& /* t1 */, const Tuple2& /* t2 */) {
+  static bool Eq(const Tuple1& , const Tuple2& ) {
     return true;
   }
 };
@@ -2376,7 +2376,7 @@ extern "C" inline void* ThreadFuncWithCLinkage(void* thread) {
 // Helper class for testing Google Test's multi-threading constructs.
 // To use it, write:
 //
-//   void ThreadFunc(int param) { /* Do things with param */ }
+//   void ThreadFunc(int param) {  }
 //   Notification thread_can_start;
 //   ...
 //   // The thread_can_start parameter is optional; you can supply NULL.
@@ -2826,7 +2826,7 @@ inline int StrCaseCmp(const char* s1, const char* s2) {
 inline char* StrDup(const char* src) { return strdup(src); }
 # else  // !__BORLANDC__
 #  if GTEST_OS_WINDOWS_MOBILE
-inline int IsATTY(int /* fd */) { return 0; }
+inline int IsATTY(int ) { return 0; }
 #  else
 inline int IsATTY(int fd) { return _isatty(fd); }
 #  endif  // GTEST_OS_WINDOWS_MOBILE
@@ -3283,7 +3283,7 @@ class GTEST_API_ Message {
   // decide between class template specializations for T and T*, so a
   // tr1::type_traits-like is_pointer works, and we can overload on that.
   template <typename T>
-  inline void StreamHelper(internal::true_type /*is_pointer*/, T* pointer) {
+  inline void StreamHelper(internal::true_type , T* pointer) {
     if (pointer == NULL) {
       *ss_ << "(null)";
     } else {
@@ -3291,7 +3291,7 @@ class GTEST_API_ Message {
     }
   }
   template <typename T>
-  inline void StreamHelper(internal::false_type /*is_pointer*/,
+  inline void StreamHelper(internal::false_type ,
                            const T& value) {
     // See the comments in Message& operator <<(const T&) above for why
     // we need this using statement.
@@ -7566,8 +7566,8 @@ class TypeParameterizedTest {
 template <GTEST_TEMPLATE_ Fixture, class TestSel>
 class TypeParameterizedTest<Fixture, TestSel, Types0> {
  public:
-  static bool Register(const char* /*prefix*/, const char* /*case_name*/,
-                       const char* /*test_names*/, int /*index*/) {
+  static bool Register(const char* , const char* ,
+                       const char* , int ) {
     return true;
   }
 };
@@ -7597,8 +7597,8 @@ class TypeParameterizedTestCase {
 template <GTEST_TEMPLATE_ Fixture, typename Types>
 class TypeParameterizedTestCase<Fixture, Templates0, Types> {
  public:
-  static bool Register(const char* /*prefix*/, const char* /*case_name*/,
-                       const char* /*test_names*/) {
+  static bool Register(const char* , const char* ,
+                       const char* ) {
     return true;
   }
 };
@@ -7826,15 +7826,15 @@ struct IsAProtocolMessage
 // IsContainerTest(...) doesn't work with Visual Age C++ and Sun C++.
 typedef int IsContainer;
 template <class C>
-IsContainer IsContainerTest(int /* dummy */,
-                            typename C::iterator* /* it */ = NULL,
-                            typename C::const_iterator* /* const_it */ = NULL) {
+IsContainer IsContainerTest(int ,
+                            typename C::iterator*  = NULL,
+                            typename C::const_iterator*  = NULL) {
   return 0;
 }
 
 typedef char IsNotContainer;
 template <class C>
-IsNotContainer IsContainerTest(long /* dummy */) { return '\0'; }
+IsNotContainer IsContainerTest(long ) { return '\0'; }
 
 // EnableIf<condition>::type is void when 'Cond' is true, and
 // undefined when 'Cond' is false.  To use SFINAE to make a function
@@ -9465,8 +9465,8 @@ void UniversalPrint(const T& value, ::std::ostream* os);
 // Used to print an STL-style container when the user doesn't define
 // a PrintTo() for it.
 template <typename C>
-void DefaultPrintTo(IsContainer /* dummy */,
-                    false_type /* is not a pointer */,
+void DefaultPrintTo(IsContainer ,
+                    false_type ,
                     const C& container, ::std::ostream* os) {
   const size_t kMaxCount = 32;  // The maximum number of elements to print.
   *os << '{';
@@ -9499,8 +9499,8 @@ void DefaultPrintTo(IsContainer /* dummy */,
 // implementation-defined.  Therefore they will be printed as raw
 // bytes.)
 template <typename T>
-void DefaultPrintTo(IsNotContainer /* dummy */,
-                    true_type /* is a pointer */,
+void DefaultPrintTo(IsNotContainer ,
+                    true_type ,
                     T* p, ::std::ostream* os) {
   if (p == NULL) {
     *os << "NULL";
@@ -9531,8 +9531,8 @@ void DefaultPrintTo(IsNotContainer /* dummy */,
 // Used to print a non-container, non-pointer value when the user
 // doesn't define PrintTo() for it.
 template <typename T>
-void DefaultPrintTo(IsNotContainer /* dummy */,
-                    false_type /* is not a pointer */,
+void DefaultPrintTo(IsNotContainer ,
+                    false_type ,
                     const T& value, ::std::ostream* os) {
   ::testing_internal::DefaultPrintNonContainerTo(value, os);
 }
@@ -10125,7 +10125,7 @@ class ParamIterator {
     return *this;
   }
   // Postfix version of operator++.
-  ParamIterator operator++(int /*unused*/) {
+  ParamIterator operator++(int ) {
     ParamIteratorInterface<T>* clone = impl_->Clone();
     impl_->Advance();
     return ParamIterator(clone);
@@ -10481,8 +10481,8 @@ class ParameterizedTestCaseInfo : public ParameterizedTestCaseInfoBase {
   // about a generator.
   int AddTestCaseInstantiation(const string& instantiation_name,
                                GeneratorCreationFunc* func,
-                               const char* /* file */,
-                               int /* line */) {
+                               const char* ,
+                               int ) {
     instantiations_.push_back(::std::make_pair(instantiation_name, func));
     return 0;  // Return value used only to run this method in namespace scope.
   }
@@ -18432,21 +18432,21 @@ class TestEventListener {
 // above.
 class EmptyTestEventListener : public TestEventListener {
  public:
-  virtual void OnTestProgramStart(const UnitTest& /*unit_test*/) {}
-  virtual void OnTestIterationStart(const UnitTest& /*unit_test*/,
-                                    int /*iteration*/) {}
-  virtual void OnEnvironmentsSetUpStart(const UnitTest& /*unit_test*/) {}
-  virtual void OnEnvironmentsSetUpEnd(const UnitTest& /*unit_test*/) {}
-  virtual void OnTestCaseStart(const TestCase& /*test_case*/) {}
-  virtual void OnTestStart(const TestInfo& /*test_info*/) {}
-  virtual void OnTestPartResult(const TestPartResult& /*test_part_result*/) {}
-  virtual void OnTestEnd(const TestInfo& /*test_info*/) {}
-  virtual void OnTestCaseEnd(const TestCase& /*test_case*/) {}
-  virtual void OnEnvironmentsTearDownStart(const UnitTest& /*unit_test*/) {}
-  virtual void OnEnvironmentsTearDownEnd(const UnitTest& /*unit_test*/) {}
-  virtual void OnTestIterationEnd(const UnitTest& /*unit_test*/,
-                                  int /*iteration*/) {}
-  virtual void OnTestProgramEnd(const UnitTest& /*unit_test*/) {}
+  virtual void OnTestProgramStart(const UnitTest& ) {}
+  virtual void OnTestIterationStart(const UnitTest& ,
+                                    int ) {}
+  virtual void OnEnvironmentsSetUpStart(const UnitTest& ) {}
+  virtual void OnEnvironmentsSetUpEnd(const UnitTest& ) {}
+  virtual void OnTestCaseStart(const TestCase& ) {}
+  virtual void OnTestStart(const TestInfo& ) {}
+  virtual void OnTestPartResult(const TestPartResult& ) {}
+  virtual void OnTestEnd(const TestInfo& ) {}
+  virtual void OnTestCaseEnd(const TestCase& ) {}
+  virtual void OnEnvironmentsTearDownStart(const UnitTest& ) {}
+  virtual void OnEnvironmentsTearDownEnd(const UnitTest& ) {}
+  virtual void OnTestIterationEnd(const UnitTest& ,
+                                  int ) {}
+  virtual void OnTestProgramEnd(const UnitTest& ) {}
 };
 
 // TestEventListeners lets users add listeners to track events in Google Test.
@@ -18850,7 +18850,7 @@ GTEST_IMPL_FORMAT_C_STRING_AS_STRING_(const wchar_t, ::std::wstring);
 // INTERNAL IMPLEMENTATION - DO NOT USE IN A USER PROGRAM.
 template <typename T1, typename T2>
 std::string FormatForComparisonFailureMessage(
-    const T1& value, const T2& /* other_operand */) {
+    const T1& value, const T2& ) {
   return FormatForComparison<T1, T2>::Format(value);
 }
 
@@ -18958,7 +18958,7 @@ class EqHelper<true> {
       // Unfortunately, gcc with -Wconversion-null warns when "passing NULL to
       // non-pointer argument" (even a deduced integral argument), so the old
       // implementation caused warnings in user code.
-      Secret* /* expected (NULL) */,
+      Secret* ,
       T* actual) {
     // We already know that 'expected' is a null pointer.
     return CmpHelperEQ(expected_expression, actual_expression,

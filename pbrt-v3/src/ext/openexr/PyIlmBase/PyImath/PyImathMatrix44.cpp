@@ -1151,29 +1151,7 @@ register_Matrix44()
     decoratecopy(matrix44_class);
 
     return matrix44_class;
-/*
-    const Matrix44 &	operator = (const Matrix44 &v);
-    const Matrix44 &	operator = (T a);
-    T *			getValue ();
-    const T *		getValue () const;
-    template <class S> void getValue (Matrix44<S> &v) const;
-    template <class S> Matrix44 & setValue (const Matrix44<S> &v);
-    template <class S> Matrix44 & setTheMatrix (const Matrix44<S> &v);
-    template <class S> void multVecMatrix(const Vec2<S> &src, Vec2<S> &dst) const;
-    template <class S> void multDirMatrix(const Vec2<S> &src, Vec2<S> &dst) const;
-    template <class S> const Matrix44 &	setRotation (S r);
-    template <class S> const Matrix44 &	rotate (S r);
-    const Matrix44 &	setScale (T s);
-    template <class S> const Matrix44 &	setScale (const Vec2<S> &s);
-    template <class S> const Matrix44 &	scale (const Vec2<S> &s);
-    template <class S> const Matrix44 &	setTranslation (const Vec2<S> &t);
-    Vec2<T>		translation () const;
-    template <class S> const Matrix44 &	translate (const Vec2<S> &t);
-    template <class S> const Matrix44 &	setShear (const S &h);
-    template <class S> const Matrix44 &	setShear (const Vec2<S> &h);
-    template <class S> const Matrix44 &	shear (const S &xy);
-    template <class S> const Matrix44 &	shear (const Vec2<S> &h);
-*/
+
 }
 
 

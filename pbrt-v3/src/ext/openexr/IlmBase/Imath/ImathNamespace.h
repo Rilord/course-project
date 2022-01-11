@@ -119,4 +119,4 @@ namespace IMATH_NAMESPACE {
 #  pragma warning(pop)
 #endif
 
-#endif /* INCLUDED_IMATHNAMESPACE_H */
+#endif

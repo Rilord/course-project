@@ -1,4 +1,5 @@
 # TODO: many of the best practices described here
+
 # (https://www.slideshare.net/DanielPfeifer1/cmake-48475415) are violated
 # in this file. Would be nice to address some of these.
 
@@ -68,6 +69,14 @@ SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
 
 ###########################################################################
 # Annoying compiler-specific details
+
+IF(APPLE)
+	if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fobjc-arc -ObjC++")
+	ELSE()
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fobjc-arc -xobjective-c++")
+	ENDIF()
+ENDIF(APPLE)
 
 IF(CMAKE_COMPILER_IS_GNUCXX)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
@@ -364,14 +373,28 @@ INCLUDE_DIRECTORIES(
         PUBLIC ${IMGUI_DIR}
         PUBLIC ${IMGUI_DIR}/backends
         PUBLIC ${IMGUI_DIR}/include
+        PUBLIC ${IMGUI_DIR}/include
         )
 ###########################################################################
+#glm
+
+ADD_SUBDIRECTORY(src/ext/glm)
+
+INCLUDE_DIRECTORIES(src/ext/glm/)
+
+###########################################################################
+
 #vulkan swapchain
 
 OPTION(USE_D2D_WSI "Build the project using Direct to Display swapchain" OFF)
 OPTION(USE_DIRECTFB_WSI "Build the project using DirectFB swapchain" OFF)
 OPTION(USE_WAYLAND_WSI "Build the project using Wayland swapchain" OFF)
 OPTION(USE_HEADLESS "Build the project using headless extension swapchain" OFF)
+
+if (NOT CMAKE_VERSION VERSION_LESS 3.7.0)
+	message(STATUS "Using module to find Vulkan")
+	find_package(Vulkan)
+endif()
 
 IF(UNIX AND NOT APPLE)
   set(LINUX TRUE)
@@ -430,7 +453,10 @@ IF (NOT Vulkan_FOUND)
   message(FATAL_ERROR "Could not find Vulkan library!")
 ELSE()
   message(STATUS ${Vulkan_LIBRARY})
+  message(STATUS ${Vulkan_INCLUDE_DIRS})
 ENDIF()
+
+INCLUDE_DIRECTORIES(${Vulkan_INCLUDE_DIRS})
 
 ###########################################################################
 
@@ -630,7 +656,9 @@ SET(ALL_PBRT_LIBS
   glog
   Ptex_static
   IMGUI
-  ${ZLIB_LIBRARY} ${XCB_LIBRARIES} ${Vulkan_LIBRARY} ${Vulkan_LIBRARY}
+  glm
+  ${ZLIB_LIBRARY} ${XCB_LIBRARIES} 
+${Vulkan_LIBRARY} "-framework AppKit" "-framework QuartzCore"
 )
 
 # Main renderer
@@ -640,7 +668,7 @@ ADD_SANITIZERS ( pbrt_exe )
 ADD_EXECUTABLE( pbrt_vk_exe src/main/pbrt_vk.cpp)
 ADD_SANITIZERS ( pbrt_vk_exe )
 
-SET_TARGET_PROPERTIES ( pbrt_vk_exe PROPERTIES OUTPUT_NAME pbrt )
+SET_TARGET_PROPERTIES ( pbrt_vk_exe PROPERTIES OUTPUT_NAME pbrt_vk )
 TARGET_COMPILE_FEATURES ( pbrt_vk_exe PRIVATE ${PBRT_CXX11_FEATURES} )
 TARGET_LINK_LIBRARIES ( pbrt_vk_exe ${ALL_PBRT_LIBS} )
 
@@ -685,10 +713,6 @@ ADD_TEST ( pbrt_unit_test pbrt_test )
 INSTALL ( TARGETS
   pbrt_exe
   pbrt_vk_exe
-  bsdftest
-  imgtool
-  obj2pbrt
-  cyhair2pbrt
   DESTINATION
   bin
   )

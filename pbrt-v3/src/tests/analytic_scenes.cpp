@@ -73,7 +73,7 @@ std::vector<TestScene> GetScenes() {
         // -> With GI, should have radiance of 1.
         static Transform id;
         std::shared_ptr<Shape> sphere = std::make_shared<Sphere>(
-            &id, &id, true /* reverse orientation */, 1, -1, 1, 360);
+            &id, &id, true , 1, -1, 1, 360);
 
         std::shared_ptr<Texture<Spectrum>> Kd =
             std::make_shared<ConstantTexture<Spectrum>>(Spectrum(0.5));
@@ -102,7 +102,7 @@ std::vector<TestScene> GetScenes() {
         // -> With GI, should have radiance of 1.
         static Transform id;
         std::shared_ptr<Shape> sphere = std::make_shared<Sphere>(
-            &id, &id, true /* reverse orientation */, 1, -1, 1, 360);
+            &id, &id, true , 1, -1, 1, 360);
 
         std::shared_ptr<Texture<Spectrum>> Kd =
             std::make_shared<ConstantTexture<Spectrum>>(Spectrum(0.5));
@@ -137,7 +137,7 @@ std::vector<TestScene> GetScenes() {
         // -> With GI, should have radiance of 1.
         static Transform id;
         std::shared_ptr<Shape> sphere = std::make_shared<Sphere>(
-            &id, &id, true /* reverse orientation */, 1, -1, 1, 360);
+            &id, &id, true , 1, -1, 1, 360);
 
         std::shared_ptr<Texture<Spectrum>> Kd =
             std::make_shared<ConstantTexture<Spectrum>>(Spectrum(0.5));
@@ -169,7 +169,7 @@ std::vector<TestScene> GetScenes() {
         // -> With GI, should have radiance of ~1.
         static Transform id;
         std::shared_ptr<Shape> sphere = std::make_shared<Sphere>(
-            &id, &id, true /* reverse orientation */, 1, -1, 1, 360);
+            &id, &id, true , 1, -1, 1, 360);
 
         std::shared_ptr<Texture<Spectrum>> Kd =
             std::make_shared<ConstantTexture<Spectrum>>(Spectrum(0.25));
@@ -208,7 +208,7 @@ std::vector<TestScene> GetScenes() {
     // -> With GI, should have radiance of ~1.
     static Transform id;
     std::shared_ptr<Shape> sphere = std::make_shared<Sphere>(
-        &id, &id, true /* reverse orientation */, 1, -1, 1, 360);
+        &id, &id, true , 1, -1, 1, 360);
 
     std::shared_ptr<Texture<Spectrum>> Kd =
         std::make_shared<ConstantTexture<Spectrum>>(Spectrum(0.25));
@@ -403,9 +403,9 @@ std::vector<TestIntegrator> GetIntegrators() {
                     0., 10., 45, film, nullptr);
 
             Integrator *integrator = new MLTIntegrator(
-                camera, 8 /* depth */, 100000 /* n bootstrap */,
-                1000 /* nchains */, 1024 /* mutations per pixel */,
-                0.01 /* sigma */, 0.3 /* large step prob */);
+                camera, 8 , 100000 ,
+                1000 , 1024 ,
+                0.01 , 0.3 );
             integrators.push_back(
                 {integrator, film,
                  "MLT, depth 8, Perspective, " + scene.description, scene});

@@ -106,9 +106,9 @@ namespace PyIex {
     }							\
     catch (boost::python::error_already_set)		\
     {							\
-        /* Can't use text here without messing with */	\
-        /* the existing python exception state, so  */	\
-        /* ignore                                   */	\
+        	\
+        	\
+        	\
 	return 0;					\
     }							\
     catch (...)						\

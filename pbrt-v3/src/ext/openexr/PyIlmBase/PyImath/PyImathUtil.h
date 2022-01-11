@@ -49,17 +49,7 @@
 namespace PyImath {
 
 
-/**
- * PyAcquireLock ensures that python is prepared for multi-threaded use and
- * ensures that this thread has the global lock.
- *
- * This object must be instantiated (and continue to be in scope) during all
- * threaded api calls.  It assumes the python interpretter is instantiated and
- * multithreading is enabled.
- * 
- * Note: this is not compatible with additional interpreters (calls to
- * Py_NewInterpreter()); 
- */
+
 class PYIMATH_EXPORT PyAcquireLock
 {
   public:
@@ -70,15 +60,7 @@ class PYIMATH_EXPORT PyAcquireLock
 };
 
 
-/**
- * This object causes the python global lock to be released for the duration
- * of it's existence.
- *
- * This object should be instantiated (and continue to be in scope) in thread-
- * safe c++ functions called from python.  This call is designed to be
- * instantiated while an AcquireLock is in effect (nested).
- *
- */
+
 class PYIMATH_EXPORT PyReleaseLock
 {
   public:
@@ -89,13 +71,7 @@ class PYIMATH_EXPORT PyReleaseLock
 
 };
 
-/**
- * This object is safe object wrapper intended to use with boost python objects.
- *
- * This object correctly acquires the python lock for creation, copying and
- * desctruction of the given object.
- *
- */
+
 template <class T>
 class PySafeObject
 {

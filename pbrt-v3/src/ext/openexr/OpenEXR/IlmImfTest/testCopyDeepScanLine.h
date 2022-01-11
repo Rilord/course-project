@@ -42,4 +42,4 @@
 
 void testCopyDeepScanLine (const std::string &tempDir);
 
-#endif /* TESTCOPYDEEPSCANLINE_H_ */
+#endif

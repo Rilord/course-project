@@ -1,37 +1,4 @@
-/*
-PTEX SOFTWARE
-Copyright 2014 Disney Enterprises, Inc.  All rights reserved
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-  * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-
-  * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in
-    the documentation and/or other materials provided with the
-    distribution.
-
-  * The names "Disney", "Walt Disney Pictures", "Walt Disney Animation
-    Studios" or the names of its contributors may NOT be used to
-    endorse or promote products derived from this software without
-    specific prior written permission from Walt Disney Pictures.
-
-Disclaimer: THIS SOFTWARE IS PROVIDED BY WALT DISNEY PICTURES AND
-CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
-BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE, NONINFRINGEMENT AND TITLE ARE DISCLAIMED.
-IN NO EVENT SHALL WALT DISNEY PICTURES, THE COPYRIGHT HOLDER OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND BASED ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-*/
 
 #include "PtexPlatform.h"
 #include <iostream>
@@ -484,8 +451,8 @@ void PtexReader::readEditData()
         // read the edit data header
         uint8_t edittype = et_editmetadata;
         uint32_t editsize;
-        if (!readBlock(&edittype, sizeof(edittype), /*reporterror*/ false)) break;
-        if (!readBlock(&editsize, sizeof(editsize), /*reporterror*/ false)) break;
+        if (!readBlock(&edittype, sizeof(edittype),  false)) break;
+        if (!readBlock(&editsize, sizeof(editsize),  false)) break;
         if (!editsize) break;
         _hasEdits = true;
         pos = tell() + editsize;
@@ -767,7 +734,7 @@ void PtexReader::getData(int faceid, void* buffer, int stride, Res res)
 PtexFaceData* PtexReader::getData(int faceid)
 {
     if (!_ok || faceid < 0 || size_t(faceid) >= _header.nfaces) {
-        return errorData(/*deleteOnRelease*/ true);
+        return errorData( true);
     }
 
     FaceInfo& fi = _faceinfo[faceid];
@@ -785,7 +752,7 @@ PtexFaceData* PtexReader::getData(int faceid)
 PtexFaceData* PtexReader::getData(int faceid, Res res)
 {
     if (!_ok || faceid < 0 || size_t(faceid) >= _header.nfaces) {
-        return errorData(/*deleteOnRelease*/ true);
+        return errorData( true);
     }
 
     FaceInfo& fi = _faceinfo[faceid];
@@ -979,17 +946,7 @@ PtexReader::FaceData*
 PtexReader::TiledFaceBase::reduce(PtexReader* r, Res newres, PtexUtils::ReduceFn reducefn,
                                   size_t& newMemUsed)
 {
-    /* Tiled reductions should generally only be anisotropic (just u
-       or v, not both) since isotropic reductions are precomputed and
-       stored on disk.  (This function should still work for isotropic
-       reductions though.)
 
-       In the anisotropic case, the number of tiles should be kept the
-       same along the direction not being reduced in order to preserve
-       the laziness of the file access.  In contrast, if reductions
-       were not tiled, then any reduction would read all the tiles and
-       defeat the purpose of tiling.
-    */
 
     // keep new face local until fully initialized
     FaceData* newface = 0;

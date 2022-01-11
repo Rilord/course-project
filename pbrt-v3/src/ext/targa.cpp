@@ -1,37 +1,26 @@
 
 // ext/targa.cpp*
-/* ---------------------------------------------------------------------------
- * Truevision Targa Reader/Writer
- * Copyright (C) 2001-2003 Emil Mikulic.
- *
- * Source and binary redistribution of this code, with or without changes, for
- * free or for profit, is allowed as long as this copyright notice is kept
- * intact.  Modified versions must be clearly marked as modified.
- *
- * This code is provided without any warranty.  The copyright holder is
- * not liable for anything bad that might happen as a result of the
- * code.
- * -------------------------------------------------------------------------*/
 
-///*@unused@*/ static const char rcsid[] =
+
+// static const char rcsid[] =
 //    "$Id: targa.c,v 1.8 2004/10/09 09:30:26 emikulic Exp $";
 
-#define TGA_KEEP_MACROS /* BIT, htole16, letoh16 */
+#define TGA_KEEP_MACROS
 #include "ext/targa.h"
 #include <stdlib.h>
-#include <string.h> /* memcpy, memcmp */
+#include <string.h>
 
 #define SANE_DEPTH(x) ((x) == 8 || (x) == 16 || (x) == 24 || (x) == 32)
 #define UNMAP_DEPTH(x) ((x) == 16 || (x) == 24 || (x) == 32)
 
 static const char tga_id[] =
-    "\0\0\0\0" /* extension area offset */
-    "\0\0\0\0" /* developer directory offset */
+    "\0\0\0\0"
+    "\0\0\0\0"
     "TRUEVISION-XFILE.";
 
-static const size_t tga_id_length = 26; /* tga_id + \0 */
+static const size_t tga_id_length = 26;
 
-/* helpers */
+
 static tga_result tga_read_rle(tga_image *dest, FILE *fp);
 static tga_result tga_write_row_RLE(FILE *fp, const tga_image *src,
                                     const uint8_t *row);
@@ -70,11 +59,7 @@ int tga_is_mono(const tga_image *tga) {
             tga->image_type == TGA_IMAGE_TYPE_MONO_RLE);
 }
 
-/* ---------------------------------------------------------------------------
- * Convert the numerical <errcode> into a verbose error string.
- *
- * Returns: an error string
- */
+
 const char *tga_error(const tga_result errcode) {
     switch (errcode) {
     case TGA_NOERR:
@@ -118,12 +103,7 @@ const char *tga_error(const tga_result errcode) {
     }
 }
 
-/* ---------------------------------------------------------------------------
- * Read a Targa image from a file named <filename> to <dest>.  This is just a
- * wrapper around tga_read_from_FILE().
- *
- * Returns: TGA_NOERR on success, or a matching TGAERR_* code on failure.
- */
+
 tga_result tga_read(tga_image *dest, const char *filename) {
     tga_result result;
     FILE *fp = fopen(filename, "rb");
@@ -133,13 +113,7 @@ tga_result tga_read(tga_image *dest, const char *filename) {
     return result;
 }
 
-/* ---------------------------------------------------------------------------
- * Read a Targa image from <fp> to <dest>.
- *
- * Returns: TGA_NOERR on success, or a TGAERR_* code on failure.  In the
- *          case of failure, the contents of dest are not guaranteed to be
- *          valid.
- */
+
 tga_result tga_read_from_FILE(tga_image *dest, FILE *fp) {
 #define BARF(errcode)           \
     {                           \
@@ -229,11 +203,11 @@ tga_result tga_read_from_FILE(tga_image *dest, FILE *fp) {
     if (dest->image_data == NULL) BARF(TGAERR_NO_MEM);
 
     if (tga_is_rle(dest)) {
-        /* read RLE */
+
         tga_result result = tga_read_rle(dest, fp);
         if (result != TGA_NOERR) BARF(result);
     } else {
-        /* uncompressed */
+
         READ(dest->image_data,
              dest->width * dest->height * dest->pixel_depth / 8);
     }
@@ -244,10 +218,7 @@ tga_result tga_read_from_FILE(tga_image *dest, FILE *fp) {
 #undef READ16
 }
 
-/* ---------------------------------------------------------------------------
- * Helper function for tga_read_from_FILE().  Decompresses RLE image data from
- * <fp>.  Assumes <dest> header fields are set correctly.
- */
+
 static tga_result tga_read_rle(tga_image *dest, FILE *fp) {
 #define RLE_BIT BIT(7)
 #define READ(dest, size) \
@@ -255,7 +226,7 @@ static tga_result tga_read_rle(tga_image *dest, FILE *fp) {
 
     uint8_t *pos;
     uint32_t p_loaded = 0, p_expected = dest->width * dest->height;
-    uint8_t bpp = dest->pixel_depth / 8; /* bytes per pixel */
+    uint8_t bpp = dest->pixel_depth / 8;
 
     pos = dest->image_data;
 
@@ -263,7 +234,7 @@ static tga_result tga_read_rle(tga_image *dest, FILE *fp) {
         uint8_t b;
         READ(&b, 1);
         if (b & RLE_BIT) {
-            /* is an RLE packet */
+
             uint8_t count, tmp[4], i;
 
             count = (b & ~RLE_BIT) + 1;
@@ -275,7 +246,7 @@ static tga_result tga_read_rle(tga_image *dest, FILE *fp) {
                 memcpy(pos, tmp, bpp);
                 pos += bpp;
             }
-        } else /* RAW packet */
+        } else
         {
             uint8_t count;
 
@@ -292,12 +263,7 @@ static tga_result tga_read_rle(tga_image *dest, FILE *fp) {
 #undef READ
 }
 
-/* ---------------------------------------------------------------------------
- * Write a Targa image to a file named <filename> from <src>.  This is just a
- * wrapper around tga_write_to_FILE().
- *
- * Returns: TGA_NOERR on success, or a matching TGAERR_* code on failure.
- */
+
 tga_result tga_write(const char *filename, const tga_image *src) {
     tga_result result;
     FILE *fp = fopen(filename, "wb");
@@ -307,11 +273,7 @@ tga_result tga_write(const char *filename, const tga_image *src) {
     return result;
 }
 
-/* ---------------------------------------------------------------------------
- * Write one row of an image to <fp> using RLE.  This is a helper function
- * called from tga_write_to_FILE().  It assumes that <src> has its header
- * fields set up correctly.
- */
+
 #define PIXEL(ofs) (row + (ofs)*bpp)
 static tga_result tga_write_row_RLE(FILE *fp, const tga_image *src,
                                     const uint8_t *row) {
@@ -332,7 +294,7 @@ static tga_result tga_write_row_RLE(FILE *fp, const tga_image *src,
         WRITE(&packet_header, 1);
         if (type == RLE) {
             WRITE(PIXEL(pos), bpp);
-        } else /* type == RAW */
+        } else
         {
             WRITE(PIXEL(pos), bpp * len);
         }
@@ -344,30 +306,23 @@ static tga_result tga_write_row_RLE(FILE *fp, const tga_image *src,
 #undef WRITE
 }
 
-/* ---------------------------------------------------------------------------
- * Determine whether the next packet should be RAW or RLE for maximum
- * efficiency.  This is a helper function called from rle_packet_len() and
- * tga_write_row_RLE().
- */
+
 #define SAME(ofs1, ofs2) (memcmp(PIXEL(ofs1), PIXEL(ofs2), bpp) == 0)
 
 static packet_type rle_packet_type(const uint8_t *row, const uint16_t pos,
                                    const uint16_t width, const uint16_t bpp) {
-    if (pos == width - 1) return RAW; /* one pixel */
-    if (SAME(pos, pos + 1))           /* dupe pixel */
+    if (pos == width - 1) return RAW;
+    if (SAME(pos, pos + 1))
     {
-        if (bpp > 1) return RLE; /* inefficient for bpp=1 */
+        if (bpp > 1) return RLE;
 
-        /* three repeats makes the bpp=1 case efficient enough */
+
         if ((pos < width - 2) && SAME(pos + 1, pos + 2)) return RLE;
     }
     return RAW;
 }
 
-/* ---------------------------------------------------------------------------
- * Find the length of the current RLE packet.  This is a helper function
- * called from tga_write_row_RLE().
- */
+
 static uint8_t rle_packet_len(const uint8_t *row, const uint16_t pos,
                               const uint16_t width, const uint16_t bpp,
                               const packet_type type) {
@@ -385,7 +340,7 @@ static uint8_t rle_packet_len(const uint8_t *row, const uint16_t pos,
 
             if (len == 128) return 128;
         }
-    } else /* type == RAW */
+    } else
     {
         while (pos + len < width) {
             if (rle_packet_type(row, pos + len, width, bpp) == RAW)
@@ -395,19 +350,13 @@ static uint8_t rle_packet_len(const uint8_t *row, const uint16_t pos,
             if (len == 128) return 128;
         }
     }
-    return len; /* hit end of row (width) */
+    return len;
 }
 
 #undef SAME
 #undef PIXEL
 
-/* ---------------------------------------------------------------------------
- * Writes a Targa image to <fp> from <src>.
- *
- * Returns: TGA_NOERR on success, or a TGAERR_* code on failure.
- *          On failure, the contents of the file are not guaranteed
- *          to be valid.
- */
+
 tga_result tga_write_to_FILE(FILE *fp, const tga_image *src) {
 #define WRITE(srcptr, size) \
     if (fwrite(srcptr, size, 1, fp) != 1) return TGAERR_WRITE
@@ -479,7 +428,7 @@ tga_result tga_write_to_FILE(FILE *fp, const tga_image *src) {
             if (result != TGA_NOERR) return result;
         }
     } else {
-        /* uncompressed */
+
         WRITE(src->image_data, src->width * src->height * src->pixel_depth / 8);
     }
 
@@ -490,17 +439,14 @@ tga_result tga_write_to_FILE(FILE *fp, const tga_image *src) {
 #undef WRITE16
 }
 
-/* Convenient writing functions --------------------------------------------*/
 
-/*
- * This is just a helper function to initialise the header fields in a
- * tga_image struct.
- */
+
+
 static void init_tga_image(tga_image *img, uint8_t *image, const uint16_t width,
                            const uint16_t height, const uint8_t depth) {
     img->image_id_length = 0;
     img->color_map_type = TGA_COLOR_MAP_ABSENT;
-    img->image_type = TGA_IMAGE_TYPE_NONE; /* override this below! */
+    img->image_type = TGA_IMAGE_TYPE_NONE;
     img->color_map_origin = 0;
     img->color_map_length = 0;
     img->color_map_depth = 0;
@@ -549,7 +495,7 @@ tga_result tga_write_bgr_rle(const char *filename, uint8_t *image,
     return tga_write(filename, &img);
 }
 
-/* Note: this function will MODIFY <image> */
+
 tga_result tga_write_rgb(const char *filename, uint8_t *image,
                          const uint16_t width, const uint16_t height,
                          const uint8_t depth) {
@@ -560,7 +506,7 @@ tga_result tga_write_rgb(const char *filename, uint8_t *image,
     return tga_write(filename, &img);
 }
 
-/* Note: this function will MODIFY <image> */
+
 tga_result tga_write_rgb_rle(const char *filename, uint8_t *image,
                              const uint16_t width, const uint16_t height,
                              const uint8_t depth) {
@@ -571,12 +517,9 @@ tga_result tga_write_rgb_rle(const char *filename, uint8_t *image,
     return tga_write(filename, &img);
 }
 
-/* Convenient manipulation functions ---------------------------------------*/
 
-/* ---------------------------------------------------------------------------
- * Horizontally flip the image in place.  Reverses the right-to-left bit in
- * the image descriptor.
- */
+
+
 tga_result tga_flip_horiz(tga_image *img) {
     uint16_t row;
     size_t bpp;
@@ -584,17 +527,17 @@ tga_result tga_flip_horiz(tga_image *img) {
     int r_to_l;
 
     if (!SANE_DEPTH(img->pixel_depth)) return TGAERR_PIXEL_DEPTH;
-    bpp = (size_t)(img->pixel_depth / 8); /* bytes per pixel */
+    bpp = (size_t)(img->pixel_depth / 8);
 
     for (row = 0; row < img->height; row++) {
         left = img->image_data + row * img->width * bpp;
         right = left + (img->width - 1) * bpp;
 
-        /* reverse from left to right */
+
         while (left < right) {
             uint8_t buffer[4];
 
-            /* swap */
+
             memcpy(buffer, left, bpp);
             memcpy(left, right, bpp);
             memcpy(right, buffer, bpp);
@@ -604,20 +547,17 @@ tga_result tga_flip_horiz(tga_image *img) {
         }
     }
 
-    /* Correct image_descriptor's left-to-right-ness. */
+
     r_to_l = tga_is_right_to_left(img);
-    img->image_descriptor &= ~TGA_R_TO_L_BIT; /* mask out r-to-l bit */
-    if (!r_to_l) /* was l-to-r, need to set r_to_l */
+    img->image_descriptor &= ~TGA_R_TO_L_BIT;
+    if (!r_to_l)
         img->image_descriptor |= TGA_R_TO_L_BIT;
-    /* else bit is already rubbed out */
+
 
     return TGA_NOERR;
 }
 
-/* ---------------------------------------------------------------------------
- * Vertically flip the image in place.  Reverses the top-to-bottom bit in
- * the image descriptor.
- */
+
 tga_result tga_flip_vert(tga_image *img) {
     uint16_t col;
     size_t bpp, line;
@@ -625,18 +565,18 @@ tga_result tga_flip_vert(tga_image *img) {
     int t_to_b;
 
     if (!SANE_DEPTH(img->pixel_depth)) return TGAERR_PIXEL_DEPTH;
-    bpp = (size_t)(img->pixel_depth / 8); /* bytes per pixel */
-    line = bpp * img->width;              /* bytes per line */
+    bpp = (size_t)(img->pixel_depth / 8);
+    line = bpp * img->width;
 
     for (col = 0; col < img->width; col++) {
         top = img->image_data + col * bpp;
         bottom = top + (img->height - 1) * line;
 
-        /* reverse from top to bottom */
+
         while (top < bottom) {
             uint8_t buffer[4];
 
-            /* swap */
+
             memcpy(buffer, top, bpp);
             memcpy(top, bottom, bpp);
             memcpy(bottom, buffer, bpp);
@@ -646,23 +586,19 @@ tga_result tga_flip_vert(tga_image *img) {
         }
     }
 
-    /* Correct image_descriptor's top-to-bottom-ness. */
+
     t_to_b = tga_is_top_to_bottom(img);
-    img->image_descriptor &= ~TGA_T_TO_B_BIT; /* mask out t-to-b bit */
-    if (!t_to_b) /* was b-to-t, need to set t_to_b */
+    img->image_descriptor &= ~TGA_T_TO_B_BIT;
+    if (!t_to_b)
         img->image_descriptor |= TGA_T_TO_B_BIT;
-    /* else bit is already rubbed out */
+
 
     return TGA_NOERR;
 }
 
-/* ---------------------------------------------------------------------------
- * Convert a color-mapped image to unmapped BGR.  Reallocates image_data to a
- * bigger size, then converts the image backwards to avoid using a secondary
- * buffer.  Alters the necessary header fields and deallocates the color map.
- */
+
 tga_result tga_color_unmap(tga_image *img) {
-    uint8_t bpp = img->color_map_depth / 8; /* bytes per pixel */
+    uint8_t bpp = img->color_map_depth / 8;
     int pos;
     void *tmp;
 
@@ -684,7 +620,7 @@ tga_result tga_color_unmap(tga_image *img) {
         memcpy(img->image_data + (pos * bpp), c_bgr, (size_t)bpp);
     }
 
-    /* clean up */
+
     img->image_type = TGA_IMAGE_TYPE_BGR;
     img->pixel_depth = img->color_map_depth;
 
@@ -698,10 +634,7 @@ tga_result tga_color_unmap(tga_image *img) {
     return TGA_NOERR;
 }
 
-/* ---------------------------------------------------------------------------
- * Return a pointer to a given pixel.  Accounts for image orientation (T_TO_B,
- * R_TO_L, etc).  Returns NULL if the pixel is out of range.
- */
+
 uint8_t *tga_find_pixel(const tga_image *img, uint16_t x, uint16_t y) {
     if (x >= img->width || y >= img->height) return NULL;
 
@@ -710,11 +643,7 @@ uint8_t *tga_find_pixel(const tga_image *img, uint16_t x, uint16_t y) {
     return img->image_data + (x + y * img->width) * img->pixel_depth / 8;
 }
 
-/* ---------------------------------------------------------------------------
- * Unpack the pixel at the src pointer according to bits.  Any of b,g,r,a can
- * be set to NULL if not wanted.  Returns TGAERR_PIXEL_DEPTH if a stupid
- * number of bits is given.
- */
+
 tga_result tga_unpack_pixel(const uint8_t *src, const uint8_t bits, uint8_t *b,
                             uint8_t *g, uint8_t *r, uint8_t *a) {
     switch (bits) {
@@ -757,10 +686,7 @@ tga_result tga_unpack_pixel(const uint8_t *src, const uint8_t bits, uint8_t *b,
     return TGA_NOERR;
 }
 
-/* ---------------------------------------------------------------------------
- * Pack the pixel at the dest pointer according to bits.  Returns
- * TGAERR_PIXEL_DEPTH if a stupid number of bits is given.
- */
+
 tga_result tga_pack_pixel(uint8_t *dest, const uint8_t bits, const uint8_t b,
                           const uint8_t g, const uint8_t r, const uint8_t a) {
     switch (bits) {
@@ -798,13 +724,10 @@ tga_result tga_pack_pixel(uint8_t *dest, const uint8_t bits, const uint8_t b,
     return TGA_NOERR;
 }
 
-/* ---------------------------------------------------------------------------
- * Desaturate the specified Targa using the specified coefficients:
- *      output = ( red * cr + green * cg + blue * cb ) / dv
- */
+
 tga_result tga_desaturate(tga_image *img, const int cr, const int cg,
                           const int cb, const int dv) {
-    uint8_t bpp = img->pixel_depth / 8; /* bytes per pixel */
+    uint8_t bpp = img->pixel_depth / 8;
     uint8_t *dest, *src, *tmp;
 
     if (tga_is_mono(img)) return TGAERR_MONO;
@@ -824,7 +747,7 @@ tga_result tga_desaturate(tga_image *img, const int cr, const int cg,
         dest++;
     }
 
-    /* shrink */
+
     tmp = (uint8_t *)realloc(img->image_data, img->width * img->height);
     if (tmp == NULL) return TGAERR_NO_MEM;
     img->image_data = tmp;
@@ -850,10 +773,7 @@ tga_result tga_desaturate_avg(tga_image *img) {
     return tga_desaturate(img, 1, 1, 1, 3);
 }
 
-/* ---------------------------------------------------------------------------
- * Convert an image to the given pixel depth. (one of 32, 24, 16)  Avoids
- * using a secondary buffer to do the conversion.
- */
+
 tga_result tga_convert_depth(tga_image *img, const uint8_t bits) {
     size_t src_size, dest_size;
     uint8_t src_bpp, dest_bpp;
@@ -867,7 +787,7 @@ tga_result tga_convert_depth(tga_image *img, const uint8_t bits) {
         if (result != TGA_NOERR) return result;
     }
 
-    if (img->pixel_depth == bits) return TGA_NOERR; /* no op, no err */
+    if (img->pixel_depth == bits) return TGA_NOERR;
 
     src_bpp = img->pixel_depth / 8;
     dest_bpp = bits / 8;
@@ -878,7 +798,7 @@ tga_result tga_convert_depth(tga_image *img, const uint8_t bits) {
     if (src_size > dest_size) {
         void *tmp;
 
-        /* convert forwards */
+
         dest = img->image_data;
         for (src = img->image_data;
              src < img->image_data + img->width * img->height * src_bpp;
@@ -889,18 +809,18 @@ tga_result tga_convert_depth(tga_image *img, const uint8_t bits) {
             dest += dest_bpp;
         }
 
-        /* shrink */
+
         tmp = realloc(img->image_data, img->width * img->height * dest_bpp);
         if (tmp == NULL) return TGAERR_NO_MEM;
         img->image_data = (uint8_t *)tmp;
     } else {
-        /* expand */
+
         void *tmp =
             realloc(img->image_data, img->width * img->height * dest_bpp);
         if (tmp == NULL) return TGAERR_NO_MEM;
         img->image_data = (uint8_t *)tmp;
 
-        /* convert backwards */
+
         dest = img->image_data + (img->width * img->height - 1) * dest_bpp;
         for (src = img->image_data + (img->width * img->height - 1) * src_bpp;
              src >= img->image_data; src -= src_bpp) {
@@ -915,9 +835,7 @@ tga_result tga_convert_depth(tga_image *img, const uint8_t bits) {
     return TGA_NOERR;
 }
 
-/* ---------------------------------------------------------------------------
- * Swap red and blue (RGB becomes BGR and vice verse).  (in-place)
- */
+
 tga_result tga_swap_red_blue(tga_image *img) {
     uint8_t *ptr;
     uint8_t bpp = img->pixel_depth / 8;
@@ -934,10 +852,7 @@ tga_result tga_swap_red_blue(tga_image *img) {
     return TGA_NOERR;
 }
 
-/* ---------------------------------------------------------------------------
- * Free the image_id, color_map_data and image_data buffers of the specified
- * tga_image, if they're not already NULL.
- */
+
 void tga_free_buffers(tga_image *img) {
     if (img->image_id != NULL) {
         free(img->image_id);

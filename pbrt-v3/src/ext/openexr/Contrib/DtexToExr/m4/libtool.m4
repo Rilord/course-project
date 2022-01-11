@@ -1662,8 +1662,7 @@ else
 #  endif
 #endif
 
-/* We may have to define LT_DLLAZY_OR_NOW in the command line if we
-   find out it does not work in some platform. */
+
 #ifndef LT_DLLAZY_OR_NOW
 #  ifdef RTLD_LAZY
 #    define LT_DLLAZY_OR_NOW		RTLD_LAZY
@@ -1694,7 +1693,7 @@ int main ()
     {
       if (dlsym (self,"fnord"))       status = $lt_dlno_uscore;
       else if (dlsym( self,"_fnord")) status = $lt_dlneed_uscore;
-      /* dlclose (self); */
+
     }
   else
     puts (dlerror ());

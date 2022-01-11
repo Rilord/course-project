@@ -1,10 +1,4 @@
-/*
- * untgz.c -- Display contents and extract files from a gzip'd TAR file
- *
- * written by Pedro A. Aranda Gutierrez <paag@tid.es>
- * adaptation to Unix by Jean-loup Gailly <jloup@gzip.org>
- * various fixes by Cosmin Truta <cosmint@cs.ubbcluj.ro>
- */
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,53 +31,53 @@
 #endif
 
 
-/* values used in typeflag field */
-
-#define REGTYPE  '0'            /* regular file */
-#define AREGTYPE '\0'           /* regular file */
-#define LNKTYPE  '1'            /* link */
-#define SYMTYPE  '2'            /* reserved */
-#define CHRTYPE  '3'            /* character special */
-#define BLKTYPE  '4'            /* block special */
-#define DIRTYPE  '5'            /* directory */
-#define FIFOTYPE '6'            /* FIFO special */
-#define CONTTYPE '7'            /* reserved */
-
-/* GNU tar extensions */
-
-#define GNUTYPE_DUMPDIR  'D'    /* file names from dumped directory */
-#define GNUTYPE_LONGLINK 'K'    /* long link name */
-#define GNUTYPE_LONGNAME 'L'    /* long file name */
-#define GNUTYPE_MULTIVOL 'M'    /* continuation of file from another volume */
-#define GNUTYPE_NAMES    'N'    /* file name that does not fit into main hdr */
-#define GNUTYPE_SPARSE   'S'    /* sparse file */
-#define GNUTYPE_VOLHDR   'V'    /* tape/volume header */
 
 
-/* tar header */
+#define REGTYPE  '0'
+#define AREGTYPE '\0'
+#define LNKTYPE  '1'
+#define SYMTYPE  '2'
+#define CHRTYPE  '3'
+#define BLKTYPE  '4'
+#define DIRTYPE  '5'
+#define FIFOTYPE '6'
+#define CONTTYPE '7'
+
+
+
+#define GNUTYPE_DUMPDIR  'D'
+#define GNUTYPE_LONGLINK 'K'
+#define GNUTYPE_LONGNAME 'L'
+#define GNUTYPE_MULTIVOL 'M'
+#define GNUTYPE_NAMES    'N'
+#define GNUTYPE_SPARSE   'S'
+#define GNUTYPE_VOLHDR   'V'
+
+
+
 
 #define BLOCKSIZE     512
 #define SHORTNAMESIZE 100
 
 struct tar_header
-{                               /* byte offset */
-  char name[100];               /*   0 */
-  char mode[8];                 /* 100 */
-  char uid[8];                  /* 108 */
-  char gid[8];                  /* 116 */
-  char size[12];                /* 124 */
-  char mtime[12];               /* 136 */
-  char chksum[8];               /* 148 */
-  char typeflag;                /* 156 */
-  char linkname[100];           /* 157 */
-  char magic[6];                /* 257 */
-  char version[2];              /* 263 */
-  char uname[32];               /* 265 */
-  char gname[32];               /* 297 */
-  char devmajor[8];             /* 329 */
-  char devminor[8];             /* 337 */
-  char prefix[155];             /* 345 */
-                                /* 500 */
+{
+  char name[100];
+  char mode[8];
+  char uid[8];
+  char gid[8];
+  char size[12];
+  char mtime[12];
+  char chksum[8];
+  char typeflag;
+  char linkname[100];
+  char magic[6];
+  char version[2];
+  char uname[32];
+  char gname[32];
+  char devmajor[8];
+  char devminor[8];
+  char prefix[155];
+
 };
 
 union tar_buffer
@@ -126,8 +120,8 @@ char *prog;
 
 const char *TGZsuffix[] = { "\0", ".tar", ".tar.gz", ".taz", ".tgz", NULL };
 
-/* return the file name of the TGZ archive */
-/* or NULL if it does not exist */
+
+
 
 char *TGZfname (const char *arcname)
 {
@@ -147,7 +141,7 @@ char *TGZfname (const char *arcname)
 }
 
 
-/* error message for the filename */
+
 
 void TGZnotfound (const char *arcname)
 {
@@ -162,8 +156,8 @@ void TGZnotfound (const char *arcname)
 }
 
 
-/* convert octal digits to int */
-/* on error return -1 */
+
+
 
 int getoct (char *p,int width)
 {
@@ -185,8 +179,8 @@ int getoct (char *p,int width)
 }
 
 
-/* convert time_t to string */
-/* use the "YYYY/MM/DD hh:mm:ss" format */
+
+
 
 char *strtime (time_t *t)
 {
@@ -201,7 +195,7 @@ char *strtime (time_t *t)
 }
 
 
-/* set file time */
+
 
 int setfiletime (char *fname,time_t ftime)
 {
@@ -248,7 +242,7 @@ int setfiletime (char *fname,time_t ftime)
 }
 
 
-/* push file attributes */
+
 
 void push_attr(struct attr_item **list,char *fname,int mode,time_t time)
 {
@@ -265,7 +259,7 @@ void push_attr(struct attr_item **list,char *fname,int mode,time_t time)
 }
 
 
-/* restore file attributes */
+
 
 void restore_attr(struct attr_item **list)
 {
@@ -283,7 +277,7 @@ void restore_attr(struct attr_item **list)
 }
 
 
-/* match regular expression */
+
 
 #define ISSPECIAL(c) (((c) == '*') || ((c) == '/'))
 
@@ -320,10 +314,10 @@ int ExprMatch (char *string,char *expr)
 }
 
 
-/* recursive mkdir */
-/* abort on ENOENT; ignore other errors like "directory already exists" */
-/* return 1 if OK */
-/*        0 on error */
+
+
+
+
 
 int makedir (char *newdir)
 {
@@ -370,18 +364,18 @@ int makedir (char *newdir)
 
 int matchname (int arg,int argc,char **argv,char *fname)
 {
-  if (arg == argc)      /* no arguments given (untgz tgzarchive) */
+  if (arg == argc)
     return 1;
 
   while (arg < argc)
     if (ExprMatch(fname,argv[arg++]))
       return 1;
 
-  return 0; /* ignore this for the moment being */
+  return 0;
 }
 
 
-/* tar file list or extract */
+
 
 int tar (gzFile in,int action,int arg,int argc,char **argv)
 {
@@ -404,26 +398,17 @@ int tar (gzFile in,int action,int arg,int argc,char **argv)
       len = gzread(in, &buffer, BLOCKSIZE);
       if (len < 0)
         error(gzerror(in, &err));
-      /*
-       * Always expect complete blocks to process
-       * the tar information.
-       */
+
       if (len != BLOCKSIZE)
         {
-          action = TGZ_INVALID; /* force error exit */
-          remaining = 0;        /* force I/O cleanup */
+          action = TGZ_INVALID;
+          remaining = 0;
         }
 
-      /*
-       * If we have to get a tar header
-       */
+
       if (getheader >= 1)
         {
-          /*
-           * if we met the end of the tar
-           * or the end-of-tar block,
-           * we are done
-           */
+
           if (len == 0 || buffer.header.name[0] == 0)
             break;
 
@@ -443,17 +428,13 @@ int tar (gzFile in,int action,int arg,int argc,char **argv)
             }
           else
             {
-              /*
-               * The file name is longer than SHORTNAMESIZE
-               */
+
               if (strncmp(fname,buffer.header.name,SHORTNAMESIZE-1) != 0)
                   error("bad long name");
               getheader = 1;
             }
 
-          /*
-           * Act according to the type flag
-           */
+
           switch (buffer.header.typeflag)
             {
             case DIRTYPE:
@@ -481,7 +462,7 @@ int tar (gzFile in,int action,int arg,int argc,char **argv)
                     {
                       outfile = fopen(fname,"wb");
                       if (outfile == NULL) {
-                        /* try creating directory */
+
                         char *p = strrchr(fname, '/');
                         if (p != NULL) {
                           *p = '\0';
@@ -554,9 +535,7 @@ int tar (gzFile in,int action,int arg,int argc,char **argv)
             }
         }
 
-      /*
-       * Abandon if errors are found
-       */
+
       if (action == TGZ_INVALID)
         {
           error("broken archive");
@@ -564,9 +543,7 @@ int tar (gzFile in,int action,int arg,int argc,char **argv)
         }
     }
 
-  /*
-   * Restore file modes and time stamps
-   */
+
   restore_attr(&attributes);
 
   if (gzclose(in) != Z_OK)
@@ -576,7 +553,7 @@ int tar (gzFile in,int action,int arg,int argc,char **argv)
 }
 
 
-/* ============================================================ */
+
 
 void help(int exitval)
 {
@@ -597,10 +574,10 @@ void error(const char *msg)
 }
 
 
-/* ============================================================ */
+
 
 #if defined(WIN32) && defined(__GNUC__)
-int _CRT_glob = 0;      /* disable argument globbing in MinGW */
+int _CRT_glob = 0;
 #endif
 
 int main(int argc,char **argv)
@@ -649,9 +626,7 @@ int main(int argc,char **argv)
     if ((action == TGZ_LIST) && (arg != argc))
       help(1);
 
-/*
- *  Process the TGZ file
- */
+
     switch(action)
       {
       case TGZ_LIST:

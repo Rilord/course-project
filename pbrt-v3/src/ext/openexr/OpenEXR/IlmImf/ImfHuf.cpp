@@ -967,7 +967,7 @@ hufDecode
 
 void
 countFrequencies (Int64 freq[HUF_ENCSIZE],
-		  const unsigned short data[/*n*/],
+		  const unsigned short data[],
 		  int n)
 {
     for (int i = 0; i < HUF_ENCSIZE; ++i)

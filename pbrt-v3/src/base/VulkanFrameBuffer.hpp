@@ -1,10 +1,4 @@
-/*
-* Vulkan framebuffer class
-*
-* Copyright (C) 2016 by Sascha Willems - www.saschawillems.de
-*
-* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
-*/
+
 
 #pragma once
 
@@ -17,9 +11,7 @@
 
 namespace vks
 {
-	/**
-	* @brief Encapsulates a single frame buffer attachment 
-	*/
+
 	struct FramebufferAttachment
 	{
 		VkImage image;
@@ -29,9 +21,7 @@ namespace vks
 		VkImageSubresourceRange subresourceRange;
 		VkAttachmentDescription description;
 
-		/**
-		* @brief Returns true if the attachment has a depth component
-		*/
+
 		bool hasDepth()
 		{
 			std::vector<VkFormat> formats = 
@@ -46,9 +36,7 @@ namespace vks
 			return std::find(formats.begin(), formats.end(), format) != std::end(formats);
 		}
 
-		/**
-		* @brief Returns true if the attachment has a stencil component
-		*/
+
 		bool hasStencil()
 		{
 			std::vector<VkFormat> formats = 
@@ -61,9 +49,7 @@ namespace vks
 			return std::find(formats.begin(), formats.end(), format) != std::end(formats);
 		}
 
-		/**
-		* @brief Returns true if the attachment is a depth and/or stencil attachment
-		*/
+
 		bool isDepthStencil()
 		{
 			return(hasDepth() || hasStencil());
@@ -71,9 +57,7 @@ namespace vks
 
 	};
 
-	/**
-	* @brief Describes the attributes of an attachment to be created
-	*/
+
 	struct AttachmentCreateInfo
 	{
 		uint32_t width, height;
@@ -83,9 +67,7 @@ namespace vks
 		VkSampleCountFlagBits imageSampleCount = VK_SAMPLE_COUNT_1_BIT;
 	};
 
-	/**
-	* @brief Encapsulates a complete Vulkan framebuffer with an arbitrary number and combination of attachments
-	*/
+
 	struct Framebuffer
 	{
 	private:
@@ -97,20 +79,14 @@ namespace vks
 		VkSampler sampler;
 		std::vector<vks::FramebufferAttachment> attachments;
 
-		/**
-		* Default constructor
-		*
-		* @param vulkanDevice Pointer to a valid VulkanDevice
-		*/
+
 		Framebuffer(vks::VulkanDevice *vulkanDevice)
 		{
 			assert(vulkanDevice);
 			this->vulkanDevice = vulkanDevice;
 		}
 
-		/**
-		* Destroy and free Vulkan resources used for the framebuffer and all of its attachments
-		*/
+
 		~Framebuffer()
 		{
 			assert(vulkanDevice);
@@ -125,13 +101,7 @@ namespace vks
 			vkDestroyFramebuffer(vulkanDevice->logicalDevice, framebuffer, nullptr);
 		}
 
-		/**
-		* Add a new attachment described by createinfo to the framebuffer's attachment list
-		*
-		* @param createinfo Structure that specifies the framebuffer to be constructed
-		*
-		* @return Index of the new attachment
-		*/
+
 		uint32_t addAttachment(vks::AttachmentCreateInfo createinfo)
 		{
 			vks::FramebufferAttachment attachment;
@@ -225,16 +195,7 @@ namespace vks
 			return static_cast<uint32_t>(attachments.size() - 1);
 		}
 
-		/**
-		* Creates a default sampler for sampling from any of the framebuffer attachments
-		* Applications are free to create their own samplers for different use cases 
-		*
-		* @param magFilter Magnification filter for lookups
-		* @param minFilter Minification filter for lookups
-		* @param adressMode Addressing mode for the U,V and W coordinates
-		*
-		* @return VkResult for the sampler creation
-		*/
+
 		VkResult createSampler(VkFilter magFilter, VkFilter minFilter, VkSamplerAddressMode adressMode)
 		{
 			VkSamplerCreateInfo samplerInfo = vks::initializers::samplerCreateInfo();
@@ -252,11 +213,7 @@ namespace vks
 			return vkCreateSampler(vulkanDevice->logicalDevice, &samplerInfo, nullptr, &sampler);
 		}
 
-		/**
-		* Creates a default render pass setup with one sub pass
-		*
-		* @return VK_SUCCESS if all resources have been created successfully
-		*/
+
 		VkResult createRenderPass()
 		{
 			std::vector<VkAttachmentDescription> attachmentDescriptions;

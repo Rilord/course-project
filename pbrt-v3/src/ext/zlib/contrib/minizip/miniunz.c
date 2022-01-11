@@ -1,16 +1,4 @@
-/*
-   miniunz.c
-   Version 1.1, February 14h, 2010
-   sample part of the MiniZip project - ( http://www.winimage.com/zLibDll/minizip.html )
 
-         Copyright (C) 1998-2010 Gilles Vollant (minizip) ( http://www.winimage.com/zLibDll/minizip.html )
-
-         Modifications of Unzip for Zip64
-         Copyright (C) 2007-2008 Even Rouault
-
-         Modifications for Zip64 support on both zip and unzip
-         Copyright (C) 2009-2010 Mathias Svensson ( http://result42.com )
-*/
 
 #if (!defined(_WIN32)) && (!defined(WIN32)) && (!defined(__APPLE__))
         #ifndef __USE_FILE_OFFSET64
@@ -65,21 +53,10 @@
 #define USEWIN32IOAPI
 #include "iowin32.h"
 #endif
-/*
-  mini unzip, demo of unzip package
-
-  usage :
-  Usage : miniunz [-exvlo] file.zip [file_to_extract] [-d extractdir]
-
-  list the file in the zipfile, and print the content of FILE_ID.ZIP or README.TXT
-    if it exists
-*/
 
 
-/* change_file_date : change the date/time of a file
-    filename : the filename of the file where date/time must be modified
-    dosdate : the new date at the MSDos format (4 bytes)
-    tmu_date : the SAME new date at the tm_unz format */
+
+
 void change_file_date(filename,dosdate,tmu_date)
     const char *filename;
     uLong dosdate;
@@ -118,8 +95,7 @@ void change_file_date(filename,dosdate,tmu_date)
 }
 
 
-/* mymkdir and change_file_date are not 100 % portable
-   As I don't know well Unix, I wait feedback for the unix portion */
+
 
 int mymkdir(dirname)
     const char* dirname;
@@ -205,7 +181,7 @@ void do_help()
 
 void Display64BitsSize(ZPOS64_T n, int size_char)
 {
-  /* to avoid compatibility problem , we do here the conversion */
+
   char number[21];
   int offset=19;
   int pos_string = 19;
@@ -259,7 +235,7 @@ int do_list(uf)
         if (file_info.uncompressed_size>0)
             ratio = (uLong)((file_info.compressed_size*100)/file_info.uncompressed_size);
 
-        /* display a '*' if the file is crypted */
+
         if ((file_info.flag & 1) != 0)
             charCrypt='*';
 
@@ -274,7 +250,7 @@ int do_list(uf)
             else if (iLevel==1)
               string_method="Defl:X";
             else if ((iLevel==2) || (iLevel==3))
-              string_method="Defl:F"; /* 2:fast , 3 : extra fast*/
+              string_method="Defl:F";
         }
         else
         if (file_info.compression_method==Z_BZIP2ED)
@@ -409,7 +385,7 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password)
         if ((skip==0) && (err==UNZ_OK))
         {
             fout=FOPEN_FUNC(write_filename,"wb");
-            /* some zipfile don't contain directory alone before file */
+
             if ((fout==NULL) && ((*popt_extract_without_path)==0) &&
                                 (filename_withoutpath!=(char*)filename_inzip))
             {
@@ -464,7 +440,7 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password)
             }
         }
         else
-            unzCloseCurrentFile(uf); /* don't lose the error */
+            unzCloseCurrentFile(uf);
     }
 
     free(buf);
@@ -607,7 +583,7 @@ int main(argc,argv)
 #        endif
 
         strncpy(filename_try, zipfilename,MAXFILENAME-1);
-        /* strncpy doesnt append the trailing NULL, of the string is too long. */
+
         filename_try[ MAXFILENAME ] = '\0';
 
 #        ifdef USEWIN32IOAPI

@@ -39,4 +39,4 @@
 
 void testMultiPartFileMixingBasic (const std::string & tempDir);
 
-#endif /* TESTMULTIPARTFILEMIXINGBASIC_H_ */
+#endif

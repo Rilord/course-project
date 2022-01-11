@@ -1,37 +1,4 @@
-/*
-PTEX SOFTWARE
-Copyright 2014 Disney Enterprises, Inc.  All rights reserved
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-  * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-
-  * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in
-    the documentation and/or other materials provided with the
-    distribution.
-
-  * The names "Disney", "Walt Disney Pictures", "Walt Disney Animation
-    Studios" or the names of its contributors may NOT be used to
-    endorse or promote products derived from this software without
-    specific prior written permission from Walt Disney Pictures.
-
-Disclaimer: THIS SOFTWARE IS PROVIDED BY WALT DISNEY PICTURES AND
-CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
-BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE, NONINFRINGEMENT AND TITLE ARE DISCLAIMED.
-IN NO EVENT SHALL WALT DISNEY PICTURES, THE COPYRIGHT HOLDER OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND BASED ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-*/
 
 #include "PtexPlatform.h"
 #include "Ptexture.h"
@@ -41,7 +8,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 
 PTEX_NAMESPACE_BEGIN
 
-/** Point-sampling filter for rectangular textures */
+
 class PtexPointFilter : public PtexFilter
 {
  public:
@@ -49,8 +16,8 @@ class PtexPointFilter : public PtexFilter
     virtual void release() { delete this; }
     virtual void eval(float* result, int firstchan, int nchannels,
                       int faceid, float u, float v,
-                      float /*uw1*/, float /*vw1*/, float /*uw2*/, float /*vw2*/,
-                      float /*width*/, float /*blur*/)
+                      float , float , float , float ,
+                      float , float )
     {
         if (!_tx || nchannels <= 0) return;
         if (faceid < 0 || faceid >= _tx->numFaces()) return;
@@ -66,7 +33,7 @@ class PtexPointFilter : public PtexFilter
 };
 
 
-/** Point-sampling filter for triangular textures */
+
 class PtexPointFilterTri : public PtexFilter
 {
  public:
@@ -74,8 +41,8 @@ class PtexPointFilterTri : public PtexFilter
     virtual void release() { delete this; }
     virtual void eval(float* result, int firstchan, int nchannels,
                       int faceid, float u, float v,
-                      float /*uw1*/, float /*vw1*/, float /*uw2*/, float /*vw2*/,
-                      float /*width*/, float /*blur*/)
+                      float , float , float , float ,
+                      float , float )
     {
         if (!_tx || nchannels <= 0) return;
         if (faceid < 0 || faceid >= _tx->numFaces()) return;
@@ -102,17 +69,7 @@ class PtexPointFilterTri : public PtexFilter
 };
 
 
-/** Separable filter with width=4 support.
 
-    The kernel width is calculated as a multiple of 4 times the filter
-    width and the texture resolution is chosen such that each kernel
-    axis has between 4 and 8.
-
-    For kernel widths too large to handle (because the kernel would
-    extend significantly beyond both sides of the face), a special
-    Hermite smoothstep is used to interpolate the two nearest 2 samples
-    along the affected axis (or axes).
-*/
 class PtexWidth4Filter : public PtexSeparableFilter
 {
  public:
@@ -248,7 +205,7 @@ class PtexWidth4Filter : public PtexSeparableFilter
 };
 
 
-/** Separable bicubic filter */
+
 class PtexBicubicFilter : public PtexWidth4Filter
 {
  public:
@@ -288,7 +245,7 @@ class PtexBicubicFilter : public PtexWidth4Filter
 
 
 
-/** Separable gaussian filter */
+
 class PtexGaussianFilter : public PtexWidth4Filter
 {
  public:
@@ -304,10 +261,7 @@ class PtexGaussianFilter : public PtexWidth4Filter
 
 
 
-/** Rectangular box filter.
-    The box is convolved with the texels as area samples and thus the kernel function is
-    actually trapezoidally shaped.
- */
+
 class PtexBoxFilter : public PtexSeparableFilter
 {
  public:
@@ -371,7 +325,7 @@ class PtexBoxFilter : public PtexSeparableFilter
 };
 
 
-/** Bilinear filter (for rectangular textures) */
+
 class PtexBilinearFilter : public PtexSeparableFilter
 {
  public:

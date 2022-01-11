@@ -57,8 +57,8 @@ if (ImGui::BeginMenuBar())
 {
     if (ImGui::BeginMenu("File"))
     {
-        if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
-        if (ImGui::MenuItem("Save", "Ctrl+S"))   { /* Do stuff */ }
+        if (ImGui::MenuItem("Open..", "Ctrl+O")) {  }
+        if (ImGui::MenuItem("Save", "Ctrl+S"))   {  }
         if (ImGui::MenuItem("Close", "Ctrl+W"))  { my_tool_active = false; }
         ImGui::EndMenu();
     }

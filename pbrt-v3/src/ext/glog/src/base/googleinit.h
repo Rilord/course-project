@@ -48,4 +48,4 @@ class GoogleInitializer {
             google_init_module_##name);                         \
   }
 
-#endif /* _GOOGLEINIT_H */
+#endif

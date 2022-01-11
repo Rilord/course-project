@@ -1,0 +1,25 @@
+# Converted from "triangle.obj" by obj2pbrt
+# Scene bounds: (-1.000000, -0.866000, 0.000000) - (1.000000, 0.866000, 0.000000)
+
+
+# Name ""
+AttributeBegin
+# Material unspecified in OBJ file
+Shape "trianglemesh"
+  "point3 P" [ 
+	-1 0.8659999967 0
+	1 0.8659999967 0
+	0 -0.8659999967 0
+]
+  "normal N" [ 
+	0 0 -1.047184944
+	0 0 -1.047184944
+	0 0 -1.047222972
+]
+  "integer indices" [ 
+	0 1 2
+	]
+
+AttributeEnd
+
+

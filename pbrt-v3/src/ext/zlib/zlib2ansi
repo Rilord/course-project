@@ -109,13 +109,10 @@ sub StripComments
   $_[0] =~
 
     s{
-       /\*         ##  Start of /* ... */ comment
+       /\*         ##  Start of  comment
        [^*]*\*+    ##  Non-* followed by 1-or-more *'s
        (
-         [^/*][^*]*\*+
-       )*          ##  0-or-more things which don't start with /
-                   ##    but do end with '*'
-       /           ##  End of /* ... */ comment
+         [^ comment
 
      |         ##     OR  C++ Comment
        //          ## Start of C++ comment //

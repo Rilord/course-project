@@ -1,10 +1,4 @@
-/*
-* Assorted Vulkan helper functions
-*
-* Copyright (C) 2016 by Sascha Willems - www.saschawillems.de
-*
-* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
-*/
+
 
 #pragma once
 
@@ -65,13 +59,13 @@ namespace vks
 {
 	namespace tools
 	{
-		/** @brief Disable message boxes on fatal errors */
+
 		extern bool errorModeSilent;
 
-		/** @brief Returns an error code as a string */
+
 		std::string errorString(VkResult errorCode);
 
-		/** @brief Returns the device type as a string */
+
 		std::string physicalDeviceTypeString(VkPhysicalDeviceType type);
 
 		// Selected a suitable supported depth format starting with 32 bit down to 16 bit
@@ -100,7 +94,7 @@ namespace vks
 			VkPipelineStageFlags srcStageMask = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
 			VkPipelineStageFlags dstStageMask = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 
-		/** @brief Insert an image memory barrier into the command buffer */
+
 		void insertImageMemoryBarrier(
 			VkCommandBuffer cmdbuffer,
 			VkImage image,
@@ -123,7 +117,7 @@ namespace vks
 		VkShaderModule loadShader(const char *fileName, VkDevice device);
 #endif
 
-		/** @brief Checks if a file exists */
+
 		bool fileExists(const std::string &filename);
 
 		uint32_t alignedSize(uint32_t value, uint32_t alignment);

@@ -42,4 +42,4 @@ namespace IMF   = OPENEXR_IMF_NAMESPACE;
 namespace IMATH = IMATH_NAMESPACE;
 namespace IEX   = IEX_NAMESPACE;
 
-#endif /* NAMESPACEALIAS_H_ */
+#endif

@@ -38,4 +38,4 @@
 
 void testCompositeDeepScanLine (const std::string & tempDir);
 
-#endif /* TESTCOMPOSITEDEEPSCANLINE_H_ */
+#endif

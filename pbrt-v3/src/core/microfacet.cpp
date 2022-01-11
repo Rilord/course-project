@@ -1,34 +1,4 @@
 
-/*
-    pbrt source code is Copyright(c) 1998-2016
-                        Matt Pharr, Greg Humphreys, and Wenzel Jakob.
-
-    This file is part of pbrt.
-
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are
-    met:
-
-    - Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-
-    - Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-    IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-    TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-    PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-    HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-    SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-    LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-    THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
- */
 
 // core/microfacet.cpp*
 #include "microfacet.h"
@@ -39,7 +9,7 @@ namespace pbrt {
 // Microfacet Utility Functions
 static void BeckmannSample11(Float cosThetaI, Float U1, Float U2,
                              Float *slope_x, Float *slope_y) {
-    /* Special case (normal incidence) */
+
     if (cosThetaI > .9999) {
         Float r = std::sqrt(-std::log(1.0f - U1));
         Float sinPhi = std::sin(2 * Pi * U2);
@@ -49,30 +19,25 @@ static void BeckmannSample11(Float cosThetaI, Float U1, Float U2,
         return;
     }
 
-    /* The original inversion routine from the paper contained
-       discontinuities, which causes issues for QMC integration
-       and techniques like Kelemen-style MLT. The following code
-       performs a numerical inversion with better behavior */
+
     Float sinThetaI =
         std::sqrt(std::max((Float)0, (Float)1 - cosThetaI * cosThetaI));
     Float tanThetaI = sinThetaI / cosThetaI;
     Float cotThetaI = 1 / tanThetaI;
 
-    /* Search interval -- everything is parameterized
-       in the Erf() domain */
+
     Float a = -1, c = Erf(cotThetaI);
     Float sample_x = std::max(U1, (Float)1e-6f);
 
-    /* Start with a good initial guess */
+
     // Float b = (1-sample_x) * a + sample_x * c;
 
-    /* We can do better (inverse of an approximation computed in
-     * Mathematica) */
+
     Float thetaI = std::acos(cosThetaI);
     Float fit = 1 + thetaI * (-0.876f + thetaI * (0.4265f - 0.0594f * thetaI));
     Float b = c - (1 + c) * std::pow(1 - sample_x, fit);
 
-    /* Normalization factor for the CDF */
+
     static const Float SQRT_PI_INV = 1.f / std::sqrt(Pi);
     Float normalization =
         1 /
@@ -80,13 +45,10 @@ static void BeckmannSample11(Float cosThetaI, Float U1, Float U2,
 
     int it = 0;
     while (++it < 10) {
-        /* Bisection criterion -- the oddly-looking
-           Boolean expression are intentional to check
-           for NaNs at little additional cost */
+
         if (!(b >= a && b <= c)) b = 0.5f * (a + c);
 
-        /* Evaluate the CDF and its derivative
-           (i.e. the density function) */
+
         Float invErf = ErfInv(b);
         Float value =
             normalization *
@@ -96,7 +58,7 @@ static void BeckmannSample11(Float cosThetaI, Float U1, Float U2,
 
         if (std::abs(value) < 1e-5f) break;
 
-        /* Update bisection intervals */
+
         if (value > 0)
             c = b;
         else
@@ -105,10 +67,10 @@ static void BeckmannSample11(Float cosThetaI, Float U1, Float U2,
         b -= value / derivative;
     }
 
-    /* Now convert back into a slope value */
+
     *slope_x = ErfInv(b);
 
-    /* Simulate Y component */
+
     *slope_y = ErfInv(2.0f * std::max(U2, (Float)1e-6f) - 1.0f);
 
     CHECK(!std::isinf(*slope_x));

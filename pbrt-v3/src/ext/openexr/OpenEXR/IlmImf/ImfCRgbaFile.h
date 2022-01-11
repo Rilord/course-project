@@ -1,36 +1,4 @@
-/*
 
-Copyright (c) 2002, Industrial Light & Magic, a division of Lucas
-Digital Ltd. LLC
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-*       Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-*       Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-*       Neither the name of Industrial Light & Magic nor the names of
-its contributors may be used to endorse or promote products derived
-from this software without specific prior written permission. 
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-*/
 
 #ifndef INCLUDED_IMF_C_RGBA_FILE_H
 #define INCLUDED_IMF_C_RGBA_FILE_H
@@ -43,9 +11,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
-/*
-** Interpreting unsigned shorts as 16-bit floating point numbers
-*/
+
 
 typedef unsigned short ImfHalf;
 
@@ -55,20 +21,18 @@ void	ImfFloatToHalf (float f,
 
 IMF_EXPORT 
 void	ImfFloatToHalfArray (int n,
-			    const float f[/*n*/],
-			    ImfHalf h[/*n*/]);
+			    const float f[],
+			    ImfHalf h[]);
 
 IMF_EXPORT 
 float	ImfHalfToFloat (ImfHalf h);
 
 IMF_EXPORT 
 void	ImfHalfToFloatArray (int n,
-			    const ImfHalf h[/*n*/],
-			    float f[/*n*/]);
+			    const ImfHalf h[],
+			    float f[]);
 
-/*
-** RGBA pixel; memory layout must be the same as struct Imf::Rgba.
-*/
+
 
 struct ImfRgba
 {
@@ -80,30 +44,22 @@ struct ImfRgba
 
 typedef struct ImfRgba ImfRgba;
 
-/*
-** Magic number; this must be the same as Imf::MAGIC
-*/
+
 
 #define IMF_MAGIC               20000630
 
-/*
-** Version number; this must be the same as Imf::EXR_VERSION
-*/
+
 
 #define IMF_VERSION_NUMBER      2
 
-/*
-** Line order; values must the the same as in Imf::LineOrder.
-*/
+
 
 #define IMF_INCREASING_Y	0
 #define IMF_DECREASING_Y	1
 #define IMF_RANDOM_Y		2
 
 
-/*
-** Compression types; values must be the same as in Imf::Compression.
-*/
+
 
 #define IMF_NO_COMPRESSION	0
 #define IMF_RLE_COMPRESSION	1
@@ -115,9 +71,7 @@ typedef struct ImfRgba ImfRgba;
 #define IMF_B44A_COMPRESSION	7
 
 
-/*
-** Channels; values must be the same as in Imf::RgbaChannels.
-*/
+
 
 #define IMF_WRITE_R		0x01
 #define IMF_WRITE_G		0x02
@@ -132,26 +86,20 @@ typedef struct ImfRgba ImfRgba;
 #define IMF_WRITE_YCA		0x38
 
 
-/*
-** Level modes; values must be the same as in Imf::LevelMode
-*/
+
 
 #define IMF_ONE_LEVEL		0
 #define IMF_MIPMAP_LEVELS	1
 #define IMF_RIPMAP_LEVELS	2
 
 
-/*
-** Level rounding modes; values must be the same as in Imf::LevelRoundingMode
-*/
+
 
 #define IMF_ROUND_DOWN		0
 #define IMF_ROUND_UP		1
 
 
-/*
-** RGBA file header
-*/
+
 
 struct ImfHeader;
 typedef struct ImfHeader ImfHeader;
@@ -345,9 +293,7 @@ int		ImfHeaderM44fAttribute (const ImfHeader *hdr,
 					const char name[],
 					float m[4][4]);
 
-/*
-** RGBA output file
-*/
+
 
 struct ImfOutputFile;
 typedef struct ImfOutputFile ImfOutputFile;
@@ -380,9 +326,7 @@ IMF_EXPORT
 int			ImfOutputChannels (const ImfOutputFile *out);
 
 
-/*
-** Tiled RGBA output file
-*/
+
 
 struct ImfTiledOutputFile;
 typedef struct ImfTiledOutputFile ImfTiledOutputFile;
@@ -434,9 +378,7 @@ int	       	ImfTiledOutputLevelRoundingMode
 						(const ImfTiledOutputFile *out);
 
 
-/*
-** RGBA input file
-*/
+
 
 struct ImfInputFile;
 typedef struct ImfInputFile ImfInputFile;
@@ -467,9 +409,7 @@ IMF_EXPORT
 const char *            ImfInputFileName (const ImfInputFile *in);
 
 
-/*
-** Tiled RGBA input file
-*/
+
 
 struct ImfTiledInputFile;
 typedef struct ImfTiledInputFile ImfTiledInputFile;
@@ -519,9 +459,7 @@ IMF_EXPORT
 int	       	ImfTiledInputLevelRoundingMode
 					       (const ImfTiledInputFile *in);
 
-/*
-** Lookup tables
-*/
+
 
 struct ImfLut;
 typedef struct ImfLut ImfLut;
@@ -540,16 +478,14 @@ void			ImfApplyLut (ImfLut *lut,
 				     ImfRgba *data,
 				     int nData,
 				     int stride);
-/*
-** Most recent error message
-*/
+
 
 IMF_EXPORT 
 const char *		ImfErrorMessage (void);
 
 
 #ifdef __cplusplus
-} /* extern "C" */
+}
 #endif
 
 #endif

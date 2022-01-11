@@ -1,12 +1,4 @@
-/*
-* Initializers for Vulkan structures and objects used by the examples
-* Saves lot of VK_STRUCTURE_TYPE assignments
-* Some initializers are parameterized for convenience
-*
-* Copyright (C) 2016 by Sascha Willems - www.saschawillems.de
-*
-* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
-*/
+
 
 #pragma once
 
@@ -80,7 +72,7 @@ namespace vks
 			return renderPassCreateInfo;
 		}
 
-		/** @brief Initialize an image memory barrier with no image transfer ownership */
+
 		inline VkImageMemoryBarrier imageMemoryBarrier()
 		{
 			VkImageMemoryBarrier imageMemoryBarrier {};
@@ -90,7 +82,7 @@ namespace vks
 			return imageMemoryBarrier;
 		}
 
-		/** @brief Initialize a buffer memory barrier with no image transfer ownership */
+
 		inline VkBufferMemoryBarrier bufferMemoryBarrier()
 		{
 			VkBufferMemoryBarrier bufferMemoryBarrier {};
@@ -580,7 +572,7 @@ namespace vks
 			return bindSparseInfo;
 		}
 
-		/** @brief Initialize a map entry for a shader specialization constant */
+
 		inline VkSpecializationMapEntry specializationMapEntry(uint32_t constantID, uint32_t offset, size_t size)
 		{
 			VkSpecializationMapEntry specializationMapEntry{};
@@ -590,7 +582,7 @@ namespace vks
 			return specializationMapEntry;
 		}
 
-		/** @brief Initialize a specialization constant info structure to pass to a shader stage */
+
 		inline VkSpecializationInfo specializationInfo(uint32_t mapEntryCount, const VkSpecializationMapEntry* mapEntries, size_t dataSize, const void* data)
 		{
 			VkSpecializationInfo specializationInfo{};
@@ -601,7 +593,7 @@ namespace vks
 			return specializationInfo;
 		}
 
-		/** @brief Initialize a specialization constant info structure to pass to a shader stage */
+
 		inline VkSpecializationInfo specializationInfo(const std::vector<VkSpecializationMapEntry> &mapEntries, size_t dataSize, const void* data)
 		{
 			VkSpecializationInfo specializationInfo{};

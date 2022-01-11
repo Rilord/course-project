@@ -1,61 +1,6 @@
-/*
-PTEX SOFTWARE
-Copyright 2014 Disney Enterprises, Inc.  All rights reserved
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
 
-  * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
 
-  * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in
-    the documentation and/or other materials provided with the
-    distribution.
-
-  * The names "Disney", "Walt Disney Pictures", "Walt Disney Animation
-    Studios" or the names of its contributors may NOT be used to
-    endorse or promote products derived from this software without
-    specific prior written permission from Walt Disney Pictures.
-
-Disclaimer: THIS SOFTWARE IS PROVIDED BY WALT DISNEY PICTURES AND
-CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
-BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE, NONINFRINGEMENT AND TITLE ARE DISCLAIMED.
-IN NO EVENT SHALL WALT DISNEY PICTURES, THE COPYRIGHT HOLDER OR
-CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND BASED ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-*/
-
-/* Ptex writer classes:
-
-   PtexIncrWriter implements "incremental" mode and simply appends
-   "edit" blocks to the end of the file.
-
-   PtexMainWriter implements both writing from scratch and updating
-   an existing file, either to add data or to "roll up" previous
-   incremental edits.
-
-   Because the various headers (faceinfo, levelinfo, etc.) are
-   variable-length and precede the data, and because the data size
-   is not known until it is compressed and written, all data
-   are written to a temp file and then copied at the end to the
-   final location.  This happens during the "finish" phase.
-
-   Each time a texture is written to the file, a reduction of the
-   texture is also generated and stored.  These reductions are stored
-   in a temporary form and recalled later as the resolution levels are
-   generated.
-
-   The final reduction for each face is averaged and stored in the
-   const data block.
-*/
 
 #include "PtexPlatform.h"
 #include <errno.h>
@@ -724,7 +669,7 @@ PtexMainWriter::PtexMainWriter(const char* path, PtexTexture* tex,
                                Ptex::MeshType mt, Ptex::DataType dt,
                                int nchannels, int alphachan, int nfaces, bool genmipmaps)
     : PtexWriterBase(path, mt, dt, nchannels, alphachan, nfaces,
-                     /* compress */ true),
+                      true),
       _hasNewData(false),
       _genmipmaps(genmipmaps),
       _reader(0)
@@ -1168,7 +1113,7 @@ void PtexMainWriter::writeMetaData(FILE* fp)
     }
     if (_header.metadatamemsize) {
         // finish zip block
-        _header.metadatazipsize = writeZipBlock(fp, 0, 0, /*finish*/ true);
+        _header.metadatazipsize = writeZipBlock(fp, 0, 0,  true);
     }
 
     // write compatibility barrier
@@ -1203,7 +1148,7 @@ void PtexMainWriter::writeMetaData(FILE* fp)
                 (uint32_t)(sizeof(keysize) + (size_t)keysize + sizeof(datatype) +
                            sizeof(datasize) + sizeof(zipsize));
         }
-        _extheader.lmdheaderzipsize = writeZipBlock(fp, 0, 0, /*finish*/ true);
+        _extheader.lmdheaderzipsize = writeZipBlock(fp, 0, 0,  true);
 
         // copy data records
         for (int i = 0; i < nLmd; i++) {
@@ -1218,7 +1163,7 @@ PtexIncrWriter::PtexIncrWriter(const char* path, FILE* fp,
                                Ptex::MeshType mt, Ptex::DataType dt,
                                int nchannels, int alphachan, int nfaces)
     : PtexWriterBase(path, mt, dt, nchannels, alphachan, nfaces,
-                     /* compress */ false),
+                      false),
       _fp(fp)
 {
     // note: incremental saves are not compressed (see compress flag above)
@@ -1378,7 +1323,7 @@ void PtexIncrWriter::writeMetaDataEdit()
         emdh.metadatamemsize += writeMetaDataBlock(_fp, e);
     }
     // finish zip block
-    emdh.metadatazipsize = writeZipBlock(_fp, 0, 0, /*finish*/ true);
+    emdh.metadatazipsize = writeZipBlock(_fp, 0, 0,  true);
 
     // update headers
     editsize = (uint32_t)(sizeof(emdh) + emdh.metadatazipsize);

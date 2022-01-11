@@ -170,7 +170,7 @@ template <class T>  bool	extractSHRT
 				     Vec3<T> &h,
 				     Vec3<T> &r,
 				     Vec3<T> &t,
-				     bool exc /*= true*/,
+				     bool exc ,
 				     typename Euler<T>::Order rOrder);
 
 template <class T>  bool	extractSHRT 
@@ -731,8 +731,8 @@ extractSHRT (const Matrix44<T> &mat,
 	     Vec3<T> &h,
 	     Vec3<T> &r,
 	     Vec3<T> &t,
-	     bool exc /* = true */ ,
-	     typename Euler<T>::Order rOrder /* = Euler<T>::XYZ */ )
+	     bool exc  ,
+	     typename Euler<T>::Order rOrder  )
 {
     Matrix44<T> rot;
 
@@ -775,7 +775,7 @@ extractSHRT (const Matrix44<T> &mat,
 	     Vec3<T> &h,
 	     Euler<T> &r,
 	     Vec3<T> &t,
-	     bool exc /* = true */)
+	     bool exc )
 {
     return extractSHRT (mat, s, h, r, t, exc, r.order ());
 }
@@ -785,7 +785,7 @@ template <class T>
 bool		
 checkForZeroScaleInRow (const T& scl, 
 			const Vec3<T> &row,
-			bool exc /* = true */ )
+			bool exc  )
 {
     for (int i = 0; i < 3; i++)
     {
@@ -1282,7 +1282,7 @@ template <class T>
 bool		
 checkForZeroScaleInRow (const T& scl, 
                         const Vec2<T> &row,
-                        bool exc /* = true */ )
+                        bool exc  )
 {
     for (int i = 0; i < 2; i++)
     {

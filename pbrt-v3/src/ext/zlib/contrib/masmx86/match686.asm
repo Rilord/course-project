@@ -36,7 +36,7 @@
 
 ;uInt longest_match(s, cur_match)
 ;    deflate_state *s;
-;    IPos cur_match;                             /* current match */
+;    IPos cur_match;
 
     NbStack         equ     76
     cur_match       equ     dword ptr[esp+NbStack-0]

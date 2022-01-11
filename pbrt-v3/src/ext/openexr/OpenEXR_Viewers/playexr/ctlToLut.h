@@ -97,8 +97,8 @@ void
 ctlToLut (std::vector<std::string> transformNames,
 	  OPENEXR_IMF_NAMESPACE::Header inHeader,
 	  size_t lutSize,
-	  const half pixelValues[/*lutSize*/],
-	  half lut[/*lutSize*/]);
+	  const half pixelValues[],
+	  half lut[]);
 
 float
 displayVideoGamma ();

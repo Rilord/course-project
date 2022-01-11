@@ -38,4 +38,4 @@
 
 void testDeepScanLineMultipleRead(const std::string & tempDir);
 
-#endif /* DEEPSCANLINEMULTIPLEREAD_H_ */
+#endif

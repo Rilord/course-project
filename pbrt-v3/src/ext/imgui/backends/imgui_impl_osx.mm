@@ -80,18 +80,7 @@ static void resetKeys()
     io.KeyCtrl = io.KeyShift = io.KeyAlt = io.KeySuper = false;
 }
 
-/**
- KeyEventResponder implements the NSTextInputClient protocol as is required by the macOS text input manager.
 
- The macOS text input manager is invoked by calling the interpretKeyEvents method from the keyDown method.
- Keyboard events are then evaluated by the macOS input manager and valid text input is passed back via the
- insertText:replacementRange method.
-
- This is the same approach employed by other cross-platform libraries such as SDL2:
-  https://github.com/spurious/SDL-mirror/blob/e17aacbd09e65a4fd1e166621e011e581fb017a8/src/video/cocoa/SDL_cocoakeyboard.m#L53
- and GLFW:
-  https://github.com/glfw/glfw/blob/b55a517ae0c7b5127dffa79a64f5406021bf9076/src/cocoa_window.m#L722-L723
- */
 @interface KeyEventResponder: NSView<NSTextInputClient>
 @end
 

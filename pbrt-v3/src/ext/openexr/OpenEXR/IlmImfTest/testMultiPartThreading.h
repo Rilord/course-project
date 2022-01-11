@@ -39,4 +39,4 @@
 
 void testMultiPartThreading (const std::string & tempDir);
 
-#endif /* TESTMULTIPARTTHREADING_H_ */
+#endif

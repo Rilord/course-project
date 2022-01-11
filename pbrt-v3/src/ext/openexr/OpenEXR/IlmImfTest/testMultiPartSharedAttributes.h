@@ -41,4 +41,4 @@
 
 void testMultiPartSharedAttributes (const std::string & tempDir);
 
-#endif /* TESTMULTIPARTSHAREDATTRIBUTES_H_ */
+#endif

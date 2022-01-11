@@ -275,7 +275,7 @@ void readFile(const char filename[])
                 
     }catch(std::exception & e)
     {
-        /* ... yeah, that's likely to happen a lot ... */
+
     }
     
     

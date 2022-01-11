@@ -39,43 +39,43 @@ inffas8664fnc PROC
 
 	mov rax,rcx
 
-	mov	[rax+8], rbp       ; /* save regs rbp and rsp */
+	mov	[rax+8], rbp       ;
 	mov	[rax], rsp
 
-	mov	rsp, rax          ; /* make rsp point to &ar */
+	mov	rsp, rax          ;
 
-	mov	rsi, [rsp+16]      ; /* rsi  = in */
-	mov	rdi, [rsp+32]      ; /* rdi  = out */
-	mov	r9, [rsp+24]       ; /* r9   = last */
-	mov	r10, [rsp+48]      ; /* r10  = end */
-	mov	rbp, [rsp+64]      ; /* rbp  = lcode */
-	mov	r11, [rsp+72]      ; /* r11  = dcode */
-	mov	rdx, [rsp+80]      ; /* rdx  = hold */
-	mov	ebx, [rsp+88]      ; /* ebx  = bits */
-	mov	r12d, [rsp+100]    ; /* r12d = lmask */
-	mov	r13d, [rsp+104]    ; /* r13d = dmask */
-                                          ; /* r14d = len */
-                                          ; /* r15d = dist */
+	mov	rsi, [rsp+16]      ;
+	mov	rdi, [rsp+32]      ;
+	mov	r9, [rsp+24]       ;
+	mov	r10, [rsp+48]      ;
+	mov	rbp, [rsp+64]      ;
+	mov	r11, [rsp+72]      ;
+	mov	rdx, [rsp+80]      ;
+	mov	ebx, [rsp+88]      ;
+	mov	r12d, [rsp+100]    ;
+	mov	r13d, [rsp+104]    ;
+                                          ;
+                                          ;
 
 
 	cld
 	cmp	r10, rdi
-	je	L_one_time           ; /* if only one decode left */
+	je	L_one_time           ;
 	cmp	r9, rsi
 
     jne L_do_loop
 
 
 L_one_time:
-	mov	r8, r12           ; /* r8 = lmask */
+	mov	r8, r12           ;
 	cmp	bl, 32
 	ja	L_get_length_code_one_time
 
-	lodsd                         ; /* eax = *(uint *)in++ */
-	mov	cl, bl            ; /* cl = bits, needs it for shifting */
-	add	bl, 32             ; /* bits += 32 */
+	lodsd                         ;
+	mov	cl, bl            ;
+	add	bl, 32             ;
 	shl	rax, cl
-	or	rdx, rax          ; /* hold |= *((uint *)in)++ << bits */
+	or	rdx, rax          ;
 	jmp	L_get_length_code_one_time
 
 ALIGN 4
@@ -86,57 +86,57 @@ L_while_test:
 	jbe	L_break_loop
 
 L_do_loop:
-	mov	r8, r12           ; /* r8 = lmask */
+	mov	r8, r12           ;
 	cmp	bl, 32
-	ja	L_get_length_code    ; /* if (32 < bits) */
+	ja	L_get_length_code    ;
 
-	lodsd                         ; /* eax = *(uint *)in++ */
-	mov	cl, bl            ; /* cl = bits, needs it for shifting */
-	add	bl, 32             ; /* bits += 32 */
+	lodsd                         ;
+	mov	cl, bl            ;
+	add	bl, 32             ;
 	shl	rax, cl
-	or	rdx, rax          ; /* hold |= *((uint *)in)++ << bits */
+	or	rdx, rax          ;
 
 L_get_length_code:
-	and	r8, rdx            ; /* r8 &= hold */
-	mov	eax, [rbp+r8*4]  ; /* eax = lcode[hold & lmask] */
+	and	r8, rdx            ;
+	mov	eax, [rbp+r8*4]  ;
 
-	mov	cl, ah            ; /* cl = this.bits */
-	sub	bl, ah            ; /* bits -= this.bits */
-	shr	rdx, cl           ; /* hold >>= this.bits */
+	mov	cl, ah            ;
+	sub	bl, ah            ;
+	shr	rdx, cl           ;
 
 	test	al, al
-	jnz	L_test_for_length_base ; /* if (op != 0) 45.7% */
+	jnz	L_test_for_length_base ;
 
-	mov	r8, r12            ; /* r8 = lmask */
-	shr	eax, 16            ; /* output this.val char */
+	mov	r8, r12            ;
+	shr	eax, 16            ;
 	stosb
 
 L_get_length_code_one_time:
-	and	r8, rdx            ; /* r8 &= hold */
-	mov	eax, [rbp+r8*4] ; /* eax = lcode[hold & lmask] */
+	and	r8, rdx            ;
+	mov	eax, [rbp+r8*4] ;
 
 L_dolen:
-	mov	cl, ah            ; /* cl = this.bits */
-	sub	bl, ah            ; /* bits -= this.bits */
-	shr	rdx, cl           ; /* hold >>= this.bits */
+	mov	cl, ah            ;
+	sub	bl, ah            ;
+	shr	rdx, cl           ;
 
 	test	al, al
-	jnz	L_test_for_length_base ; /* if (op != 0) 45.7% */
+	jnz	L_test_for_length_base ;
 
-	shr	eax, 16            ; /* output this.val char */
+	shr	eax, 16            ;
 	stosb
 	jmp	L_while_test
 
 ALIGN 4
 L_test_for_length_base:
-	mov	r14d, eax         ; /* len = this */
-	shr	r14d, 16           ; /* len = this.val */
+	mov	r14d, eax         ;
+	shr	r14d, 16           ;
 	mov	cl, al
 
 	test	al, 16
-	jz	L_test_for_second_level_length ; /* if ((op & 16) == 0) 8% */
-	and	cl, 15             ; /* op &= 15 */
-	jz	L_decode_distance    ; /* if (!op) */
+	jz	L_test_for_second_level_length ;
+	and	cl, 15             ;
+	jz	L_decode_distance    ;
 
 L_add_bits_to_len:
 	sub	bl, cl
@@ -144,36 +144,36 @@ L_add_bits_to_len:
 	inc	eax
 	shl	eax, cl
 	dec	eax
-	and	eax, edx          ; /* eax &= hold */
+	and	eax, edx          ;
 	shr	rdx, cl
-	add	r14d, eax         ; /* len += hold & mask[op] */
+	add	r14d, eax         ;
 
 L_decode_distance:
-	mov	r8, r13           ; /* r8 = dmask */
+	mov	r8, r13           ;
 	cmp	bl, 32
-	ja	L_get_distance_code  ; /* if (32 < bits) */
+	ja	L_get_distance_code  ;
 
-	lodsd                         ; /* eax = *(uint *)in++ */
-	mov	cl, bl            ; /* cl = bits, needs it for shifting */
-	add	bl, 32             ; /* bits += 32 */
+	lodsd                         ;
+	mov	cl, bl            ;
+	add	bl, 32             ;
 	shl	rax, cl
-	or	rdx, rax          ; /* hold |= *((uint *)in)++ << bits */
+	or	rdx, rax          ;
 
 L_get_distance_code:
-	and	r8, rdx           ; /* r8 &= hold */
-	mov	eax, [r11+r8*4] ; /* eax = dcode[hold & dmask] */
+	and	r8, rdx           ;
+	mov	eax, [r11+r8*4] ;
 
 L_dodist:
-	mov	r15d, eax         ; /* dist = this */
-	shr	r15d, 16           ; /* dist = this.val */
+	mov	r15d, eax         ;
+	shr	r15d, 16           ;
 	mov	cl, ah
-	sub	bl, ah            ; /* bits -= this.bits */
-	shr	rdx, cl           ; /* hold >>= this.bits */
-	mov	cl, al            ; /* cl = this.op */
+	sub	bl, ah            ;
+	shr	rdx, cl           ;
+	mov	cl, al            ;
 
-	test	al, 16             ; /* if ((op & 16) == 0) */
+	test	al, 16             ;
 	jz	L_test_for_second_level_dist
-	and	cl, 15             ; /* op &= 15 */
+	and	cl, 15             ;
 	jz	L_check_dist_one
 
 L_add_bits_to_dist:
@@ -181,47 +181,47 @@ L_add_bits_to_dist:
 	xor	eax, eax
 	inc	eax
 	shl	eax, cl
-	dec	eax                 ; /* (1 << op) - 1 */
-	and	eax, edx          ; /* eax &= hold */
+	dec	eax                 ;
+	and	eax, edx          ;
 	shr	rdx, cl
-	add	r15d, eax         ; /* dist += hold & ((1 << op) - 1) */
+	add	r15d, eax         ;
 
 L_check_window:
-	mov	r8, rsi           ; /* save in so from can use it's reg */
+	mov	r8, rsi           ;
 	mov	rax, rdi
-	sub	rax, [rsp+40]      ; /* nbytes = out - beg */
+	sub	rax, [rsp+40]      ;
 
 	cmp	eax, r15d
-	jb	L_clip_window        ; /* if (dist > nbytes) 4.2% */
+	jb	L_clip_window        ;
 
-	mov	ecx, r14d         ; /* ecx = len */
+	mov	ecx, r14d         ;
 	mov	rsi, rdi
-	sub	rsi, r15          ; /* from = out - dist */
+	sub	rsi, r15          ;
 
 	sar	ecx, 1
-	jnc	L_copy_two           ; /* if len % 2 == 0 */
+	jnc	L_copy_two           ;
 
 	rep     movsw
 	mov	al, [rsi]
 	mov	[rdi], al
 	inc	rdi
 
-	mov	rsi, r8           ; /* move in back to %rsi, toss from */
+	mov	rsi, r8           ;
 	jmp	L_while_test
 
 L_copy_two:
 	rep     movsw
-	mov	rsi, r8           ; /* move in back to %rsi, toss from */
+	mov	rsi, r8           ;
 	jmp	L_while_test
 
 ALIGN 4
 L_check_dist_one:
-	cmp	r15d, 1            ; /* if dist 1, is a memset */
+	cmp	r15d, 1            ;
 	jne	L_check_window
-	cmp	[rsp+40], rdi      ; /* if out == beg, outside window */
+	cmp	[rsp+40], rdi      ;
 	je	L_check_window
 
-	mov	ecx, r14d         ; /* ecx = len */
+	mov	ecx, r14d         ;
 	mov	al, [rdi-1]
 	mov	ah, al
 
@@ -237,109 +237,109 @@ L_set_two:
 ALIGN 4
 L_test_for_second_level_length:
 	test	al, 64
-	jnz	L_test_for_end_of_block ; /* if ((op & 64) != 0) */
+	jnz	L_test_for_end_of_block ;
 
 	xor	eax, eax
 	inc	eax
 	shl	eax, cl
 	dec	eax
-	and	eax, edx         ; /* eax &= hold */
-	add	eax, r14d        ; /* eax += len */
-	mov	eax, [rbp+rax*4] ; /* eax = lcode[val+(hold&mask[op])]*/
+	and	eax, edx         ;
+	add	eax, r14d        ;
+	mov	eax, [rbp+rax*4] ;
 	jmp	L_dolen
 
 ALIGN 4
 L_test_for_second_level_dist:
 	test	al, 64
-	jnz	L_invalid_distance_code ; /* if ((op & 64) != 0) */
+	jnz	L_invalid_distance_code ;
 
 	xor	eax, eax
 	inc	eax
 	shl	eax, cl
 	dec	eax
-	and	eax, edx         ; /* eax &= hold */
-	add	eax, r15d        ; /* eax += dist */
-	mov	eax, [r11+rax*4] ; /* eax = dcode[val+(hold&mask[op])]*/
+	and	eax, edx         ;
+	add	eax, r15d        ;
+	mov	eax, [r11+rax*4] ;
 	jmp	L_dodist
 
 ALIGN 4
 L_clip_window:
-	mov	ecx, eax         ; /* ecx = nbytes */
-	mov	eax, [rsp+92]     ; /* eax = wsize, prepare for dist cmp */
-	neg	ecx                ; /* nbytes = -nbytes */
+	mov	ecx, eax         ;
+	mov	eax, [rsp+92]     ;
+	neg	ecx                ;
 
 	cmp	eax, r15d
-	jb	L_invalid_distance_too_far ; /* if (dist > wsize) */
+	jb	L_invalid_distance_too_far ;
 
-	add	ecx, r15d         ; /* nbytes = dist - nbytes */
+	add	ecx, r15d         ;
 	cmp	dword ptr [rsp+96], 0
-	jne	L_wrap_around_window ; /* if (write != 0) */
+	jne	L_wrap_around_window ;
 
-	mov	rsi, [rsp+56]     ; /* from  = window */
-	sub	eax, ecx         ; /* eax  -= nbytes */
-	add	rsi, rax         ; /* from += wsize - nbytes */
+	mov	rsi, [rsp+56]     ;
+	sub	eax, ecx         ;
+	add	rsi, rax         ;
 
-	mov	eax, r14d        ; /* eax = len */
+	mov	eax, r14d        ;
 	cmp	r14d, ecx
-	jbe	L_do_copy           ; /* if (nbytes >= len) */
+	jbe	L_do_copy           ;
 
-	sub	eax, ecx         ; /* eax -= nbytes */
+	sub	eax, ecx         ;
 	rep     movsb
 	mov	rsi, rdi
-	sub	rsi, r15         ; /* from = &out[ -dist ] */
+	sub	rsi, r15         ;
 	jmp	L_do_copy
 
 ALIGN 4
 L_wrap_around_window:
-	mov	eax, [rsp+96]     ; /* eax = write */
+	mov	eax, [rsp+96]     ;
 	cmp	ecx, eax
-	jbe	L_contiguous_in_window ; /* if (write >= nbytes) */
+	jbe	L_contiguous_in_window ;
 
-	mov	esi, [rsp+92]     ; /* from  = wsize */
-	add	rsi, [rsp+56]     ; /* from += window */
-	add	rsi, rax         ; /* from += write */
-	sub	rsi, rcx         ; /* from -= nbytes */
-	sub	ecx, eax         ; /* nbytes -= write */
+	mov	esi, [rsp+92]     ;
+	add	rsi, [rsp+56]     ;
+	add	rsi, rax         ;
+	sub	rsi, rcx         ;
+	sub	ecx, eax         ;
 
-	mov	eax, r14d        ; /* eax = len */
+	mov	eax, r14d        ;
 	cmp	eax, ecx
-	jbe	L_do_copy           ; /* if (nbytes >= len) */
+	jbe	L_do_copy           ;
 
-	sub	eax, ecx         ; /* len -= nbytes */
+	sub	eax, ecx         ;
 	rep     movsb
-	mov	rsi, [rsp+56]     ; /* from = window */
-	mov	ecx, [rsp+96]     ; /* nbytes = write */
+	mov	rsi, [rsp+56]     ;
+	mov	ecx, [rsp+96]     ;
 	cmp	eax, ecx
-	jbe	L_do_copy           ; /* if (nbytes >= len) */
+	jbe	L_do_copy           ;
 
-	sub	eax, ecx         ; /* len -= nbytes */
+	sub	eax, ecx         ;
 	rep     movsb
 	mov	rsi, rdi
-	sub	rsi, r15         ; /* from = out - dist */
+	sub	rsi, r15         ;
 	jmp	L_do_copy
 
 ALIGN 4
 L_contiguous_in_window:
-	mov	rsi, [rsp+56]     ; /* rsi = window */
+	mov	rsi, [rsp+56]     ;
 	add	rsi, rax
-	sub	rsi, rcx         ; /* from += write - nbytes */
+	sub	rsi, rcx         ;
 
-	mov	eax, r14d        ; /* eax = len */
+	mov	eax, r14d        ;
 	cmp	eax, ecx
-	jbe	L_do_copy           ; /* if (nbytes >= len) */
+	jbe	L_do_copy           ;
 
-	sub	eax, ecx         ; /* len -= nbytes */
+	sub	eax, ecx         ;
 	rep     movsb
 	mov	rsi, rdi
-	sub	rsi, r15         ; /* from = out - dist */
-	jmp	L_do_copy           ; /* if (nbytes >= len) */
+	sub	rsi, r15         ;
+	jmp	L_do_copy           ;
 
 ALIGN 4
 L_do_copy:
-	mov	ecx, eax         ; /* ecx = len */
+	mov	ecx, eax         ;
 	rep     movsb
 
-	mov	rsi, r8          ; /* move in back to %esi, toss from */
+	mov	rsi, r8          ;
 	jmp	L_while_test
 
 L_test_for_end_of_block:
@@ -364,13 +364,13 @@ L_break_loop:
 	mov	dword ptr [rsp+116], 0
 
 L_break_loop_with_status:
-; /* put in, out, bits, and hold back into ar and pop esp */
-	mov	[rsp+16], rsi     ; /* in */
-	mov	[rsp+32], rdi     ; /* out */
-	mov	[rsp+88], ebx     ; /* bits */
-	mov	[rsp+80], rdx     ; /* hold */
+;
+	mov	[rsp+16], rsi     ;
+	mov	[rsp+32], rdi     ;
+	mov	[rsp+88], ebx     ;
+	mov	[rsp+80], rdx     ;
 
-	mov	rax, [rsp]       ; /* restore rbp and rsp */
+	mov	rax, [rsp]       ;
 	mov	rbp, [rsp+8]
 	mov	rsp, rax
 

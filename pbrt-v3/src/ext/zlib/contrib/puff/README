@@ -29,10 +29,10 @@ applications, but if you must ...
 
 Include puff.h in your code, which provides this prototype:
 
-int puff(unsigned char *dest,           /* pointer to destination pointer */
-         unsigned long *destlen,        /* amount of output space */
-         unsigned char *source,         /* pointer to source data pointer */
-         unsigned long *sourcelen);     /* amount of input available */
+int puff(unsigned char *dest,
+         unsigned long *destlen,
+         unsigned char *source,
+         unsigned long *sourcelen);
 
 Then you can call puff() to decompress a deflate stream that is in memory in
 its entirety at source, to a sufficiently sized block of memory for the

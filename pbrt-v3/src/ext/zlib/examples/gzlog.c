@@ -1,28 +1,6 @@
-/*
- * gzlog.c
- * Copyright (C) 2004, 2008, 2012 Mark Adler, all rights reserved
- * For conditions of distribution and use, see copyright notice in gzlog.h
- * version 2.2, 14 Aug 2012
- */
 
-/*
-   gzlog provides a mechanism for frequently appending short strings to a gzip
-   file that is efficient both in execution time and compression ratio.  The
-   strategy is to write the short strings in an uncompressed form to the end of
-   the gzip file, only compressing when the amount of uncompressed data has
-   reached a given threshold.
 
-   gzlog also provides protection against interruptions in the process due to
-   system crashes.  The status of the operation is recorded in an extra field
-   in the gzip file, and is only updated once the gzip file is brought to a
-   valid state.  The last data to be appended or compressed is saved in an
-   auxiliary file, so that if the operation is interrupted, it can be completed
-   the next time an append operation is attempted.
 
-   gzlog maintains another auxiliary file with the last 32K of data from the
-   compressed portion, which is preloaded for the compression of the subsequent
-   data.  This minimizes the impact to the compression ratio of appending.
- */
 
 /*
    Operations Concept:

@@ -156,8 +156,8 @@ static void BM_Check2(int n) {
 }
 BENCHMARK(BM_Check2);
 
-static void CheckFailure(int, int, const char* /* file */, int /* line */,
-                         const char* /* msg */) {
+static void CheckFailure(int, int, const char* , int ,
+                         const char* ) {
 }
 
 static void BM_logspeed(int n) {
@@ -477,7 +477,7 @@ void TestLogToString() {
 class TestLogSinkImpl : public LogSink {
  public:
   vector<string> errors;
-  virtual void send(LogSeverity severity, const char* /* full_filename */,
+  virtual void send(LogSeverity severity, const char* ,
                     const char* base_filename, int line,
                     const struct tm* tm_time,
                     const char* message, size_t message_len) {
@@ -729,8 +729,8 @@ static void TestExtension() {
 struct MyLogger : public base::Logger {
   string data;
 
-  virtual void Write(bool /* should_flush */,
-                     time_t /* timestamp */,
+  virtual void Write(bool ,
+                     time_t ,
                      const char* message,
                      int length) {
     data.append(message, length);
@@ -875,130 +875,7 @@ TEST(SafeFNMatch, logging) {
   CHECK(!WrapSafeFNMatch("bar/foo.ext", "bar/baz.ext"));
   CHECK(!WrapSafeFNMatch("bar/foo.ext", "bar/foo"));
   CHECK(!WrapSafeFNMatch("bar/foo.ext", "bar/foo.ext.zip"));
-  CHECK(WrapSafeFNMatch("ba?/*.ext", "bar/foo.ext"));
-  CHECK(WrapSafeFNMatch("ba?/*.ext", "baZ/FOO.ext"));
-  CHECK(!WrapSafeFNMatch("ba?/*.ext", "barr/foo.ext"));
-  CHECK(!WrapSafeFNMatch("ba?/*.ext", "bar/foo.ext2"));
-  CHECK(WrapSafeFNMatch("ba?/*", "bar/foo.ext2"));
-  CHECK(WrapSafeFNMatch("ba?/*", "bar/"));
-  CHECK(!WrapSafeFNMatch("ba?/?", "bar/"));
-  CHECK(!WrapSafeFNMatch("ba?/*", "bar"));
-}
-
-// TestWaitingLogSink will save messages here
-// No lock: Accessed only by TestLogSinkWriter thread
-// and after its demise by its creator.
-static vector<string> global_messages;
-
-// helper for TestWaitingLogSink below.
-// Thread that does the logic of TestWaitingLogSink
-// It's free to use LOG() itself.
-class TestLogSinkWriter : public Thread {
- public:
-
-  TestLogSinkWriter() : should_exit_(false) {
-    SetJoinable(true);
-    Start();
-  }
-
-  // Just buffer it (can't use LOG() here).
-  void Buffer(const string& message) {
-    mutex_.Lock();
-    RAW_LOG(INFO, "Buffering");
-    messages_.push(message);
-    mutex_.Unlock();
-    RAW_LOG(INFO, "Buffered");
-  }
-
-  // Wait for the buffer to clear (can't use LOG() here).
-  void Wait() {
-    RAW_LOG(INFO, "Waiting");
-    mutex_.Lock();
-    while (!NoWork()) {
-      mutex_.Unlock();
-      SleepForMilliseconds(1);
-      mutex_.Lock();
-    }
-    RAW_LOG(INFO, "Waited");
-    mutex_.Unlock();
-  }
-
-  // Trigger thread exit.
-  void Stop() {
-    MutexLock l(&mutex_);
-    should_exit_ = true;
-  }
-
- private:
-
-  // helpers ---------------
-
-  // For creating a "Condition".
-  bool NoWork() { return messages_.empty(); }
-  bool HaveWork() { return !messages_.empty() || should_exit_; }
-
-  // Thread body; CAN use LOG() here!
-  virtual void Run() {
-    while (1) {
-      mutex_.Lock();
-      while (!HaveWork()) {
-        mutex_.Unlock();
-        SleepForMilliseconds(1);
-        mutex_.Lock();
-      }
-      if (should_exit_ && messages_.empty()) {
-        mutex_.Unlock();
-        break;
-      }
-      // Give the main thread time to log its message,
-      // so that we get a reliable log capture to compare to golden file.
-      // Same for the other sleep below.
-      SleepForMilliseconds(20);
-      RAW_LOG(INFO, "Sink got a messages");  // only RAW_LOG under mutex_ here
-      string message = messages_.front();
-      messages_.pop();
-      // Normally this would be some more real/involved logging logic
-      // where LOG() usage can't be eliminated,
-      // e.g. pushing the message over with an RPC:
-      int messages_left = messages_.size();
-      mutex_.Unlock();
-      SleepForMilliseconds(20);
-      // May not use LOG while holding mutex_, because Buffer()
-      // acquires mutex_, and Buffer is called from LOG(),
-      // which has its own internal mutex:
-      // LOG()->LogToSinks()->TestWaitingLogSink::send()->Buffer()
-      LOG(INFO) << "Sink is sending out a message: " << message;
-      LOG(INFO) << "Have " << messages_left << " left";
-      global_messages.push_back(message);
-    }
-  }
-
-  // data ---------------
-
-  Mutex mutex_;
-  bool should_exit_;
-  queue<string> messages_;  // messages to be logged
-};
-
-// A log sink that exercises WaitTillSent:
-// it pushes data to a buffer and wakes up another thread to do the logging
-// (that other thread can than use LOG() itself),
-class TestWaitingLogSink : public LogSink {
- public:
-
-  TestWaitingLogSink() {
-    tid_ = pthread_self();  // for thread-specific behavior
-    AddLogSink(this);
-  }
-  ~TestWaitingLogSink() {
-    RemoveLogSink(this);
-    writer_.Stop();
-    writer_.Join();
-  }
-
-  // (re)define LogSink interface
-
-  virtual void send(LogSeverity severity, const char* /* full_filename */,
+  CHECK(WrapSafeFNMatch("ba?,
                     const char* base_filename, int line,
                     const struct tm* tm_time,
                     const char* message, size_t message_len) {

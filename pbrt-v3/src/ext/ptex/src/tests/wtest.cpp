@@ -59,7 +59,7 @@ bool checkMeta(const char* path,
 }
 
 
-int main(int /*argc*/, char** /*argv*/)
+int main(int , char** )
 {
     static Ptex::Res res[] = { Ptex::Res(8,7),
                                Ptex::Res(0x0201),

@@ -1,10 +1,4 @@
-/*
-* Extended sample base class for ray tracing based samples
-*
-* Copyright (C) 2020 by Sascha Willems - www.saschawillems.de
-*
-* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
-*/
+
 
 #pragma once
 

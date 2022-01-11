@@ -707,17 +707,17 @@ bool ImFontAtlasBuildWithFreeTypeEx(FT_Library ft_library, ImFontAtlas* atlas, u
 }
 
 // FreeType memory allocation callbacks
-static void* FreeType_Alloc(FT_Memory /*memory*/, long size)
+static void* FreeType_Alloc(FT_Memory , long size)
 {
     return GImGuiFreeTypeAllocFunc((size_t)size, GImGuiFreeTypeAllocatorUserData);
 }
 
-static void FreeType_Free(FT_Memory /*memory*/, void* block)
+static void FreeType_Free(FT_Memory , void* block)
 {
     GImGuiFreeTypeFreeFunc(block, GImGuiFreeTypeAllocatorUserData);
 }
 
-static void* FreeType_Realloc(FT_Memory /*memory*/, long cur_size, long new_size, void* block)
+static void* FreeType_Realloc(FT_Memory , long cur_size, long new_size, void* block)
 {
     // Implement realloc() as we don't ask user to provide it.
     if (block == NULL)

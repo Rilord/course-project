@@ -1,22 +1,4 @@
-/* ioapi.h -- IO base function header for compress/uncompress .zip
-   part of the MiniZip project - ( http://www.winimage.com/zLibDll/minizip.html )
 
-         Copyright (C) 1998-2010 Gilles Vollant (minizip) ( http://www.winimage.com/zLibDll/minizip.html )
-
-         Modifications for Zip64 support
-         Copyright (C) 2009-2010 Mathias Svensson ( http://result42.com )
-
-         For more info read MiniZip_info.txt
-
-         Changes
-
-    Oct-2009 - Defined ZPOS64_T to fpos_t on windows and u_int64_t on linux. (might need to find a better why for this)
-    Oct-2009 - Change to fseeko64, ftello64 and fopen64 so large files would work on linux.
-               More if/def section may be needed to support other platforms
-    Oct-2009 - Defined fxxxx64 calls to normal fopen/ftell/fseek so they would compile on windows.
-                          (but you should use iowin32.c for windows instead)
-
-*/
 
 #ifndef _ZLIBIOAPI64_H
 #define _ZLIBIOAPI64_H
@@ -67,22 +49,13 @@
 #endif
 #endif
 
-/*
-#ifndef ZPOS64_T
-  #ifdef _WIN32
-                #define ZPOS64_T fpos_t
-  #else
-    #include <stdint.h>
-    #define ZPOS64_T uint64_t
-  #endif
-#endif
-*/
+
 
 #ifdef HAVE_MINIZIP64_CONF_H
 #include "mz64conf.h"
 #endif
 
-/* a type choosen by DEFINE */
+
 #ifdef HAVE_64BIT_INT_CUSTOM
 typedef  64BIT_INT_CUSTOM_TYPE ZPOS64_T;
 #else
@@ -91,7 +64,7 @@ typedef  64BIT_INT_CUSTOM_TYPE ZPOS64_T;
 typedef uint64_t ZPOS64_T;
 #else
 
-/* Maximum unsigned 32-bit value used as placeholder for zip64 */
+
 #define MAXU32 0xffffffff
 
 #if defined(_MSC_VER) || defined(__BORLANDC__)
@@ -142,7 +115,7 @@ typedef long     (ZCALLBACK *tell_file_func)      OF((voidpf opaque, voidpf stre
 typedef long     (ZCALLBACK *seek_file_func)      OF((voidpf opaque, voidpf stream, uLong offset, int origin));
 
 
-/* here is the "old" 32 bits structure structure */
+
 typedef struct zlib_filefunc_def_s
 {
     open_file_func      zopen_file;
@@ -174,7 +147,7 @@ typedef struct zlib_filefunc64_def_s
 void fill_fopen64_filefunc OF((zlib_filefunc64_def* pzlib_filefunc_def));
 void fill_fopen_filefunc OF((zlib_filefunc_def* pzlib_filefunc_def));
 
-/* now internal definition, only for zip.c and unzip.h */
+
 typedef struct zlib_filefunc64_32_def_s
 {
     zlib_filefunc64_def zfile_func64;

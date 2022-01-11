@@ -1,11 +1,4 @@
-/*
- * A C++ I/O streams interface to the zlib gz* functions
- *
- * by Ludwig Schwardt <schwardt@sun.ac.za>
- * original version by Kevin Ruland <kevin@rodin.wustl.edu>
- *
- * This version is standard-compliant and compatible with gcc 3.x.
- */
+
 
 #include "zfstream.h"
 #include <cstring>          // for strcpy, strcat, strlen (mode strings)
@@ -15,7 +8,7 @@
 #define BIGBUFSIZE BUFSIZ
 #define SMALLBUFSIZE 1
 
-/*****************************************************************************/
+
 
 // Default constructor
 gzfilebuf::gzfilebuf()
@@ -124,7 +117,7 @@ gzfilebuf::close()
   return retval;
 }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 
 // Convert int open mode to mode string
 bool
@@ -301,7 +294,7 @@ gzfilebuf::sync()
   return traits_type::eq_int_type(this->overflow(), traits_type::eof()) ? -1 : 0;
 }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 
 // Allocate internal buffer
 void
@@ -368,7 +361,7 @@ gzfilebuf::disable_buffer()
   }
 }
 
-/*****************************************************************************/
+
 
 // Default constructor initializes stream buffer
 gzifstream::gzifstream()
@@ -423,7 +416,7 @@ gzifstream::close()
     this->setstate(std::ios_base::failbit);
 }
 
-/*****************************************************************************/
+
 
 // Default constructor initializes stream buffer
 gzofstream::gzofstream()

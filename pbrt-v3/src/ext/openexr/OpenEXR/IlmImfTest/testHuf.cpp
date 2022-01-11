@@ -52,7 +52,7 @@ using namespace std;
 namespace {
 
 void
-fill1 (unsigned short data[/*n*/], int n, float bias, IMATH_NAMESPACE::Rand48 & rand48)
+fill1 (unsigned short data[], int n, float bias, IMATH_NAMESPACE::Rand48 & rand48)
 {
     for (int i = 0; i < n; ++i)
 	data[i] = (unsigned short)
@@ -61,7 +61,7 @@ fill1 (unsigned short data[/*n*/], int n, float bias, IMATH_NAMESPACE::Rand48 & 
 
 
 void
-fill2 (unsigned short data[/*n*/], int n, int m, IMATH_NAMESPACE::Rand48 & rand48)
+fill2 (unsigned short data[], int n, int m, IMATH_NAMESPACE::Rand48 & rand48)
 {
     for (int i = 0; i < n; ++i)
 	data[i] = 0;
@@ -72,7 +72,7 @@ fill2 (unsigned short data[/*n*/], int n, int m, IMATH_NAMESPACE::Rand48 & rand4
 
 
 void
-fill3 (unsigned short data[/*n*/], int n, int m)
+fill3 (unsigned short data[], int n, int m)
 {
     for (int i = 0; i < n; ++i)
 	data[i] = m;
@@ -80,7 +80,7 @@ fill3 (unsigned short data[/*n*/], int n, int m)
 
 
 void
-fill4 (unsigned short data[/*n*/], int n)
+fill4 (unsigned short data[], int n)
 {
     for (int i = 0; i < n; ++i)
 	data[i] = i & USHRT_MAX;
@@ -88,7 +88,7 @@ fill4 (unsigned short data[/*n*/], int n)
 
 
 void
-fill5 (unsigned short data[/*n*/], int n)
+fill5 (unsigned short data[], int n)
 {
     for (int i = 0; i < n; ++i)
 	data[i] = 0;

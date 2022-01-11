@@ -74,7 +74,7 @@ const int USHORT_RANGE = (1 << 16);
 const int BITMAP_SIZE  = (USHORT_RANGE >> 3);
 
 void
-bitmapFromData (const unsigned short data[/*nData*/],
+bitmapFromData (const unsigned short data[],
 		int nData,
 		unsigned char bitmap[BITMAP_SIZE],
 		unsigned short &minNonZero,
@@ -146,7 +146,7 @@ reverseLutFromBitmap (const unsigned char bitmap[BITMAP_SIZE],
 
 void
 applyLut (const unsigned short lut[USHORT_RANGE],
-	  unsigned short data[/*nData*/],
+	  unsigned short data[],
 	  int nData)
 {
     for (int i = 0; i < nData; ++i)

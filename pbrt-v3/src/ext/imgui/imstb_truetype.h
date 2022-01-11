@@ -3256,46 +3256,46 @@ static void stbtt__sort_edges_ins_sort(stbtt__edge *p, int n)
 
 static void stbtt__sort_edges_quicksort(stbtt__edge *p, int n)
 {
-   /* threshold for transitioning to insertion sort */
+
    while (n > 12) {
       stbtt__edge t;
       int c01,c12,c,m,i,j;
 
-      /* compute median of three */
+
       m = n >> 1;
       c01 = STBTT__COMPARE(&p[0],&p[m]);
       c12 = STBTT__COMPARE(&p[m],&p[n-1]);
-      /* if 0 >= mid >= end, or 0 < mid < end, then use mid */
+
       if (c01 != c12) {
-         /* otherwise, we'll need to swap something else to middle */
+
          int z;
          c = STBTT__COMPARE(&p[0],&p[n-1]);
-         /* 0>mid && mid<n:  0>n => n; 0<n => 0 */
-         /* 0<mid && mid>n:  0>n => 0; 0<n => n */
+
+
          z = (c == c12) ? 0 : n-1;
          t = p[z];
          p[z] = p[m];
          p[m] = t;
       }
-      /* now p[m] is the median-of-three */
-      /* swap it to the beginning so it won't move around */
+
+
       t = p[0];
       p[0] = p[m];
       p[m] = t;
 
-      /* partition loop */
+
       i=1;
       j=n-1;
       for(;;) {
-         /* handling of equality is crucial here */
-         /* for sentinels & efficiency with duplicates */
+
+
          for (;;++i) {
             if (!STBTT__COMPARE(&p[i], &p[0])) break;
          }
          for (;;--j) {
             if (!STBTT__COMPARE(&p[0], &p[j])) break;
          }
-         /* make sure we haven't crossed */
+
          if (i >= j) break;
          t = p[i];
          p[i] = p[j];
@@ -3304,7 +3304,7 @@ static void stbtt__sort_edges_quicksort(stbtt__edge *p, int n)
          ++i;
          --j;
       }
-      /* recurse on smaller side, iterate on larger */
+
       if (j < (n-i)) {
          stbtt__sort_edges_quicksort(p,j);
          p = p+i;
@@ -4860,44 +4860,4 @@ STBTT_DEF int stbtt_CompareUTF8toUTF16_bigendian(const char *s1, int len1, const
 //   0.1  (2009-03-09) First public release
 //
 
-/*
-------------------------------------------------------------------------------
-This software is available under 2 licenses -- choose whichever you prefer.
-------------------------------------------------------------------------------
-ALTERNATIVE A - MIT License
-Copyright (c) 2017 Sean Barrett
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-------------------------------------------------------------------------------
-ALTERNATIVE B - Public Domain (www.unlicense.org)
-This is free and unencumbered software released into the public domain.
-Anyone is free to copy, modify, publish, use, compile, sell, or distribute this
-software, either in source code form or as a compiled binary, for any purpose,
-commercial or non-commercial, and by any means.
-In jurisdictions that recognize copyright laws, the author or authors of this
-software dedicate any and all copyright interest in the software to the public
-domain. We make this dedication for the benefit of the public at large and to
-the detriment of our heirs and successors. We intend this dedication to be an
-overt act of relinquishment in perpetuity of all present and future rights to
-this software under copyright law.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-------------------------------------------------------------------------------
-*/
+

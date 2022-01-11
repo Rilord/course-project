@@ -149,7 +149,7 @@ check (istream &is, const char * c)
 
 
 void
-check (istream &is, const char c[/*n*/], int n)
+check (istream &is, const char c[], int n)
 {
     char v[1024];
 

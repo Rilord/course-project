@@ -15,29 +15,20 @@
 
 using namespace pbrt;
 
-/* The null hypothesis will be rejected when the associated
-   p-value is below the significance level specified here. */
+
 #define CHI2_SLEVEL 0.01
 
-/* Resolution of the frequency table discretization. The azimuthal
-   resolution is twice this value. */
+
 #define CHI2_THETA_RES 10
 #define CHI2_PHI_RES 2 * CHI2_THETA_RES
 
-/* Number of MC samples to compute the observed frequency table */
+
 #define CHI2_SAMPLECOUNT 1000000
 
-/* Minimum expected bin frequency. The chi^2 test does not
-   work reliably when the expected frequency in a cell is
-   low (e.g. less than 5), because normality assumptions
-   break down in this case. Therefore, the implementation
-   will merge such low-frequency cells when they fall below
-   the threshold specified here. */
+
 #define CHI2_MINFREQ 5
 
-/* Each provided BSDF will be tested for a few different
-   incident directions. The value specified here determines
-   how many tests will be executed per BSDF */
+
 #define CHI2_RUNS 5
 
 /// Regularized lower incomplete gamma function (based on code from Cephes)
@@ -127,21 +118,20 @@ double Chi2CDF(double x, int dof) {
 Float AdaptiveSimpson(const std::function<Float(Float)>& f, Float x0, Float x1,
                       Float eps = 1e-6f, int depth = 6) {
     int count = 0;
-    /* Define an recursive lambda function for integration over subintervals */
+
     std::function<Float(Float, Float, Float, Float, Float, Float, Float, Float,
                         int)> integrate = [&](Float a, Float b, Float c,
                                               Float fa, Float fb, Float fc,
                                               Float I, Float eps, int depth) {
-        /* Evaluate the function at two intermediate points */
+
         Float d = 0.5f * (a + b), e = 0.5f * (b + c), fd = f(d), fe = f(e);
 
-        /* Simpson integration over each subinterval */
+
         Float h = c - a, I0 = (Float)(1.0 / 12.0) * h * (fa + 4 * fd + fb),
               I1 = (Float)(1.0 / 12.0) * h * (fb + 4 * fe + fc), Ip = I0 + I1;
         ++count;
 
-        /* Stopping criterion from J.N. Lyness (1969)
-          "Notes on the adaptive Simpson quadrature routine" */
+
         if (depth <= 0 || std::abs(Ip - I) < 15 * eps) {
             // Richardson extrapolation
             return Ip + (Float)(1.0 / 15.0) * (Ip - I);
@@ -160,7 +150,7 @@ Float AdaptiveSimpson(const std::function<Float(Float)>& f, Float x0, Float x1,
 Float AdaptiveSimpson2D(const std::function<Float(Float, Float)>& f, Float x0,
                         Float y0, Float x1, Float y1, Float eps = 1e-6f,
                         int depth = 6) {
-    /* Lambda function that integrates over the X axis */
+
     auto integrate = [&](Float y) {
         return AdaptiveSimpson(std::bind(f, std::placeholders::_1, y), x0, x1,
                                eps, depth);
@@ -278,7 +268,7 @@ std::pair<bool, std::string> Chi2Test(const Float* frequencies,
         size_t index;
     };
 
-    /* Sort all cells by their expected frequencies */
+
     std::vector<Cell> cells(thetaRes * phiRes);
     for (size_t i = 0; i < cells.size(); ++i) {
         cells[i].expFrequency = expFrequencies[i];
@@ -288,21 +278,14 @@ std::pair<bool, std::string> Chi2Test(const Float* frequencies,
         return a.expFrequency < b.expFrequency;
     });
 
-    /* Compute the Chi^2 statistic and pool cells as necessary */
+
     Float pooledFrequencies = 0, pooledExpFrequencies = 0, chsq = 0;
     int pooledCells = 0, dof = 0;
 
     for (const Cell& c : cells) {
         if (expFrequencies[c.index] == 0) {
             if (frequencies[c.index] > sampleCount * 1e-5f) {
-                /* Uh oh: samples in a c that should be completely empty
-                   according to the probability density function. Ordinarily,
-                   even a single sample requires immediate rejection of the null
-                   hypothesis. But due to finite-precision computations and
-                   rounding
-                   errors, this can occasionally happen without there being an
-                   actual bug. Therefore, the criterion here is a bit more
-                   lenient. */
+
 
                 std::string result = StringPrintf(
                         "Encountered %f samples in a c with expected "
@@ -311,14 +294,13 @@ std::pair<bool, std::string> Chi2Test(const Float* frequencies,
                 return std::make_pair(false, result);
             }
         } else if (expFrequencies[c.index] < minExpFrequency) {
-            /* Pool cells with low expected frequencies */
+
             pooledFrequencies += frequencies[c.index];
             pooledExpFrequencies += expFrequencies[c.index];
             pooledCells++;
         } else if (pooledExpFrequencies > 0 &&
                    pooledExpFrequencies < minExpFrequency) {
-            /* Keep on pooling cells until a sufficiently high
-               expected frequency is achieved. */
+
             pooledFrequencies += frequencies[c.index];
             pooledExpFrequencies += expFrequencies[c.index];
             pooledCells++;
@@ -335,8 +317,7 @@ std::pair<bool, std::string> Chi2Test(const Float* frequencies,
         ++dof;
     }
 
-    /* All parameters are assumed to be known, so there is no
-       additional DF reduction due to model parameters */
+
     dof -= 1;
 
     if (dof <= 0) {
@@ -345,16 +326,10 @@ std::pair<bool, std::string> Chi2Test(const Float* frequencies,
         return std::make_pair(false, result);
     }
 
-    /* Probability of obtaining a test statistic at least
-       as extreme as the one observed under the assumption
-       that the distributions match */
+
     Float pval = 1 - (Float)Chi2CDF(chsq, dof);
 
-    /* Apply the Sidak correction term, since we'll be conducting multiple
-       independent
-       hypothesis tests. This accounts for the fact that the probability of a
-       failure
-       increases quickly when several hypothesis tests are run in sequence. */
+
     Float alpha = 1.0f - std::pow(1.0f - significanceLevel, 1.0f / numTests);
 
     if (pval < alpha || !std::isfinite(pval)) {
@@ -408,7 +383,7 @@ void TestBSDF(void (*createBSDF)(BSDF*, MemoryArena&),
     }
 
     for (int k = 0; k < CHI2_RUNS; ++k) {
-        /* Randomly pick an outgoing direction on the hemisphere */
+
         Point2f sample {rng.UniformFloat(), rng.UniformFloat()};
         Vector3f woL = CosineSampleHemisphere(sample);
         Vector3f wo = bsdf->LocalToWorld(woL);

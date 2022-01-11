@@ -37,4 +37,4 @@
 #include <string>
 void testRle(const std::string&);
 
-#endif /* TESTRLE_H_ */
+#endif

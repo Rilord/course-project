@@ -300,7 +300,7 @@ RefNumIFStream::~RefNumIFStream ()
 //-------------------------------------------------------------------------------
 
 bool	
-RefNumIFStream::read (char c[/*n*/], int n)
+RefNumIFStream::read (char c[], int n)
 {
 	if (!Read (_refNum, n, c))
 	{
@@ -393,7 +393,7 @@ RefNumOFStream::~RefNumOFStream ()
 //-------------------------------------------------------------------------------
 
 void	
-RefNumOFStream::write (const char c[/*n*/], int n)
+RefNumOFStream::write (const char c[], int n)
 {
 	if (!Write (_refNum, n, c))
 	{

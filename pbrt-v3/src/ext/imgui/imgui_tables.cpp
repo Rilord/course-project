@@ -1,27 +1,7 @@
 // dear imgui, v1.86
 // (tables and columns code)
 
-/*
 
-Index of this file:
-
-// [SECTION] Commentary
-// [SECTION] Header mess
-// [SECTION] Tables: Main code
-// [SECTION] Tables: Simple accessors
-// [SECTION] Tables: Row changes
-// [SECTION] Tables: Columns changes
-// [SECTION] Tables: Columns width management
-// [SECTION] Tables: Drawing
-// [SECTION] Tables: Sorting
-// [SECTION] Tables: Headers
-// [SECTION] Tables: Context Menu
-// [SECTION] Tables: Settings (.ini data)
-// [SECTION] Tables: Garbage Collection
-// [SECTION] Tables: Debugging
-// [SECTION] Columns, BeginColumns, EndColumns, etc.
-
-*/
 
 // Navigating this file:
 // - In Visual Studio IDE: CTRL+comma ("Edit.NavigateTo") can follow symbols in comments, whereas CTRL+F12 ("Edit.GoToImplementation") cannot.

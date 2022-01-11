@@ -39,4 +39,4 @@
 
 void testDeepScanLineBasic (const std::string &tempDir);
 
-#endif /* TESTDEEPSCANLINEBASIC_H_ */
+#endif

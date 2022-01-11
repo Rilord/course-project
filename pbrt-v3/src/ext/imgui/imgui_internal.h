@@ -6,36 +6,7 @@
 //   #define IMGUI_DEFINE_MATH_OPERATORS
 // To implement maths operators for ImVec2 (disabled by default to not collide with using IM_VEC2_CLASS_EXTRA along with your own math types+operators)
 
-/*
 
-Index of this file:
-
-// [SECTION] Header mess
-// [SECTION] Forward declarations
-// [SECTION] Context pointer
-// [SECTION] STB libraries includes
-// [SECTION] Macros
-// [SECTION] Generic helpers
-// [SECTION] ImDrawList support
-// [SECTION] Widgets support: flags, enums, data structures
-// [SECTION] Clipper support
-// [SECTION] Navigation support
-// [SECTION] Columns support
-// [SECTION] Multi-select support
-// [SECTION] Docking support
-// [SECTION] Viewport support
-// [SECTION] Settings support
-// [SECTION] Metrics, Debug tools
-// [SECTION] Generic context hooks
-// [SECTION] ImGuiContext (main imgui context)
-// [SECTION] ImGuiWindowTempData, ImGuiWindow
-// [SECTION] Tab bar, Tab item support
-// [SECTION] Table support
-// [SECTION] ImGui internal API
-// [SECTION] ImFontAtlas internal API
-// [SECTION] Test Engine specific hooks (imgui_test_engine)
-
-*/
 
 #pragma once
 #ifndef IMGUI_DISABLE

@@ -40,4 +40,4 @@
 
 void testBackwardCompatibility (const std::string & tempDir);
 
-#endif /* TESTBACKWARDCOMPATIBILITY_H_ */
+#endif

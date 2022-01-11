@@ -1,30 +1,16 @@
-/* infback.c -- inflate using a call-back interface
- * Copyright (C) 1995-2011 Mark Adler
- * For conditions of distribution and use, see copyright notice in zlib.h
- */
 
-/*
-   This code is largely copied from inflate.c.  Normally either infback.o or
-   inflate.o would be linked into an application--not both.  The interface
-   with inffast.c is retained so that optimized assembler-coded versions of
-   inflate_fast() can be used with either inflate.c or infback.c.
- */
+
+
 
 #include "zutil.h"
 #include "inftrees.h"
 #include "inflate.h"
 #include "inffast.h"
 
-/* function prototypes */
+
 local void fixedtables OF((struct inflate_state FAR *state));
 
-/*
-   strm provides memory allocation functions in zalloc and zfree, or
-   Z_NULL to use the library memory allocation functions.
 
-   windowBits is in the range 8..15, and window is a user-supplied
-   window and output buffer that is 2**windowBits bytes.
- */
 int ZEXPORT inflateBackInit_(strm, windowBits, window, version, stream_size)
 z_streamp strm;
 int windowBits;
@@ -40,7 +26,7 @@ int stream_size;
     if (strm == Z_NULL || window == Z_NULL ||
         windowBits < 8 || windowBits > 15)
         return Z_STREAM_ERROR;
-    strm->msg = Z_NULL;                 /* in case we return an error */
+    strm->msg = Z_NULL;
     if (strm->zalloc == (alloc_func)0) {
 #ifdef Z_SOLO
         return Z_STREAM_ERROR;
@@ -69,16 +55,7 @@ int stream_size;
     return Z_OK;
 }
 
-/*
-   Return state with length and distance decoding tables and index sizes set to
-   fixed code decoding.  Normally this returns fixed tables from inffixed.h.
-   If BUILDFIXED is defined, then instead this routine builds the tables the
-   first time it's called, and returns those tables the first time and
-   thereafter.  This reduces the size of the code by about 2K bytes, in
-   exchange for a little execution time.  However, BUILDFIXED should not be
-   used for threaded applications, since the rewriting of the tables and virgin
-   may not be thread-safe.
- */
+
 local void fixedtables(state)
 struct inflate_state FAR *state;
 {
@@ -87,12 +64,12 @@ struct inflate_state FAR *state;
     static code *lenfix, *distfix;
     static code fixed[544];
 
-    /* build fixed huffman tables if first call (may not be thread safe) */
+
     if (virgin) {
         unsigned sym, bits;
         static code *next;
 
-        /* literal/length table */
+
         sym = 0;
         while (sym < 144) state->lens[sym++] = 8;
         while (sym < 256) state->lens[sym++] = 9;
@@ -103,28 +80,28 @@ struct inflate_state FAR *state;
         bits = 9;
         inflate_table(LENS, state->lens, 288, &(next), &(bits), state->work);
 
-        /* distance table */
+
         sym = 0;
         while (sym < 32) state->lens[sym++] = 5;
         distfix = next;
         bits = 5;
         inflate_table(DISTS, state->lens, 32, &(next), &(bits), state->work);
 
-        /* do this just once */
+
         virgin = 0;
     }
-#else /* !BUILDFIXED */
+#else
 #   include "inffixed.h"
-#endif /* BUILDFIXED */
+#endif
     state->lencode = lenfix;
     state->lenbits = 9;
     state->distcode = distfix;
     state->distbits = 5;
 }
 
-/* Macros for inflateBack(): */
 
-/* Load returned state from inflate_fast() */
+
+
 #define LOAD() \
     do { \
         put = strm->next_out; \
@@ -135,7 +112,7 @@ struct inflate_state FAR *state;
         bits = state->bits; \
     } while (0)
 
-/* Set state from registers for inflate_fast() */
+
 #define RESTORE() \
     do { \
         strm->next_out = put; \
@@ -146,15 +123,14 @@ struct inflate_state FAR *state;
         state->bits = bits; \
     } while (0)
 
-/* Clear the input bit accumulator */
+
 #define INITBITS() \
     do { \
         hold = 0; \
         bits = 0; \
     } while (0)
 
-/* Assure that some input is available.  If input is requested, but denied,
-   then return a Z_BUF_ERROR from inflateBack(). */
+
 #define PULL() \
     do { \
         if (have == 0) { \
@@ -167,8 +143,7 @@ struct inflate_state FAR *state;
         } \
     } while (0)
 
-/* Get a byte of input into the bit accumulator, or return from inflateBack()
-   with an error if there is no input available. */
+
 #define PULLBYTE() \
     do { \
         PULL(); \
@@ -177,36 +152,32 @@ struct inflate_state FAR *state;
         bits += 8; \
     } while (0)
 
-/* Assure that there are at least n bits in the bit accumulator.  If there is
-   not enough available input to do that, then return from inflateBack() with
-   an error. */
+
 #define NEEDBITS(n) \
     do { \
         while (bits < (unsigned)(n)) \
             PULLBYTE(); \
     } while (0)
 
-/* Return the low n bits of the bit accumulator (n < 16) */
+
 #define BITS(n) \
     ((unsigned)hold & ((1U << (n)) - 1))
 
-/* Remove n bits from the bit accumulator */
+
 #define DROPBITS(n) \
     do { \
         hold >>= (n); \
         bits -= (unsigned)(n); \
     } while (0)
 
-/* Remove zero to seven bits as needed to go to a byte boundary */
+
 #define BYTEBITS() \
     do { \
         hold >>= bits & 7; \
         bits -= bits & 7; \
     } while (0)
 
-/* Assure that some output space is available, by writing out the window
-   if it's full.  If the write fails, return from inflateBack() with a
-   Z_BUF_ERROR. */
+
 #define ROOM() \
     do { \
         if (left == 0) { \
@@ -220,33 +191,7 @@ struct inflate_state FAR *state;
         } \
     } while (0)
 
-/*
-   strm provides the memory allocation functions and window buffer on input,
-   and provides information on the unused input on return.  For Z_DATA_ERROR
-   returns, strm will also provide an error message.
 
-   in() and out() are the call-back input and output functions.  When
-   inflateBack() needs more input, it calls in().  When inflateBack() has
-   filled the window with output, or when it completes with data in the
-   window, it calls out() to write out the data.  The application must not
-   change the provided input until in() is called again or inflateBack()
-   returns.  The application must not change the window/output buffer until
-   inflateBack() returns.
-
-   in() and out() are called with a descriptor parameter provided in the
-   inflateBack() call.  This parameter can be a structure that provides the
-   information required to do the read or write, as well as accumulated
-   information on the input and output such as totals and check values.
-
-   in() should return zero on failure.  out() should return non-zero on
-   failure.  If either in() or out() fails, than inflateBack() returns a
-   Z_BUF_ERROR.  strm->next_in can be checked for Z_NULL to see whether it
-   was in() or out() that caused in the error.  Otherwise,  inflateBack()
-   returns Z_STREAM_END on success, Z_DATA_ERROR for an deflate format
-   error, or Z_MEM_ERROR if it could not allocate memory for the state.
-   inflateBack() can also return Z_STREAM_ERROR if the input parameters
-   are not correct, i.e. strm is Z_NULL or the state was not initialized.
- */
 int ZEXPORT inflateBack(strm, in, in_desc, out, out_desc)
 z_streamp strm;
 in_func in;
@@ -255,26 +200,26 @@ out_func out;
 void FAR *out_desc;
 {
     struct inflate_state FAR *state;
-    z_const unsigned char FAR *next;    /* next input */
-    unsigned char FAR *put;     /* next output */
-    unsigned have, left;        /* available input and output */
-    unsigned long hold;         /* bit buffer */
-    unsigned bits;              /* bits in bit buffer */
-    unsigned copy;              /* number of stored or match bytes to copy */
-    unsigned char FAR *from;    /* where to copy match bytes from */
-    code here;                  /* current decoding table entry */
-    code last;                  /* parent table entry */
-    unsigned len;               /* length to copy for repeats, bits to drop */
-    int ret;                    /* return code */
-    static const unsigned short order[19] = /* permutation of code lengths */
+    z_const unsigned char FAR *next;
+    unsigned char FAR *put;
+    unsigned have, left;
+    unsigned long hold;
+    unsigned bits;
+    unsigned copy;
+    unsigned char FAR *from;
+    code here;
+    code last;
+    unsigned len;
+    int ret;
+    static const unsigned short order[19] =
         {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 
-    /* Check that the strm exists and that the state was initialized */
+
     if (strm == Z_NULL || strm->state == Z_NULL)
         return Z_STREAM_ERROR;
     state = (struct inflate_state FAR *)strm->state;
 
-    /* Reset the state */
+
     strm->msg = Z_NULL;
     state->mode = TYPE;
     state->last = 0;
@@ -286,11 +231,11 @@ void FAR *out_desc;
     put = state->window;
     left = state->wsize;
 
-    /* Inflate until end of block marked as last */
+
     for (;;)
         switch (state->mode) {
         case TYPE:
-            /* determine and dispatch block type */
+
             if (state->last) {
                 BYTEBITS();
                 state->mode = DONE;
@@ -300,18 +245,18 @@ void FAR *out_desc;
             state->last = BITS(1);
             DROPBITS(1);
             switch (BITS(2)) {
-            case 0:                             /* stored block */
+            case 0:
                 Tracev((stderr, "inflate:     stored block%s\n",
                         state->last ? " (last)" : ""));
                 state->mode = STORED;
                 break;
-            case 1:                             /* fixed block */
+            case 1:
                 fixedtables(state);
                 Tracev((stderr, "inflate:     fixed codes block%s\n",
                         state->last ? " (last)" : ""));
-                state->mode = LEN;              /* decode codes */
+                state->mode = LEN;
                 break;
-            case 2:                             /* dynamic block */
+            case 2:
                 Tracev((stderr, "inflate:     dynamic codes block%s\n",
                         state->last ? " (last)" : ""));
                 state->mode = TABLE;
@@ -324,8 +269,8 @@ void FAR *out_desc;
             break;
 
         case STORED:
-            /* get and verify stored block length */
-            BYTEBITS();                         /* go to byte boundary */
+
+            BYTEBITS();
             NEEDBITS(32);
             if ((hold & 0xffff) != ((hold >> 16) ^ 0xffff)) {
                 strm->msg = (char *)"invalid stored block lengths";
@@ -337,7 +282,7 @@ void FAR *out_desc;
                     state->length));
             INITBITS();
 
-            /* copy stored block from input to output */
+
             while (state->length != 0) {
                 copy = state->length;
                 PULL();
@@ -356,7 +301,7 @@ void FAR *out_desc;
             break;
 
         case TABLE:
-            /* get dynamic table entries descriptor */
+
             NEEDBITS(14);
             state->nlen = BITS(5) + 257;
             DROPBITS(5);
@@ -373,7 +318,7 @@ void FAR *out_desc;
 #endif
             Tracev((stderr, "inflate:       table sizes ok\n"));
 
-            /* get code length code lengths (not a typo) */
+
             state->have = 0;
             while (state->have < state->ncode) {
                 NEEDBITS(3);
@@ -394,7 +339,7 @@ void FAR *out_desc;
             }
             Tracev((stderr, "inflate:       code lengths ok\n"));
 
-            /* get length and distance code code lengths */
+
             state->have = 0;
             while (state->have < state->nlen + state->ndist) {
                 for (;;) {
@@ -443,19 +388,17 @@ void FAR *out_desc;
                 }
             }
 
-            /* handle error breaks in while */
+
             if (state->mode == BAD) break;
 
-            /* check for end-of-block code (better have one) */
+
             if (state->lens[256] == 0) {
                 strm->msg = (char *)"invalid code -- missing end-of-block";
                 state->mode = BAD;
                 break;
             }
 
-            /* build code tables -- note: do not change the lenbits or distbits
-               values here (9 and 6) without reading the comments in inftrees.h
-               concerning the ENOUGH constants, which depend on those values */
+
             state->next = state->codes;
             state->lencode = (code const FAR *)(state->next);
             state->lenbits = 9;
@@ -479,7 +422,7 @@ void FAR *out_desc;
             state->mode = LEN;
 
         case LEN:
-            /* use inflate_fast() if we have enough input and output */
+
             if (have >= 6 && left >= 258) {
                 RESTORE();
                 if (state->whave < state->wsize)
@@ -489,7 +432,7 @@ void FAR *out_desc;
                 break;
             }
 
-            /* get a literal, length, or end-of-block code */
+
             for (;;) {
                 here = state->lencode[BITS(state->lenbits)];
                 if ((unsigned)(here.bits) <= bits) break;
@@ -508,7 +451,7 @@ void FAR *out_desc;
             DROPBITS(here.bits);
             state->length = (unsigned)here.val;
 
-            /* process literal */
+
             if (here.op == 0) {
                 Tracevv((stderr, here.val >= 0x20 && here.val < 0x7f ?
                         "inflate:         literal '%c'\n" :
@@ -520,21 +463,21 @@ void FAR *out_desc;
                 break;
             }
 
-            /* process end of block */
+
             if (here.op & 32) {
                 Tracevv((stderr, "inflate:         end of block\n"));
                 state->mode = TYPE;
                 break;
             }
 
-            /* invalid code */
+
             if (here.op & 64) {
                 strm->msg = (char *)"invalid literal/length code";
                 state->mode = BAD;
                 break;
             }
 
-            /* length code -- get extra bits, if any */
+
             state->extra = (unsigned)(here.op) & 15;
             if (state->extra != 0) {
                 NEEDBITS(state->extra);
@@ -543,7 +486,7 @@ void FAR *out_desc;
             }
             Tracevv((stderr, "inflate:         length %u\n", state->length));
 
-            /* get distance code */
+
             for (;;) {
                 here = state->distcode[BITS(state->distbits)];
                 if ((unsigned)(here.bits) <= bits) break;
@@ -567,7 +510,7 @@ void FAR *out_desc;
             }
             state->offset = (unsigned)here.val;
 
-            /* get distance extra bits, if any */
+
             state->extra = (unsigned)(here.op) & 15;
             if (state->extra != 0) {
                 NEEDBITS(state->extra);
@@ -582,7 +525,7 @@ void FAR *out_desc;
             }
             Tracevv((stderr, "inflate:         distance %u\n", state->offset));
 
-            /* copy match from window to output */
+
             do {
                 ROOM();
                 copy = state->wsize - state->offset;
@@ -604,7 +547,7 @@ void FAR *out_desc;
             break;
 
         case DONE:
-            /* inflate stream terminated properly -- write leftover output */
+
             ret = Z_STREAM_END;
             if (left < state->wsize) {
                 if (out(out_desc, state->window, state->wsize - left))
@@ -616,12 +559,12 @@ void FAR *out_desc;
             ret = Z_DATA_ERROR;
             goto inf_leave;
 
-        default:                /* can't happen, but makes compilers happy */
+        default:
             ret = Z_STREAM_ERROR;
             goto inf_leave;
         }
 
-    /* Return unused input */
+
   inf_leave:
     strm->next_in = next;
     strm->avail_in = have;

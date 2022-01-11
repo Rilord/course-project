@@ -1,7 +1,7 @@
 #include "PtexHalf.h"
 #include <stdio.h>
 
-/** Table initializations. */
+
 static bool PtexHalfInit(uint32_t* h2fTable, uint16_t* f2hTable)
 {
     union { int i; float f; } u;
